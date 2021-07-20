@@ -1,5 +1,5 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
-FROM julia:1.5.4-buster
+FROM python:3.8-slim-buster
 
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 
@@ -24,12 +24,13 @@ RUN apt-get install wget --yes
 # RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 # ENV PATH="/root/.cargo/bin:${PATH}"
 
-# install python with conda
-RUN mkdir /conda && \
-    cd /conda && \
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda
-ENV PATH="/opt/conda/bin:${PATH}"
+# install julia
+RUN mkdir /julia && \
+    cd /julia && \
+    wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.4-linux-x86_64.tar.gz && \
+    tar zxvf julia-1.5.4-linux-x86_64.tar.gz -C /julia
+ENV PATH="/julia/julia-1.5.4/bin:${PATH}"
+RUN rm -rf /julia/julia-1.5.4-linux-x86_64.tar.gz
 
 # install Julia dependencies
 RUN julia /src/install.jl

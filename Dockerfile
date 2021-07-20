@@ -30,7 +30,7 @@ RUN mkdir /julia && \
     wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.4-linux-x86_64.tar.gz && \
     tar zxvf julia-1.5.4-linux-x86_64.tar.gz -C /julia
 ENV PATH="/julia/julia-1.5.4/bin:${PATH}"
-RUN rm -rf /julia/julia-1.5.4-linux-x86_64.tar.gz
+RUN rm -rf ~/julia/julia-1.5.4-linux-x86_64.tar.gz
 
 # install Julia dependencies
 RUN julia /src/install.jl

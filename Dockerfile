@@ -16,8 +16,7 @@ RUN chmod a+x /src/install.jl
 RUN apt-get update --yes
 RUN apt-get install build-essential --yes
 RUN apt-get install libcurl4-gnutls-dev --yes
-RUN apt-get install libhdf5-serial-dev --yes
-RUN apt-get install libxml2-dev
+RUN apt-get install libxml2-dev --yes
 RUN apt-get apt-get install wget --yes
 
 # # install RUST

@@ -17,11 +17,12 @@ RUN apt-get update --yes
 RUN apt-get install build-essential --yes
 RUN apt-get install libcurl4-gnutls-dev --yes
 RUN apt-get install libhdf5-serial-dev --yes
-RUN apt-get install libxml2-dev --yes
+RUN apt-get install libxml2-dev
+RUN apt-get apt-get install wget --yes
 
-# install RUST
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
+# # install RUST
+# RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+# ENV PATH="/root/.cargo/bin:${PATH}"
 
 # install python with conda
 RUN mkdir /conda && \

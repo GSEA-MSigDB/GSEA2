@@ -36,8 +36,8 @@ RUN julia /src/install.jl
 
 # install python dependencies
 RUN pip install git+https://github.com/KwatME/gsea
-RUN conda install -c genepattern genepattern-python 
-
+# RUN conda install -c genepattern genepattern-python 
+RUN pip install genepattern-python
 # display software versions
 RUN python --version
 RUN pip --version

@@ -10,7 +10,7 @@ RUN mkdir /src
 # copy module files
 COPY src/* /src/
 RUN chmod a+x /src/install.jl
-#RUN chmod a+x /src/run.gsea.py
+#RUN chmod a+x /src/run.gsea2.py
 
 # install system dependencies
 RUN apt-get update --yes

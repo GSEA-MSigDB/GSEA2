@@ -18,6 +18,7 @@ RUN apt-get install git --yes
 RUN apt-get install libcurl4-gnutls-dev --yes
 RUN apt-get install libxml2-dev --yes
 RUN apt-get install wget --yes
+RUN apt-get install unzip --yes
 
 # install julia
 RUN mkdir /julia && \

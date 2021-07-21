@@ -32,6 +32,7 @@ RUN julia /src/install.jl
 
 # install python dependencies
 RUN pip install git+https://github.com/KwatME/gsea
+RUN pip install git+https://github.com/KwatME/kwat.py
 # RUN conda install -c genepattern genepattern-python 
 RUN pip install genepattern-python
 

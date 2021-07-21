@@ -2,8 +2,6 @@ using Pkg: add
 
 for na in [
     "PyCall",
-    "DataFrames",
-    "Pandas",
 ]
 
     add(na)

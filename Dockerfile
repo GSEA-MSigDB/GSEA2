@@ -20,12 +20,12 @@ RUN apt-get install libxml2-dev --yes
 RUN apt-get install wget --yes
 
 # install julia
-RUN mkdir ~/julia && \
-    cd ~/julia && \
+RUN mkdir /julia && \
+    cd /julia && \
     wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.4-linux-x86_64.tar.gz && \
     tar zxvf julia-1.5.4-linux-x86_64.tar.gz
 ENV PATH="/julia/julia-1.5.4/bin:${PATH}"
-RUN rm ~/julia/julia-1.5.4-linux-x86_64.tar.gz
+RUN rm /julia/julia-1.5.4-linux-x86_64.tar.gz
 
 # install Julia dependencies
 RUN julia /src/install.jl

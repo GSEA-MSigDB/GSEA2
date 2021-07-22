@@ -40,6 +40,7 @@ RUN pip install genepattern-python
 # display software versions
 RUN python --version
 RUN pip --version
+RUN julia --version
 
 # default command
 CMD ["python --version"]

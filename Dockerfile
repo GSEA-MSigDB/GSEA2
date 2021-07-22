@@ -9,6 +9,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 RUN mkdir /src
 COPY src/* /src/
 RUN chmod a+x /src/install.jl
+RUN chmod a+x /src/test.jl
 RUN chmod a+x /src/run.gsea2.py
 
 # install system dependencies

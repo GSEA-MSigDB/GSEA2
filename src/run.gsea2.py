@@ -2,6 +2,7 @@ import os, sys
 from optparse import OptionParser
 import argparse
 import shutil
+import pickle
 
 import gp
 import kwat
@@ -46,7 +47,7 @@ def main():
         pa="gsea_results", # directory path to write the gene-set-by-statistic and plots; str
 	)
 	
-	nu_se_st
+	pickle.dump(nu_se_st,open("gsea_results/complete_result.pkl", "wb"))
 
 if __name__ == '__main__':
 	main()

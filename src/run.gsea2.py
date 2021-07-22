@@ -17,6 +17,8 @@ def main():
 	ap.add_argument("-g","--gct",action="store",dest="GCT",help="GCT file.")
 	ap.add_argument("-c","--cls",action="store",dest="CLS",help="CLS file.")
 	ap.add_argument("-m","--gmt",action="store",dest="GMT",help="GMT file.")
+	ap.add_argument("-r","--rme",action="store",dest="rme",help="Ranking Metric.")
+	ap.add_argument("-e","--eme",action="store",dest="eme",help="Enrichment Method.")
 	options = ap.parse_args()
 
 	os.mkdir("gsea_results")
@@ -34,11 +36,11 @@ def main():
         sa_la,  # Sample label; Series
         gm,  # Gene sets; set-to-genes dict or DataFrame
         no="-0-",  # Normalization method; "-0-", "0-1", "1234", "log"
-        ra="ic",  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
+        ra=options.rme,  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
         mi=5,  # Minimum gene set size; int
         ma=500,  # Maximum gene set size; int
         we=1.0,  # Weight used for "ks" and "auc"; float
-        me="js",  # Enrichment method; "ks", "auc", "js"
+        me=options.eme,  # Enrichment method; "ks", "auc", "js"
         se=1729,  # Random seed; int
         pe="label",  # Permutation type; "gene_set", "label"
         n_pe=1000,  # Number of permutations; int

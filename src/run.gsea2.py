@@ -4,6 +4,7 @@ import argparse
 import shutil
 
 import gp
+import kwat
 from gp import data
 from gsea import run_gsea
 
@@ -21,7 +22,7 @@ def main():
 
 	sc_ge_sa = gp.data.GCT(options.GCT) # Parse GCT file
 	cls_file = gp.data.CLS(options.CLS) # Parse CLS file
-	gm = pd.read_csv(options.GMT, sep="\t", header=None, index_col=0).drop(1, axis=1) # Parse GMT file
+	gm = kwat.gmt.read([options.GMT]) # Parse GMT file
 	
 	sc_ge_sa.index=sc_ge_sa.index.droplevel(1) # Drop gene descriptions
 	sa_la = pd.Series(cls_file.class_assignments) # extract class assignments from CLS object

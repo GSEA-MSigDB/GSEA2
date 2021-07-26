@@ -19,6 +19,7 @@ def main():
 	ap.add_argument("-m","--gmt",action="store",dest="GMT",help="GMT file.")
 	ap.add_argument("-r","--rme",action="store",dest="rme",help="Ranking Metric.")
 	ap.add_argument("-e","--eme",action="store",dest="eme",help="Enrichment Method.")
+	ap.add_argument("-j","--cpu",action="store",dest="cpu",help="Job CPU Count.")
 	options = ap.parse_args()
 
 	os.mkdir("gsea_results")
@@ -40,6 +41,7 @@ def main():
         fu=options.rme,  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
         mi=5,  # Minimum gene set size; int
         ma=500,  # Maximum gene set size; int
+        n_jo=options.cpu
         we=1.0,  # Weight used for "ks" and "auc"; float
         al=options.eme,  # Enrichment method; "ks", "auc", "js"
         pe="label",  # Permutation type; "gene_set", "label"

@@ -55,14 +55,14 @@ def main():
         ta,  # Sample label; Series
         sc_el_sa,  # Gene-by-sample score; DataFrame
         se_el_,  # Gene sets; set-to-genes dict or DataFrame
-        pe="label",  # Permutation type; "gene_set", "label"
-        n_pe=1000,  # Number of permutations; int
         fu=options.rme,  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
         mi=5,  # Minimum gene set size; int
         ma=500,  # Maximum gene set size; int
-        al=options.eme,  # Enrichment method; "ks", "auc", "js"
         we=1.0,  # Weight used for "ks" and "auc"; float
+        al=options.eme,  # Enrichment method; "ks", "auc", "js"
+        pe="label",  # Permutation type; "gene_set", "label"
         ra=1729,  # Random seed; int
+        n_pe=1000,  # Number of permutations; int
         n_pl=25,  # Number of extreme gene sets to plot; int
         ad=None,  # Additional gene sets to plot; list of str
         pa="gsea_results", # directory path to write the gene-set-by-statistic and plots; str

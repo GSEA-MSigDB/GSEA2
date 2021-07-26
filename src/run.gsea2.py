@@ -29,7 +29,7 @@ def main():
 	
 	sc_el_sa.index=sc_el_sa.index.droplevel(1) # Drop gene descriptions
 	la_ = pd.Series(cls_file.class_assignments) # extract class assignments from CLS object
-	sa_la.index = sc_el_sa.columns # Assign sample names to classes
+	la_.index = sc_el_sa.columns # Assign sample names to classes
 	
 	# nu_se_st = run_gsea(
     #     sc_el_sa,  # Gene-by-sample score; DataFrame

@@ -31,24 +31,6 @@ def main():
 	la_ = pd.Series(cls_file.class_assignments) # extract class assignments from CLS object
 	la_.index = sc_el_sa.columns # Assign sample names to classes
 	
-	# nu_se_st = run_gsea(
-    #     sc_el_sa,  # Gene-by-sample score; DataFrame
-    #     se_el_,  # Gene sets; set-to-genes dict or DataFrame
-    #     la_,  # Sample label; Series
-    #     pe="label",  # Permutation type; "gene_set", "label"
-    #     n_pe=1000,  # Number of permutations; int
-    #     fu=options.rme,  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
-    #     mi=5,  # Minimum gene set size; int
-    #     ma=500,  # Maximum gene set size; int
-    #     al=options.eme,  # Enrichment method; "ks", "auc", "js"
-    #     we=1.0,  # Weight used for "ks" and "auc"; float
-    #     no="-0-",  # Normalization method; "-0-", "0-1", "1234", "log"
-    #     se=1729,  # Random seed; int
-    #     n_pl=25,  # Number of extreme gene sets to plot; int
-    #     ad=None,  # Additional gene sets to plot; list of str
-    #     pa="gsea_results", # directory path to write the gene-set-by-statistic and plots; str
-	# )
-
 	ta = la_
 
 	nu_se_st = run_gsea(

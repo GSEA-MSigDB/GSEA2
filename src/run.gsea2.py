@@ -52,7 +52,7 @@ def main():
 	ta = la_
 
 	nu_se_st = run_gsea(
-        ta,  # Gene-by-sample score; DataFrame
+        ta,  # Sample label; Series
         sc_el_sa,  # Gene-by-sample score; DataFrame
         se_el_,  # Gene sets; set-to-genes dict or DataFrame
         pe="label",  # Permutation type; "gene_set", "label"

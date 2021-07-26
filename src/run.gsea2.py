@@ -62,7 +62,7 @@ def main():
         ma=500,  # Maximum gene set size; int
         al=options.eme,  # Enrichment method; "ks", "auc", "js"
         we=1.0,  # Weight used for "ks" and "auc"; float
-        se=1729,  # Random seed; int
+        ra=1729,  # Random seed; int
         n_pl=25,  # Number of extreme gene sets to plot; int
         ad=None,  # Additional gene sets to plot; list of str
         pa="gsea_results", # directory path to write the gene-set-by-statistic and plots; str

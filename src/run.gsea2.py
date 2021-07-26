@@ -19,6 +19,13 @@ def main():
 	ap.add_argument("-m","--gmt",action="store",dest="GMT",help="GMT file.")
 	ap.add_argument("-r","--rme",action="store",dest="rme",help="Ranking Metric.")
 	ap.add_argument("-e","--eme",action="store",dest="eme",help="Enrichment Method.")
+	ap.add_argument("-p","--perm",action="store",dest="perm",default="label",help="Permutation mode.")
+	ap.add_argument("-n","--nperm",action="store",dest="nperm",default=1000,type="int",help="Number of permutations.")
+	ap.add_argument("-a","--max",action="store",dest="max",default=500,type="int",help="Max gene set size.")
+	ap.add_argument("-i","--min",action="store",dest="min",default=5,type="int",help="Min gene set size.")
+	ap.add_argument("-w","--wgt",action="store",dest="weight",default=1.0,type="float",help="Weight for ks or auc enrichment method.")
+	ap.add_argument("-l","--npl",action="store",dest="nplot",default=25,type="int",help="Number of enrichment results to plot.")
+	ap.add_argument("-z","--rnd",action="store",dest="rnd",default=1729,type="int",help="Random seed used for permutations.")
 	ap.add_argument("-j","--cpu",action="store",dest="cpu",help="Job CPU Count.")
 	options = ap.parse_args()
 
@@ -39,15 +46,15 @@ def main():
         sc_el_sa,  # Gene-by-sample score; DataFrame
         se_el_,  # Gene sets; set-to-genes dict or DataFrame
         fu=options.rme,  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
-        mi=5,  # Minimum gene set size; int
-        ma=500,  # Maximum gene set size; int
-        n_jo=options.cpu
-        we=1.0,  # Weight used for "ks" and "auc"; float
+        mi=options.min,  # Minimum gene set size; int
+        ma=motions.max,  # Maximum gene set size; int
+        n_jo=options.cpu,
+        we=options.weight,  # Weight used for "ks" and "auc"; float
         al=options.eme,  # Enrichment method; "ks", "auc", "js"
-        pe="label",  # Permutation type; "gene_set", "label"
-        ra=1729,  # Random seed; int
-        n_pe=1000,  # Number of permutations; int
-        n_pl=25,  # Number of extreme gene sets to plot; int
+        pe=options.perm,  # Permutation type; "gene_set", "label"
+        ra=options.rnd,  # Random seed; int
+        n_pe=options.nperm,  # Number of permutations; int
+        n_pl=options.nplot,  # Number of extreme gene sets to plot; int
         ad=None,  # Additional gene sets to plot; list of str
         pa="gsea_results", # directory path to write the gene-set-by-statistic and plots; str
 	)

@@ -48,9 +48,11 @@ def main():
     #     ad=None,  # Additional gene sets to plot; list of str
     #     pa="gsea_results", # directory path to write the gene-set-by-statistic and plots; str
 	# )
-	
+
+	ta = la_
+
 	nu_se_st = run_gsea(
-        ta = la_,  # Gene-by-sample score; DataFrame
+        ta,  # Gene-by-sample score; DataFrame
         sc_el_sa,  # Gene-by-sample score; DataFrame
         se_el_,  # Gene sets; set-to-genes dict or DataFrame
         pe="label",  # Permutation type; "gene_set", "label"

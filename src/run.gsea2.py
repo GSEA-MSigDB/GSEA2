@@ -26,7 +26,7 @@ def main():
 	ap.add_argument("-w","--wgt",action="store",dest="weight",default=1.0,type="float",help="Weight for ks or auc enrichment method.")
 	ap.add_argument("-l","--npl",action="store",dest="nplot",default=25,type="int",help="Number of enrichment results to plot.")
 	ap.add_argument("-z","--rnd",action="store",dest="rnd",default=1729,type="int",help="Random seed used for permutations.")
-	ap.add_argument("-j","--cpu",action="store",dest="cpu",help="Job CPU Count.")
+	ap.add_argument("-j","--cpu",action="store",dest="cpu",default=1,type="int",help="Job CPU Count.")
 	options = ap.parse_args()
 
 	os.mkdir("gsea_results")

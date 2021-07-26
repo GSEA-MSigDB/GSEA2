@@ -47,7 +47,7 @@ def main():
         se_el_,  # Gene sets; set-to-genes dict or DataFrame
         fu=options.rme,  # Ranking method; "ic", "si", "co", "tt", "di", "ra", "lo"
         mi=options.min,  # Minimum gene set size; int
-        ma=motions.max,  # Maximum gene set size; int
+        ma=options.max,  # Maximum gene set size; int
         n_jo=options.cpu,
         we=options.weight,  # Weight used for "ks" and "auc"; float
         al=options.eme,  # Enrichment method; "ks", "auc", "js"

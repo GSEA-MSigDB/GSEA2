@@ -1,7 +1,9 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
 
-FROM julia:1.5.4-buster #Julia base image
-#FROM python:3.8-slim-buster #Python base image
+#Julia base image
+FROM julia:1.5.4-buster
+#Python base image
+#FROM python:3.8-slim-buster 
 
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 

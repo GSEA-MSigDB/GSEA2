@@ -10,6 +10,7 @@ from gp import data
 from gsea import run_gsea
 
 import pandas as pd
+import numpy as np
 
 def main():
 	usage="%prog [options]" + "\n"
@@ -36,11 +37,10 @@ def main():
 	se_el_ = kwat.gmt.read([options.GMT]) # Parse GMT file
 	
 	sc_el_sa.index=sc_el_sa.index.droplevel(1) # Drop gene descriptions
-	la_ = pd.Series(cls_file.class_assignments) # extract class assignments from CLS object
-	la_.index = sc_el_sa.columns # Assign sample names to classes
+	ta = pd.Series(cls_file.class_assignments) # extract class assignments from CLS object
+	ta = np.asarray(ta) # convert to numpy array
+	#ta.index = sc_el_sa.columns # Assign sample names to classes ## No longer works with numpy array class
 	
-	ta = la_
-
 	nu_se_st = run_gsea(
         ta,  # Sample label; Series
         sc_el_sa,  # Gene-by-sample score; DataFrame

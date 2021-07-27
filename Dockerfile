@@ -1,5 +1,5 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
-FROM python:3.8-slim-buster
+FROM python:3.8-buster
 
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 

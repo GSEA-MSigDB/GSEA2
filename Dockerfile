@@ -55,4 +55,4 @@ RUN julia --version
 RUN julia /src/test.jl
 
 # default command
-CMD ["python3" "--version"]
+CMD ["python-jl" "--version"]

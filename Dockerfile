@@ -28,6 +28,7 @@ RUN apt-get install unzip --yes
 
 # Update to Python3
 RUN apt-get install python3.7 --yes
+RUN apt-get install python3-pip --yes
 
 # # install julia
 # RUN mkdir /julia && \

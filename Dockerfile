@@ -1,5 +1,7 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
-FROM python:3.8-slim-buster
+
+FROM julia:1.5.4-buster #Julia base image
+#FROM python:3.8-slim-buster #Python base image
 
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 
@@ -21,13 +23,17 @@ RUN apt-get install libxml2-dev --yes
 RUN apt-get install wget --yes
 RUN apt-get install unzip --yes
 
-# install julia
-RUN mkdir /julia && \
-    cd /julia && \
-    wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.4-linux-x86_64.tar.gz && \
-    tar zxvf julia-1.5.4-linux-x86_64.tar.gz
-ENV PATH="/julia/julia-1.5.4/bin:${PATH}"
-RUN rm /julia/julia-1.5.4-linux-x86_64.tar.gz
+
+# Update to Python3
+RUN apt-get install python3.8
+
+# # install julia
+# RUN mkdir /julia && \
+#     cd /julia && \
+#     wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.4-linux-x86_64.tar.gz && \
+#     tar zxvf julia-1.5.4-linux-x86_64.tar.gz
+# ENV PATH="/julia/julia-1.5.4/bin:${PATH}"
+# RUN rm /julia/julia-1.5.4-linux-x86_64.tar.gz
 
 # install Julia dependencies
 RUN julia /src/install.jl

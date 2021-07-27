@@ -42,14 +42,14 @@ RUN apt-get install python3-pip --yes
 RUN julia /src/install.jl
 
 # install python dependencies
-RUN pip install git+https://github.com/KwatME/gsea
-RUN pip install git+https://github.com/KwatME/kwat.py
+RUN pip3 install git+https://github.com/KwatME/gsea
+RUN pip3 install git+https://github.com/KwatME/kwat.py
 # RUN conda install -c genepattern genepattern-python 
-RUN pip install genepattern-python
+RUN pip3 install genepattern-python
 
 # display software versions
 RUN python --version
-RUN pip --version
+RUN pip3 --version
 RUN julia --version
 
 RUN julia /src/test.jl

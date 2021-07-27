@@ -48,11 +48,11 @@ RUN pip3 install git+https://github.com/KwatME/kwat.py
 RUN pip3 install genepattern-python
 
 # display software versions
-RUN python --version
+RUN python3 --version
 RUN pip3 --version
 RUN julia --version
 
 RUN julia /src/test.jl
 
 # default command
-CMD ["python" "--version"]
+CMD ["python3" "--version"]

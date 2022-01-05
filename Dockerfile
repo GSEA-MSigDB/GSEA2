@@ -17,6 +17,9 @@ RUN apt-get install build-essential --yes
 RUN apt-get install unzip --yes
 RUN apt-get install git --yes
 
+# Clean up after apt
+RUN apt-get clean --yes
+
 # install GSEA dependencies
 RUN git clone https://github.com/KwatMDPhD/GSEA.jl
 RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia --project deps/build.jl

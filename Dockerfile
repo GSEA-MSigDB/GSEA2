@@ -10,7 +10,7 @@ RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
 
 # Update to Python3
-RUN apt-get install python3.9 python3-pip python-is-python3--yes
+RUN apt-get install python3.9 python3-pip
 
 # Clean up after apt
 RUN apt-get clean --yes
@@ -22,7 +22,7 @@ RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia
 # install python dependencies
 
 # display software versions
-RUN python --version
+RUN python3 --version
 RUN julia --version
 
 # copy module files

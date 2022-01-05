@@ -1,4 +1,4 @@
-import os, sys
+limport os, sys
 from optparse import OptionParser
 import argparse
 import shutil
@@ -63,5 +63,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
-

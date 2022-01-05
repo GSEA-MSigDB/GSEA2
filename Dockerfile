@@ -15,7 +15,7 @@ RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
 
 # Update to Python3
-RUN apt-get install python3.8 --yes
+RUN apt-get install python3.7 --yes
 RUN apt-get install python3-pip --yes
 
 # Clean up after apt

@@ -10,7 +10,7 @@ RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
 
 # Update to Python3
-RUN apt-get install python3.9 python3-pip
+RUN apt-get install python3.9 python3-pip --yes
 
 # Clean up after apt
 RUN apt-get clean --yes

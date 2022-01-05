@@ -11,11 +11,8 @@ COPY module/* /module/
 RUN chmod a+x /module/run.gsea2.py
 
 # install system dependencies
-RUN apt-get update --yes
-RUN apt-get upgrade --yes
-RUN apt-get install build-essential --yes
-RUN apt-get install unzip --yes
-RUN apt-get install git --yes
+RUN apt-get update && apt-get upgrade --yes
+RUN apt-get install build-essential unzip git --yes
 
 # Clean up after apt
 RUN apt-get clean --yes

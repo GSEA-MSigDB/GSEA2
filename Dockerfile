@@ -5,11 +5,6 @@ FROM julia:1.7.0-bullseye
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-# copy module files
-RUN mkdir /module
-COPY module/* /module/
-RUN chmod a+x /module/run.gsea2.py
-
 # install system dependencies
 RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
@@ -30,6 +25,11 @@ RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia
 # display software versions
 RUN python --version
 RUN julia --version
+
+# copy module files
+RUN mkdir /module
+COPY module/* /module/
+RUN chmod a+x /module/run.gsea2.py
 
 # default command
 CMD ["gsea", "-h"]

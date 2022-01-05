@@ -1,7 +1,7 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
 
 #Julia base image
-FROM julia:1.7.0-buster
+FROM julia:1.7.0-bullseye
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 

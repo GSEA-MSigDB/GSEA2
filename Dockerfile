@@ -15,6 +15,9 @@ RUN apt-get install python3.9 python3-pip --yes
 # Clean up after apt
 RUN apt-get clean --yes
 
+# Set Julia CPU Target to build for generic
+RUN julia --cpu-target=generic;sandybridge,-xsaveopt,clone_all;haswell,-rdrnd,base(1)
+
 # install GSEA dependencies
 RUN git clone https://github.com/KwatMDPhD/GSEA.jl
 RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia --project deps/build.jl

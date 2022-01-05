@@ -14,6 +14,10 @@ RUN chmod a+x /module/run.gsea2.py
 RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
 
+# Update to Python3
+RUN apt-get install python3.8 --yes
+RUN apt-get install python3-pip --yes
+
 # Clean up after apt
 RUN apt-get clean --yes
 

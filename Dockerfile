@@ -17,7 +17,7 @@ RUN apt-get clean --yes
 
 # install GSEA dependencies
 RUN git clone https://github.com/KwatMDPhD/GSEA.jl
-RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia --project --eval "using GSEA; GSEA.comonicon_install()"
+RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia --project --eval "using GSEA; GSEA.comonicon_install(;cpu_target='x86-64')"
 
 # install python dependencies
 

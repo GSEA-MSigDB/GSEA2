@@ -1,7 +1,7 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
 
 #Julia base image
-FROM julia:1.7.0-buster
+FROM julia:1.7.1-buster
 MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -15,6 +15,7 @@ RUN apt-get update --yes
 RUN apt-get upgrade --yes
 RUN apt-get install build-essential --yes
 RUN apt-get install unzip --yes
+RUN apt-get install git --yes
 
 # install GSEA dependencies
 RUN git clone https://github.com/KwatMDPhD/GSEA.jl

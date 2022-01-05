@@ -21,8 +21,7 @@ RUN cd GSEA.jl && julia --project --eval "using Pkg; Pkg.instantiate()" && julia
 
 # install python dependencies
 
-# update Path
-ENV PATH=~/.julia/bin:$PATH
+# Link GSEA to /bin
 RUN ln -s ~/.julia/bin/gsea /bin/gsea
 
 # display software versions

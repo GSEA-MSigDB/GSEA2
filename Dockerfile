@@ -17,9 +17,8 @@ RUN apt-get clean --yes
 
 # install GSEA dependencies
 RUN git clone https://github.com/KwatMDPhD/GSEA.jl
-RUN cd GSEA.jl && julia --project --eval 'using Pkg; Pkg.instantiate()' && julia --project --eval 'using GSEA; GSEA.comonicon_install(; kwargs...cpu_target="x86-64")'
-
-# install python dependencies
+RUN cd GSEA.jl && julia --project --eval 'using Pkg; Pkg.instantiate()' 
+RUN cd GSEA.jl && julia --project --eval 'using Comonicon; Comonicon.Options.Application(cpu_target="generic"); using GSEA; GSEA.comonicon_install()'
 
 # Link GSEA to /bin
 RUN ln -s ~/.julia/bin/gsea /bin/gsea

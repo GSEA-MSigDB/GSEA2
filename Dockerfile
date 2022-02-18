@@ -19,10 +19,10 @@ RUN apt-get clean --yes
 # install GSEA dependencies
 RUN git clone -b 0.7.1 https://github.com/KwatMDPhD/GSEA.jl
 RUN cd GSEA.jl && julia --project --eval 'using Pkg; Pkg.instantiate()'
-RUN cd GSEA.jl && julia  --project --eval "using Pkg; Pkg.test()"
 RUN cd GSEA.jl && julia --project deps/build.jl # For Local Use
 
-# To Build a Redistributable Binary Run: 
+# To Build a Redistributable Binary Run:
+# RUN cd GSEA.jl && julia  --project --eval "using Pkg; Pkg.test()" # Run pre-build tests
 # RUN cd GSEA.jl && julia --project deps/build.jl app tarball && mv gsea*tar.gz /files # Make redistributable and move it to an accessible folder. Only use when building for export
 
 # Link GSEA to /bin

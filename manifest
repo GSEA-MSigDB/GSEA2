@@ -1,5 +1,5 @@
 #GSEA2
-#Tue Feb 22 01:47:54 UTC 2022
+#Tue Feb 22 02:08:37 UTC 2022
 JVMLevel=
 LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1
 author=
@@ -118,7 +118,7 @@ p2_description=Gene sets database from GSEA website. Upload a gene set if your g
 p2_fileFormat=gmt
 p2_flag=--gsdb\=
 p2_name=gene.sets.database
-p2_numValues=1..1
+p2_numValues=1+
 p2_optional=
 p2_prefix=--gsdb\=
 p2_prefix_when_specified=--gsdb\=

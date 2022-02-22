@@ -7,7 +7,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 ## From ERROR: Unable to find compatible target in system image. 
 ## this seams to solve it per https://discourse.julialang.org/t/singularity-error-unable-to-find-compatible-target-in-system-image/57619
-RUN export JULIA_CPU_TARGET='generic;sandybridge,-xsaveopt,clone_all;haswell,-rdrnd,base(1)'
+ENVsJULIA_CPU_TARGET='generic;sandybridge,-xsaveopt,clone_all;haswell,-rdrnd,base(1)'
 
 
 # Install system dependencies

@@ -28,15 +28,10 @@ RUN cd GSEA.jl && julia --project deps/build.jl # For Local Use
 # Link GSEA to /bin
 RUN ln -s ~/.julia/bin/gsea /bin/gsea
 
-# display software versions
-RUN python3 --version
-RUN julia --version
-RUN gsea -h
-
 # copy module files
 RUN mkdir /module
 COPY module/* /module/
 RUN chmod a+x /module/run.gsea2.py
 
 # default command
-CMD ["gsea", "-h"]
+CMD ["python3", "--version"]

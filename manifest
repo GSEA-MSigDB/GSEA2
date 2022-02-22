@@ -20,12 +20,12 @@ p10_TYPE=TEXT
 p10_default_value=ks
 p10_description=Which method to use for running GSEA, the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), or the new Jensen-Shannon metric (GSEA-Future).
 p10_fileFormat=
-p10_flag=--method
+p10_flag=--method\=
 p10_name=enrichment.method
 p10_numValues=1..1
 p10_optional=
-p10_prefix=--method
-p10_prefix_when_specified=--method
+p10_prefix=--method\=
+p10_prefix_when_specified=--method\=
 p10_type=java.lang.String
 p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);js\=Jensen-Shannon (GSEA-Future)
 p11_MODE=

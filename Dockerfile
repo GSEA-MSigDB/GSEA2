@@ -2,8 +2,6 @@
 
 # Julia base image
 FROM julia:1.7.2-bullseye as gsea_build
-MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 # Install system dependencies
 RUN apt-get update && apt-get upgrade --yes

@@ -1,9 +1,10 @@
 import os, sys, subprocess
 from optparse import OptionParser
+from datetime import datetime
 import argparse
 import shutil
 import json
-
+import random
 import pandas
 import numpy
 
@@ -26,13 +27,21 @@ def main():
 	ap.add_argument("--weight",action="store",dest="weight",default=1.0,type=float,help="Weight for ks or auc enrichment method.")
 	ap.add_argument("--max",action="store",dest="max",default=500,type=int,help="Max gene set size.")
 	ap.add_argument("--min",action="store",dest="min",default=15,type=int,help="Min gene set size.")
-	ap.add_argument("--seed",action="store",dest="seed",default=1729,type=int,help="Random seed used for permutations.")
+	ap.add_argument("--seed",action="store",dest="seed",default="timestamp",type=int,help="Random seed used for permutations.")
 	ap.add_argument("--nplot",action="store",dest="nplot",default=25,type=int,help="Number of enrichment results to plot.")
 	ap.add_argument("--cpu",action="store",dest="cpu",default=1,type=int,help="Job CPU Count.")
 	options = ap.parse_args()
 
 	sys.path.insert(1, options.libdir)
 	import GSEAlib
+
+	## Generate and set the random seed at the Python level and save it to pass to GSEA
+	if options.seed == "timestamp":
+		options.seed = int(round(datetime.now().timestamp()))
+		random.seed(options.seed)
+	else:
+		options.seed = int(rouns(options.seed))
+		random.seed(options.seed)
 
 	os.mkdir("gsea_results")
 	os.mkdir("gsea_results/input")

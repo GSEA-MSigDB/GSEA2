@@ -30,13 +30,13 @@ RUN cd GSEA.jl && julia --project deps/build.jl # For Local Use
 # RUN cd GSEA.jl && julia  --project --eval "using Pkg; Pkg.test()" # Run pre-build tests
 # RUN cd GSEA.jl && julia --project deps/build.jl app tarball && mv gsea*tar.gz /files # Make redistributable and move it to an accessible folder. Only use when building for export
 
+# Link GSEA to /bin
+RUN ln -s ~/.julia/bin/gsea /bin/gsea
+
 # Display software versions
 RUN python3 --version
 RUN julia --version
 RUN gsea -h
-
-# Link GSEA to /bin
-RUN ln -s ~/.julia/bin/gsea /bin/gsea
 
 # Copy module files
 RUN mkdir /module

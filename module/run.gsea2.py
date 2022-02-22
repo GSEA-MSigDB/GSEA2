@@ -35,7 +35,7 @@ def main():
 	import GSEAlib
 
 	os.mkdir("gsea_results")
-	os.mkdir("gsea_results/input_files")
+	os.mkdir("gsea_results/input")
 
 
 	## Parse GMT/GMX files from a list of inputs and create a name:members dict written out as a json file
@@ -44,7 +44,7 @@ def main():
 			gene_sets_dbfile_list = f.read().splitlines()
 
 	genesets=GSEAlib.read_sets(gene_sets_dbfile_list)
-	with open('gsea_results/input_files/set_to_genes.json', 'w') as path:
+	with open('gsea_results/input/set_to_genes.json', 'w') as path:
 		json.dump(genesets, path,  indent=2)
 
 
@@ -76,8 +76,8 @@ def main():
 
 	## Order the dataset using the phenotypes and write out both files
 	input_ds=input_ds.reindex(columns=phenotypes.index)
-	input_ds.to_csv('gsea_results/input_files/gene_by_sample.tsv', sep = "\t")
-	pandas.DataFrame(phenotypes['Phenotypes']).transpose().to_csv('gsea_results/input_files/target_by_sample.tsv',sep="\t", index=False)
+	input_ds.to_csv('gsea_results/input/gene_by_sample.tsv', sep = "\t")
+	pandas.DataFrame(phenotypes['Phenotypes']).transpose().to_csv('gsea_results/input/target_by_sample.tsv',sep="\t", index=False)
 
 	## Construct GSEA Settings json file
 	gsea_settings={
@@ -94,11 +94,11 @@ def main():
 		"gene_sets_to_plot": []
 	}
 
-	with open('gsea_results/input_files/gsea_settings.json', 'w') as path:
+	with open('gsea_results/input/gsea_settings.json', 'w') as path:
 		json.dump(gsea_settings, path,  indent=2)
 
 	## Run GSEA
-	subprocess.check_output(['gsea', 'standard', 'gsea_results/input_files/gsea_settings.json', 'gsea_results/input_files/set_to_genes.json', 'gsea_results/input_files/target_by_sample.tsv', 'gsea_results/input_files/gene_by_sample.tsv', 'gsea_results'])
+	subprocess.check_output(['gsea', 'standard', 'gsea_results/input/gsea_settings.json', 'gsea_results/input/set_to_genes.json', 'gsea_results/input/target_by_sample.tsv', 'gsea_results/input/gene_by_sample.tsv', 'gsea_results'])
 
 if __name__ == '__main__':
 	main()

@@ -51,7 +51,7 @@ def main():
 	## Parse GCT file
 	if options.dataset.split(".")[-1] == "gct":
 		if options.collapse != "none":
-			chip_file=read_chip(options.chip)
+			chip_file=GSEAlib.read_chip(options.chip)
 			input_ds = GSEAlib.collapse_dataset(options.dataset, chip_file, method=options.collapse)
 		else:
 			input_ds = GSEAlib.read_gct(options.dataset)
@@ -63,7 +63,7 @@ def main():
 			input_ds.drop(input_ds.columns[[description_loc]], axis = 1, inplace = True)
 			input_ds.index.name="Name"
 		if options.collapse != "none":
-			chip_file=read_chip(options.chip)
+			chip_file=GSEAlib.read_chip(options.chip)
 			input_ds = GSEAlib.collapse_dataset(input_ds, chip_file, method=options.collapse)
 			input_ds=input_ds['data']
 

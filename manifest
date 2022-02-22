@@ -1,5 +1,5 @@
 #GSEA2
-#Tue Feb 22 02:08:37 UTC 2022
+#Tue Feb 22 21:39:06 UTC 2022
 JVMLevel=
 LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1
 author=
@@ -70,8 +70,8 @@ p13_range=1+
 p13_type=java.lang.Integer
 p13_value=
 p14_MODE=
-p14_TYPE=Integer
-p14_default_value=1729
+p14_TYPE=TEXT
+p14_default_value=timestamp
 p14_description=Numerical seed used to initiate the random permutation matrix.
 p14_fileFormat=
 p14_flag=--seed\=
@@ -80,7 +80,7 @@ p14_numValues=1..1
 p14_optional=
 p14_prefix=--seed\=
 p14_prefix_when_specified=--seed\=
-p14_type=java.lang.Integer
+p14_type=java.lang.String
 p14_value=
 p15_MODE=
 p15_TYPE=Integer

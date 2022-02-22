@@ -78,7 +78,7 @@ def collapse_dataset(dataset, chip, method="sum"):
     if method.lower() == "max":
         collapsed_df=joined_df.groupby(["Gene Symbol"]).max()
     if method.lower() == "absmax":
-        collapsed_df = joined_df.loc[joined_df.groupby(['Gene Symbol'].idxmax()]
+        collapsed_df = joined_df.loc[joined_df.groupby(['Gene Symbol']).idxmax()]
     collapsed_df.index.name="Name"
     return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values}
 

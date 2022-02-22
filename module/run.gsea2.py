@@ -39,8 +39,8 @@ def main():
 
 
 	## Parse GMT/GMX files from a list of inputs and create a name:members dict written out as a json file
-	if options.gene_sets_db_list_filename != None:
-		with open(options.gene_sets_db_list_filename) as f:
+	if options.gsdb != None:
+		with open(options.gsdb) as f:
 			gene_sets_dbfile_list = f.read().splitlines()
 
 	genesets=GSEAlib.read_sets(gene_sets_dbfile_list)

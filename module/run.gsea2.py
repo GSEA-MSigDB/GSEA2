@@ -88,7 +88,7 @@ def main():
 		"weight": options.weight,
 		"maximum_gene_set_size": options.max,
 		"minimum_gene_set_size": options.min,
-		"remove_gene_set_genes": true,
+		"remove_gene_set_genes": True,
 		"random_seed": options.seed,
 		"number_of_jobs": options.cpu,
 		"number_of_extreme_gene_sets_to_plot": options.nplot,

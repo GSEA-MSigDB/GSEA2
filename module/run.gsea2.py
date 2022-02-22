@@ -28,7 +28,7 @@ def main():
 	ap.add_argument("--min",action="store",dest="min",default=15,type=int,help="Min gene set size.")
 	ap.add_argument("--seed",action="store",dest="seed",default=1729,type=int,help="Random seed used for permutations.")
 	ap.add_argument("--nplot",action="store",dest="nplot",default=25,type=int,help="Number of enrichment results to plot.")
-	ap.add_argument("--cpu",action="store",dest="cpu",default=1,type=int,help="Job CPU Count.")
+	ap.add_argument("--cpu",action="store",dest="cpu",default="1",type=int,help="Job CPU Count.")
 	options = ap.parse_args()
 
 	sys.path.insert(1, options.libdir)
@@ -89,7 +89,7 @@ def main():
 		"maximum_gene_set_size": options.max,
 		"minimum_gene_set_size": options.min,
 		"random_seed": options.seed,
-		"number_of_jobs": options.cpu,
+		"number_of_jobs": int(options.cpu),
 		"number_of_extreme_gene_sets_to_plot": options.nplot,
 		"gene_sets_to_plot": []
 	}

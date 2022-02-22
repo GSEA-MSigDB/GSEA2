@@ -49,15 +49,15 @@ def main():
 
 
 	## Parse GCT file
-	if options.input_gct_filename.split(".")[-1] == "gct":
+	if options.dataset.split(".")[-1] == "gct":
 		if options.collapse != "none":
 			chip_file=read_chip(options.chip)
-			input_ds = GSEAlib.collapse_dataset(options.input_gct_filename, chip_file, method=options.collapse)
+			input_ds = GSEAlib.collapse_dataset(options.dataset, chip_file, method=options.collapse)
 		else:
-			input_ds = GSEAlib.read_gct(options.input_gct_filename)
+			input_ds = GSEAlib.read_gct(options.dataset)
 		input_ds=input_ds['data']
 	else:
-		input_ds=pandas.read_csv(options.input_gct_filename, sep='\t', index_col=0, skip_blank_lines=True)
+		input_ds=pandas.read_csv(options.dataset, sep='\t', index_col=0, skip_blank_lines=True)
 		if "description" in input_ds.columns.str.lower():
 			description_loc=input_ds.columns.str.lower().to_list().index('description')
 			input_ds.drop(input_ds.columns[[description_loc]], axis = 1, inplace = True)

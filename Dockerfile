@@ -16,6 +16,8 @@ RUN cd GSEA.jl && julia --project deps/build.jl app tarball
 
 # Python base image
 FROM python:3.10-bullseye
+MAINTAINER Anthony Castanza <acastanza@cloud.ucsd.edu>
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 COPY --from=gsea_build /GSEA.jl/gsea*tar.gz /gsea.tar.gz
 
 # Install system dependencies

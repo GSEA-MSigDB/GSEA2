@@ -28,6 +28,7 @@ def main():
 	ap.add_argument("--max",action="store",dest="max",default=500,type=int,help="Max gene set size.")
 	ap.add_argument("--min",action="store",dest="min",default=15,type=int,help="Min gene set size.")
 	ap.add_argument("--seed",action="store",dest="seed",default="timestamp",help="Random seed used for permutations.")
+	ap.add_argument("--orc",action="store",dest="override",default="False",help="Override reasonableness check for input dataset gene list size.")
 	ap.add_argument("--nplot",action="store",dest="nplot",default=25,type=int,help="Number of enrichment results to plot.")
 	ap.add_argument("--cpu",action="store",dest="cpu",default=1,type=int,help="Job CPU Count.")
 	options = ap.parse_args()
@@ -75,6 +76,11 @@ def main():
 			chip_file=GSEAlib.read_chip(options.chip)
 			input_ds = GSEAlib.collapse_dataset(input_ds, chip_file, method=options.collapse)
 			input_ds=input_ds['data']
+
+	if len(input_ds)<10000 and options.override=="False":
+		sys.exit(print("Only ", len(imput_ds), "genes were identified in the dataset.\nEither the dataset did not contain all expressed genes, or there was possibly a problem with the chip selected for collapse dataset.\n\nIf this was intentional, to bypass this check you can set 'override_gene_list_length_validation' to 'True' but this is not recommended."))
+	if len(input_ds)<10000 and options.override=="True":
+		print("Only", len(input_ds), "genes were identified in the dataset, but the user specified overriding this check. Continuing analysis, as-is however this is not recommended. The input dataset should include all expressed genes.")
 
 	## Parse CLS file
 	phenotypes=GSEAlib.read_cls(options.cls)

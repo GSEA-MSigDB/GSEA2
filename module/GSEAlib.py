@@ -64,7 +64,7 @@ def collapse_dataset(dataset, chip, method="sum"):
         chip=read_chip(chip)
     if isinstance(dataset, dict) == True:
         dataset=dataset['data']
-    joined_df=chip.join(dataset, how='inner')
+    joined_df=chip.join(dataset, how='inner') # 
     joined_df.reset_index(drop=True, inplace=True)
     annotations=joined_df[["Gene Symbol",
                              "Gene Title"]].drop_duplicates().copy()
@@ -123,16 +123,21 @@ def read_cls(path):
         returns (pd.Series): Pandas Series with phenotype labels
     """
     lines = open(path).readlines()
-    labels = {
-        label: i for i, label in enumerate(lines[1][1:-1].split())
-    }
-    try:
-        labs = lines[2][:-1].split()
-        phens = [labels[lab] for lab in lines[2].strip('\n').split()]
-        return pandas.concat([pandas.Series(labs, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
-    except KeyError: ## Assume phenotype row is already ints
-        phens = list(map(int, lines[2].strip('\n').split()))
-        return pandas.concat([pandas.Series(phens, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
+    if "numeric" in lines[0]:
+        phens = lines[2].strip('\n').split()
+        labs = [lines[1].strip('\n').strip("#").split()[0] for i in range(len(phens))]
+        return pandas.concat([pandas.Series(labs, name='Numeric'), pandas.Series(phens, name='Phenotypes')], axis=1)
+    else:
+        labels = {
+            label: i for i, label in enumerate(lines[1][1:-1].split())
+        }
+        try:
+            labs = lines[2][:-1].split()
+            phens = [labels[lab] for lab in lines[2].strip('\n').split()]
+            return pandas.concat([pandas.Series(labs, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
+        except KeyError: ## Assume phenotype row is already ints
+            phens = list(map(int, lines[2].strip('\n').split()))
+            return pandas.concat([pandas.Series(phens, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
 
 
 # Read Maps Phenotypes to Samples, adapted from https://github.com/broadinstitute/gsea_python/blob/ccal-refactor/gsea/Utils.py

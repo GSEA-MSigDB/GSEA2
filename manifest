@@ -1,9 +1,9 @@
 #GSEA2
-#Wed Feb 23 18:38:06 UTC 2022
+#Wed Feb 23 21:08:15 UTC 2022
 JVMLevel=
 LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.0.2
 author=
-commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.method> <weight> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <plot.graphs> --cpu\=<job.cpuCount>
+commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.method> <weight> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
 cpuType=any
 description=New GSEA
 documentationUrl=
@@ -83,19 +83,32 @@ p14_prefix_when_specified=--seed\=
 p14_type=java.lang.String
 p14_value=
 p15_MODE=
-p15_TYPE=Integer
-p15_default_value=25
-p15_description=Number of top gene sets to produce enrichment plots for.
+p15_TYPE=TEXT
+p15_default_value=False
+p15_description=GSEA will check the length of the input dataset to ensure a reasonable number of genes are included.
 p15_fileFormat=
-p15_flag=--nplot\=
-p15_name=plot.graphs
-p15_numValues=0..1
+p15_flag=--ogllv\=
+p15_name=override.gene.list.length.validation
+p15_numValues=1..1
 p15_optional=
-p15_prefix=--nplot\=
-p15_prefix_when_specified=--nplot\=
-p15_range=0+
-p15_type=java.lang.Integer
-p15_value=
+p15_prefix=--ogllv\=
+p15_prefix_when_specified=--ogllv\=
+p15_type=java.lang.String
+p15_value=True\=True;False\=False
+p16_MODE=
+p16_TYPE=Integer
+p16_default_value=25
+p16_description=Number of top gene sets to produce enrichment plots for.
+p16_fileFormat=
+p16_flag=--nplot\=
+p16_name=plot.graphs
+p16_numValues=0..1
+p16_optional=
+p16_prefix=--nplot\=
+p16_prefix_when_specified=--nplot\=
+p16_range=0+
+p16_type=java.lang.Integer
+p16_value=
 p1_MODE=IN
 p1_TYPE=FILE
 p1_default_value=

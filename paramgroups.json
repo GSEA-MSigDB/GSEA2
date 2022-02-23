@@ -22,7 +22,8 @@
             "weight",
             "max.gene.set.size",
             "min.gene.set.size",
-            "seed.for.permutation"
+            "seed.for.permutation",
+            "override.gene.list.length.validation"
         ]
     },
     {

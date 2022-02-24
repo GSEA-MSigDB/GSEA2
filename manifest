@@ -97,7 +97,7 @@ p15_type=java.lang.String
 p15_value=True\=True;False\=False
 p16_MODE=
 p16_TYPE=Integer
-p16_default_value=25
+p16_default_value=20
 p16_description=Number of top gene sets to produce enrichment plots for.
 p16_fileFormat=
 p16_flag=--nplot\=

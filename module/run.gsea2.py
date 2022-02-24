@@ -85,9 +85,8 @@ def main():
 	## Parse CLS file
 	phenotypes=GSEAlib.read_cls(options.cls)
 	phenotypes=GSEAlib.match_phenotypes(input_ds,phenotypes)
-	if phenotypes.columns[0]
-		if options.reverse=="True" and phenotypes.columns[0]=="Labels":
-			phenotypes["Phenotypes"]=numpy.where((phenotypes["Phenotypes"]==0)|(phenotypes["Phenotypes"]==1), phenotypes["Phenotypes"]^1, phenotypes["Phenotypes"])
+	if options.reverse=="True" and phenotypes.columns[0]=="Labels":
+		phenotypes["Phenotypes"]=numpy.where((phenotypes["Phenotypes"]==0)|(phenotypes["Phenotypes"]==1), phenotypes["Phenotypes"]^1, phenotypes["Phenotypes"])
 	phenotypes=phenotypes.sort_values('Phenotypes')
 
 	## Order the dataset using the phenotypes and write out both files

@@ -26,7 +26,7 @@ def read_sets(gene_sets_dbfile_list):
                 gene_set_tags=gs_line[1:len(gs_line)]
                 genesets[gene_set_name]=list(set(gene_set_tags))
                 genesets_descr[gene_set_name]=gene_set_desc # Not used yet but should end up in reports eventually
-    return genesets
+    return genesets, genesets_descr
 
 
 # Simple implementation of a GCT parser
@@ -156,3 +156,14 @@ def match_phenotypes(expr, phen):
 #        phen = phen[list(common)]
         sys.exit("The number of samples in the CLS file did not match the number of samples in the dataset.")
     return phen
+
+#Get file paths
+
+def result_paths(root_dir):
+    file_set = set()
+    for dir_, _, files in os.walk(root_dir):
+        for file_name in files:
+            rel_dir = os.path.relpath(dir_, root_dir)
+            rel_file = os.path.join(rel_dir, file_name)
+            file_set.add(rel_file)
+    return list(file_set)

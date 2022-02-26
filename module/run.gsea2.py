@@ -7,6 +7,7 @@ import json
 import random
 import pandas
 import numpy
+pandas.set_printoptions(max_colwidth=-1)
 
 def main():
 	usage="%prog [options]" + "\n"
@@ -53,7 +54,7 @@ def main():
 		with open(options.gsdb) as f:
 			gene_sets_dbfile_list = f.read().splitlines()
 
-	genesets=GSEAlib.read_sets(gene_sets_dbfile_list)
+	genesets, genesets_descr=GSEAlib.read_sets(gene_sets_dbfile_list)
 	with open('gsea_results/input/set_to_genes.json', 'w') as path:
 		json.dump(genesets, path,  indent=2)
 
@@ -115,6 +116,27 @@ def main():
 
 	## Run GSEA
 	subprocess.check_output(['gsea', 'standard', 'gsea_results/input/gsea_settings.json', 'gsea_results/input/set_to_genes.json', 'gsea_results/input/target_by_sample.tsv', 'gsea_results/input/gene_by_sample.tsv', 'gsea_results'])
+
+	## Parse Results
+	genesets_descr=pandas.DataFrame.from_dict(genesets_descr,orient="index",columns=["URL"])
+	results=GSEAlib.result_paths('gsea_results')
+	plots=[result for result in results if "plot" in result]
+	gsea_stats=pandas.read_csv('gsea_results/float.set_x_statistic.tsv',sep="\t",index_col=0)
+
+	#Positive Enrichment Report
+	gsea_pos=gsea_stats[gsea_stats.loc[:,"Enrichment"]>0]
+	gsea_pos=genesets_descr.merge(gsea_pos, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,False)).reset_index().rename(columns={'index':'Gene Set'})
+	gsea_pos["Gene Set"] = gsea_pos.apply(lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['Gene Set']), axis=1)
+	gsea_pos.drop("URL",axis=1,inplace=True)
+	gsea_pos.to_html(open('positve_enrichment.html', 'w'),render_links=True,escape=False)
+
+	#Negative Enrichment Report
+	gsea_neg=gsea_stats[gsea_stats.loc[:,"Enrichment"]<0]
+	gsea_neg=genesets_descr.merge(gsea_neg, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,True)).reset_index().rename(columns={'index':'Gene Set'})
+	gsea_neg["Gene Set"] = gsea_neg.apply(lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['Gene Set']), axis=1)
+	gsea_neg.drop("URL",axis=1,inplace=True)
+	gsea_neg.to_html(open('negative_enrichment.html', 'w'),render_links=True,escape=False)
+
 
 if __name__ == '__main__':
 	main()

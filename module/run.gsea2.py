@@ -7,7 +7,6 @@ import json
 import random
 import pandas
 import numpy
-pandas.set_printoptions(max_colwidth=-1)
 
 def main():
 	usage="%prog [options]" + "\n"

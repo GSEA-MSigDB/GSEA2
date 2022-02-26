@@ -128,6 +128,7 @@ def main():
 	gsea_pos=genesets_descr.merge(gsea_pos, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,False)).reset_index().rename(columns={'index':'Gene Set'})
 	gsea_pos["Gene Set"] = gsea_pos.apply(lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['Gene Set']), axis=1)
 	gsea_pos.drop("URL",axis=1,inplace=True)
+	gsea_pos.reindex(list(range(1,len(gsea_pos))),axis=0)
 	gsea_pos.to_html(open('positve_enrichment.html', 'w'),render_links=True,escape=False)
 
 	#Negative Enrichment Report
@@ -135,6 +136,7 @@ def main():
 	gsea_neg=genesets_descr.merge(gsea_neg, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,True)).reset_index().rename(columns={'index':'Gene Set'})
 	gsea_neg["Gene Set"] = gsea_neg.apply(lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['Gene Set']), axis=1)
 	gsea_neg.drop("URL",axis=1,inplace=True)
+	gsea_neg.reindex(list(range(1,len(gsea_neg))),axis=0)
 	gsea_neg.to_html(open('negative_enrichment.html', 'w'),render_links=True,escape=False)
 
 

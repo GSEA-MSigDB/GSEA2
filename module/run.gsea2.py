@@ -128,6 +128,10 @@ def main():
 	#Positive Enrichment Report
 	gsea_pos=gsea_stats[gsea_stats.loc[:,"Enrichment"]>0]
 	gsea_pos=genesets_descr.merge(gsea_pos, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,False)).reset_index()
+	gsea_pos.insert(1,'Details','')
+	for set in range(len(gsea_pos)):
+		if "plot/"+gsea_pos.iloc[set]['index'].lower()+".html" in plots:
+			gsea_pos.at[set,"Details"]="<a href=plot/"+gsea_pos.iloc[set]['index'].lower()+".html target='_blank'>Details...</a>"
 	gsea_pos["index"] = gsea_pos.apply(lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
 	gsea_pos.drop("URL",axis=1,inplace=True)
 	gsea_pos=gsea_pos.rename(columns={'index':'Gene Set<br>follow link to MSigDB'})
@@ -137,6 +141,10 @@ def main():
 	#Negative Enrichment Report
 	gsea_neg=gsea_stats[gsea_stats.loc[:,"Enrichment"]<0]
 	gsea_neg=genesets_descr.merge(gsea_neg, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,True)).reset_index()
+	gsea_neg.insert(1,'Details','')
+	for set in range(len(gsea_neg)):
+		if "plot/"+gsea_neg.iloc[set]['index'].lower()+".html" in plots:
+			gsea_neg.at[set,"Details"]="<a href=plot/"+gsea_neg.iloc[set]['index'].lower()+".html target='_blank'>Details...</a>"
 	gsea_neg["index"] = gsea_neg.apply(lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
 	gsea_neg.drop("URL",axis=1,inplace=True)
 	gsea_neg=gsea_neg.rename(columns={'index':'Gene Set<br>follow link to MSigDB'})

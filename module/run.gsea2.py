@@ -1,6 +1,8 @@
 import os, sys, subprocess
 from optparse import OptionParser
 from datetime import datetime
+from zipfile import ZipFile
+from os.path import basename
 import argparse
 import shutil
 import json
@@ -30,11 +32,15 @@ def main():
 	ap.add_argument("--seed",action="store",dest="seed",default="timestamp",help="Random seed used for permutations.")
 	ap.add_argument("--ogllv",action="store",dest="override",default="False",help="Override reasonableness check for input dataset gene list size.")
 	ap.add_argument("--nplot",action="store",dest="nplot",default=25,type=int,help="Number of enrichment results to plot.")
+	ap.add_argument("--zip",action="store",dest="zip",default="True",help="Create ZIP bundle of results.")
 	ap.add_argument("--cpu",action="store",dest="cpu",default=1,type=int,help="Job CPU Count.")
 	options = ap.parse_args()
 
 	sys.path.insert(1, options.libdir)
 	import GSEAlib
+
+	## Make a directory to store processed input files
+	os.mkdir("input")
 
 	## Generate and set the random seed at the Python level and save it to pass to GSEA
 	if options.seed == "timestamp":
@@ -44,17 +50,13 @@ def main():
 		options.seed = int(rouns(options.seed))
 		random.seed(options.seed)
 
-	os.mkdir("gsea_results")
-	os.mkdir("gsea_results/input")
-
-
 	## Parse GMT/GMX files from a list of inputs and create a name:members dict written out as a json file
 	if options.gsdb != None:
 		with open(options.gsdb) as f:
 			gene_sets_dbfile_list = f.read().splitlines()
 
 	genesets, genesets_descr=GSEAlib.read_sets(gene_sets_dbfile_list)
-	with open('gsea_results/input/set_to_genes.json', 'w') as path:
+	with open('input/set_to_genes.json', 'w') as path:
 		json.dump(genesets, path,  indent=2)
 
 
@@ -94,8 +96,8 @@ def main():
 
 	## Order the dataset using the phenotypes and write out both files
 	input_ds=input_ds.reindex(columns=phenotypes.index)
-	input_ds.to_csv('gsea_results/input/gene_by_sample.tsv', sep = "\t")
-	pandas.DataFrame(phenotypes['Phenotypes']).transpose().to_csv('gsea_results/input/target_by_sample.tsv',sep="\t", index=False)
+	input_ds.to_csv('input/gene_by_sample.tsv', sep = "\t")
+	pandas.DataFrame(phenotypes['Phenotypes']).transpose().to_csv('input/target_by_sample.tsv',sep="\t", index=False)
 
 	## Construct GSEA Settings json file
 	gsea_settings={
@@ -113,17 +115,17 @@ def main():
 		"gene_sets_to_plot": []
 	}
 
-	with open('gsea_results/input/gsea_settings.json', 'w') as path:
+	with open('input/gsea_settings.json', 'w') as path:
 		json.dump(gsea_settings, path,  indent=2)
 
 	## Run GSEA
-	subprocess.check_output(['gsea', 'standard', 'gsea_results/input/gsea_settings.json', 'gsea_results/input/set_to_genes.json', 'gsea_results/input/target_by_sample.tsv', 'gsea_results/input/gene_by_sample.tsv', 'gsea_results'])
+	subprocess.check_output(['gsea', 'standard', 'input/gsea_settings.json', 'input/set_to_genes.json', 'input/target_by_sample.tsv', 'input/gene_by_sample.tsv', os.getcwd()])
 
 	## Parse Results
 	genesets_descr=pandas.DataFrame.from_dict(genesets_descr,orient="index",columns=["URL"])
-	results=GSEAlib.result_paths('gsea_results')
+	results=GSEAlib.result_paths(os.getcwd())
 	plots=[result for result in results if "plot" in result]
-	gsea_stats=pandas.read_csv('gsea_results/float.set_x_statistic.tsv',sep="\t",index_col=0)
+	gsea_stats=pandas.read_csv('float.set_x_statistic.tsv',sep="\t",index_col=0)
 
 	#Positive Enrichment Report
 	gsea_pos=gsea_stats[gsea_stats.loc[:,"Enrichment"]>0]
@@ -151,6 +153,18 @@ def main():
 	gsea_neg=gsea_neg.reindex(list(range(1,len(gsea_neg))),axis=0)
 	gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html', 'w'),render_links=True,escape=False,justify='center')
 
+	#Zip up results
+	if options.zip == "True":
+		gsea_files=[]
+		for folderName, subfolders, filenames in os.walk(os.path.relpath(os.getcwd())):
+			for filename in filenames:
+				#create complete filepath of file in directory
+				filePath = os.path.join(folderName, filename)
+						# Add file to zip
+				gsea_files.append(filePath)
+		with ZipFile("gsea_results.zip", "w") as gsea_zip:
+			for filename in gsea_files:
+				gsea_zip.write(filename)
 
 if __name__ == '__main__':
 	main()

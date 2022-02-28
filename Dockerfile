@@ -27,7 +27,7 @@ RUN tar -xzf gsea.tar.gz && rm gsea.tar.gz
 ENV PATH="/gsea/bin:$PATH"
 
 # Install Python dependencies
-RUN pip install pandas==1.3.5 argparse==1.4.0
+RUN pip install pandas==1.3.5 argparse==1.4.0 dominate==2.6.0
 
 # Display software versions
 RUN python3 --version

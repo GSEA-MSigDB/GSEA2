@@ -9,6 +9,8 @@ import json
 import random
 import pandas
 import numpy
+import dominate
+from dominate.tags import *
 
 def main():
 	usage="%prog [options]" + "\n"
@@ -152,6 +154,8 @@ def main():
 	gsea_neg=gsea_neg.rename(columns={'index':'Gene Set<br>follow link to MSigDB'})
 	gsea_neg=gsea_neg.reindex(list(range(1,len(gsea_neg))),axis=0)
 	gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html', 'w'),render_links=True,escape=False,justify='center')
+
+
 
 	#Zip up results
 	if options.zip == "True":

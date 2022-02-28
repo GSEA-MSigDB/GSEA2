@@ -77,7 +77,9 @@ def main():
 			input_ds = GSEAlib.collapse_dataset(input_ds, chip_file, method=options.collapse)
 			input_ds=input_ds['data']
 
-	if len(input_ds)<10000 and options.override=="False":
+	if len(input_ds)<10000 and options.override=="False" and options.collapse=="none":
+		sys.exit(print("Only ", len(input_ds), "genes were identified in the dataset.\nEither the dataset did not contain all expressed genes, or collapse dataset may need to be run with an appropriate chip file.\n\nIf this was intentional, to bypass this check you can set 'override gene list length validation' (--ogllv) to 'True' but this is not recommended."))
+	if len(input_ds)<10000 and options.override=="False" and options.collapse != "none":
 		sys.exit(print("Only ", len(input_ds), "genes were identified in the dataset.\nEither the dataset did not contain all expressed genes, or there was possibly a problem with the chip selected for collapse dataset.\n\nIf this was intentional, to bypass this check you can set 'override gene list length validation' (--ogllv) to 'True' but this is not recommended."))
 	if len(input_ds)<10000 and options.override=="True":
 		print("Only", len(input_ds), "genes were identified in the dataset, but the user specified overriding this check. Continuing analysis, as-is however this is not recommended. The input dataset should include all expressed genes.")

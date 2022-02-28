@@ -124,9 +124,10 @@ def read_cls(path):
     """
     lines = open(path).readlines()
     if "numeric" in lines[0]:
+        labels = {0:'Pos',1:'Neg'}
         phens = lines[2].strip('\n').split()
         labs = [lines[1].strip('\n').strip("#").split()[0] for i in range(len(phens))]
-        return pandas.concat([pandas.Series(labs, name='Numeric'), pandas.Series(phens, name='Phenotypes')], axis=1)
+        return labels, pandas.concat([pandas.Series(labs, name='Numeric'), pandas.Series(phens, name='Phenotypes')], axis=1)
     else:
         labels = {
             label: i for i, label in enumerate(lines[1][1:-1].split())
@@ -134,10 +135,13 @@ def read_cls(path):
         try:
             labs = lines[2][:-1].split()
             phens = [labels[lab] for lab in lines[2].strip('\n').split()]
-            return pandas.concat([pandas.Series(labs, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
+            labels = {value : key for (key, value) in labels.items()}
+            return labels, pandas.concat([pandas.Series(labs, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
         except KeyError: ## Assume phenotype row is already ints
             phens = list(map(int, lines[2].strip('\n').split()))
-            return pandas.concat([pandas.Series(phens, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
+            labels = {value : key for (key, value) in labels.items()}
+            return labels, pandas.concat([pandas.Series(phens, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
+
 
 
 # Read Maps Phenotypes to Samples, adapted from https://github.com/broadinstitute/gsea_python/blob/ccal-refactor/gsea/Utils.py

@@ -83,10 +83,11 @@ def main():
 		print("Only", len(input_ds), "genes were identified in the dataset, but the user specified overriding this check. Continuing analysis, as-is however this is not recommended. The input dataset should include all expressed genes.")
 
 	## Parse CLS file
-	phenotypes=GSEAlib.read_cls(options.cls)
+	labels, phenotypes=GSEAlib.read_cls(options.cls)
 	phenotypes=GSEAlib.match_phenotypes(input_ds,phenotypes)
 	if options.reverse=="True" and phenotypes.columns[0]=="Labels":
 		phenotypes["Phenotypes"]=numpy.where((phenotypes["Phenotypes"]==0)|(phenotypes["Phenotypes"]==1), phenotypes["Phenotypes"]^1, phenotypes["Phenotypes"])
+		labels={0:labels[1],1:labels[0]}
 	phenotypes=phenotypes.sort_values('Phenotypes')
 
 	## Order the dataset using the phenotypes and write out both files

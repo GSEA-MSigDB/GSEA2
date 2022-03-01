@@ -155,7 +155,33 @@ def main():
 	gsea_neg=gsea_neg.reindex(list(range(1,len(gsea_neg))),axis=0)
 	gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html', 'w'),render_links=True,escape=False,justify='center')
 
+	#Create Report Index using dominate package
+	gsea_index = dominate.document(title="GSEA Report for Dataset "+os.path.splitext(os.path.basename(dataset))[0])
+	gsea_index += h1("GSEA Report for Dataset " + os.path.splitext(os.path.basename(dataset))[0])
+	gsea_index += h2(labels[0] + " vs. " + labels[1])
+	gsea_index += h3("Enrichment in phenotype: " + str(labels[0]) + " (" + str(sum(phenotypes['Phenotypes']==0)) + " samples)")
+	gsea_index += ul(
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0)])) + " / " + str(len(gsea_stats))+" gene sets are upregulated in phenotype" + labels[1]),
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (gsea_stats['Q-value'] < 0.05)]))+" gene sets are significant at FDR qValue < 25%"),
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (gsea_stats['P-value'] < 0.01)]))+" gene sets are significantly enriched at pValue < 1%"),
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (gsea_stats['P-value'] < 0.05)]))+" gene sets are significantly enriched at pValue < 5%"),
+					li(a("Detailed enrichment results in html format", href="gsea_report_for_positive_enrichment.html")),
+					li(a("Guide to interpret results", href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results'))
+					)
+	gsea_index += h3("Enrichment in phenotype: " + str(labels[1]) + " (" + str(sum(phenotypes['Phenotypes']==1)) + " samples)")
+	gsea_index += ul(
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0)])) + " / " + str(len(gsea_stats))+" gene sets are upregulated in phenotype" + labels[1]),
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (gsea_stats['Q-value'] < 0.05)]))+" gene sets are significant at FDR qValue < 25%"),
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (gsea_stats['P-value'] < 0.01)]))+" gene sets are significantly enriched at pValue < 1%"),
+					li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (gsea_stats['P-value'] < 0.05)]))+" gene sets are significantly enriched at pValue < 5%"),
+					li(a("Detailed enrichment results in html format", href="gsea_report_for_negitive_enrichment.html")),
+					li(a("Guide to interpret results", href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results'))
+					)
 
+	with open('index.html', 'w') as f:
+		f.write(gsea_index.render())
+
+print(gsea_index)
 
 	#Zip up results
 	if options.zip == "True":
@@ -172,3 +198,6 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+gsea_stats[(gsea_stats.Enrichment > 0) & (gsea_stats.P-value < 0.05)].sum()

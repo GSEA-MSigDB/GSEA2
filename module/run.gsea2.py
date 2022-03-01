@@ -131,7 +131,7 @@ def main():
 
 	#Positive Enrichment Report
 	gsea_pos=gsea_stats[gsea_stats.loc[:,"Enrichment"]>0]
-	gsea_pos=genesets_descr.merge(gsea_pos, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,False)).reset_index()
+	gsea_pos=genesets_descr.merge(gsea_pos, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],axis=0,ascending=(True,True,False)).reset_index()
 	gsea_pos.insert(1,'Details','')
 	for set in range(len(gsea_pos)):
 		if "plot/"+gsea_pos.iloc[set]['index'].lower()+".html" in plots:
@@ -144,7 +144,7 @@ def main():
 
 	#Negative Enrichment Report
 	gsea_neg=gsea_stats[gsea_stats.loc[:,"Enrichment"]<0]
-	gsea_neg=genesets_descr.merge(gsea_neg, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],0,ascending=(True,True,True)).reset_index()
+	gsea_neg=genesets_descr.merge(gsea_neg, how='inner',left_index=True, right_index=True).sort_values(["Q-value","P-value","Enrichment"],axis=0,ascending=(True,True,True)).reset_index()
 	gsea_neg.insert(1,'Details','')
 	for set in range(len(gsea_neg)):
 		if "plot/"+gsea_neg.iloc[set]['index'].lower()+".html" in plots:

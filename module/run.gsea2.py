@@ -156,7 +156,7 @@ def main():
 	gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html', 'w'),render_links=True,escape=False,justify='center')
 
 	#Create Report Index using dominate package
-	gsea_index = dominate.document(title="GSEA Report for Dataset "+os.path.splitext(os.path.basename(dataset))[0])
+	gsea_index = dominate.document(title="GSEA Report for Dataset "+os.path.splitext(os.path.basename(options.dataset))[0])
 	gsea_index += h1("GSEA Report for Dataset " + os.path.splitext(os.path.basename(dataset))[0])
 	gsea_index += h2(labels[0] + " vs. " + labels[1])
 	gsea_index += h3("Enrichment in phenotype: " + str(labels[0]) + " (" + str(sum(phenotypes['Phenotypes']==0)) + " samples)")

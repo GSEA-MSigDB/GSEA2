@@ -196,6 +196,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
-
-gsea_stats[(gsea_stats.Enrichment > 0) & (gsea_stats.P-value < 0.05)].sum()

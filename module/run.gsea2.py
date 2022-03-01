@@ -181,8 +181,6 @@ def main():
 	with open('index.html', 'w') as f:
 		f.write(gsea_index.render())
 
-print(gsea_index)
-
 	#Zip up results
 	if options.zip == "True":
 		gsea_files=[]

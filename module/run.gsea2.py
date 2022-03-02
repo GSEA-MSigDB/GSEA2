@@ -59,7 +59,7 @@ def main():
 		options.seed = int(round(datetime.now().timestamp()))
 		random.seed(options.seed)
 	else:
-		options.seed = int(rouns(options.seed))
+		options.seed = int(round(options.seed))
 		random.seed(options.seed)
 
 	## Parse GMT/GMX files from a list of inputs and create a name:members dict written out as a json file

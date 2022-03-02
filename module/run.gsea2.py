@@ -177,8 +177,8 @@ def main():
 					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (gsea_stats['Q-value'] < 0.05)]))+" gene sets are significant at FDR qValue < 25%"),
 					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (gsea_stats['P-value'] < 0.01)]))+" gene sets are significantly enriched at pValue < 1%"),
 					li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (gsea_stats['P-value'] < 0.05)]))+" gene sets are significantly enriched at pValue < 5%"),
-					li(a("Detailed enrichment results in html format", href="gsea_report_for_positive_enrichment.html")),
-					li(a("Guide to interpret results", href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results'))
+					li(a("Detailed enrichment results in html format", href="gsea_report_for_positive_enrichment.html", target='_blank')),
+					li(a("Guide to interpret results", href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
 					)
 	gsea_index += h3("Enrichment in phenotype: " + str(labels[1]) + " (" + str(sum(phenotypes['Phenotypes']==1)) + " samples)")
 	gsea_index += ul(
@@ -186,8 +186,8 @@ def main():
 					li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (gsea_stats['Q-value'] < 0.05)]))+" gene sets are significant at FDR qValue < 25%"),
 					li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (gsea_stats['P-value'] < 0.01)]))+" gene sets are significantly enriched at pValue < 1%"),
 					li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (gsea_stats['P-value'] < 0.05)]))+" gene sets are significantly enriched at pValue < 5%"),
-					li(a("Detailed enrichment results in html format", href="gsea_report_for_negitive_enrichment.html")),
-					li(a("Guide to interpret results", href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results'))
+					li(a("Detailed enrichment results in html format", href="gsea_report_for_negitive_enrichment.html", target='_blank')),
+					li(a("Guide to interpret results", href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
 					)
 
 	with open('index.html', 'w') as f:

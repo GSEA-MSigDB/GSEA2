@@ -77,6 +77,7 @@ def main():
 		if options.collapse != "none":
 			chip_file=GSEAlib.read_chip(options.chip)
 			input_ds = GSEAlib.collapse_dataset(options.dataset, chip_file, method=options.collapse, drop=True)
+			input_ds['mappings'].to_csv('input/collapse_dataset_mapping_details.tsv',sep="\t",na_rep="No Symbol Mapping")
 		else:
 			input_ds = GSEAlib.read_gct(options.dataset)
 		input_ds=input_ds['data']

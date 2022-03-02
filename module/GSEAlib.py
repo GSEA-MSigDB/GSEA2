@@ -133,8 +133,8 @@ def check_extension(file_name, extension):
 def read_cls(path):
     """
     Returns a Pandas Series with phenotype labels from a .cls
-        path (str): Local filepath for a .cls file
-        returns (pd.Series): Pandas Series with phenotype labels
+            path (str): Local filepath for a .cls file
+            returns (pd.Series): Pandas Series with phenotype labels
     """
     lines = open(path).readlines()
     if "numeric" in lines[0]:
@@ -162,16 +162,16 @@ def read_cls(path):
 def match_phenotypes(expr, phen):
     """
     Populates the index of phen with the column names of expr
-        expr (pandas.DataFrame): DataFrame from read_gct
-        phen (pandas.Series): Series from read_cls
-        returns (pandas.Series): phen with index set to expr columns
+            expr (pandas.DataFrame): DataFrame from read_gct
+            phen (pandas.Series): Series from read_cls
+            returns (pandas.Series): phen with index set to expr columns
     """
     if len(phen) == len(expr.columns):
         phen.index = expr.columns
     else:
-        #        common = set(phen['phenotypes'].index) & set(expr.columns)
-        #        expr = expr[list(common)]
-        #        phen = phen[list(common)]
+        #		common = set(phen['phenotypes'].index) & set(expr.columns)
+        #		expr = expr[list(common)]
+        #		phen = phen[list(common)]
         sys.exit(
             "The number of samples in the CLS file did not match the number of samples in the dataset.")
     return phen

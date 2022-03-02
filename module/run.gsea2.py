@@ -56,9 +56,9 @@ def main():
     ap.add_argument("--weight", action="store", dest="weight", default=1.0,
                     type=float, help="Weight for ks or auc enrichment method.")
     ap.add_argument("--max", action="store", dest="max",
-                    default=500, type=int, help="Max gene set size.")
+                                    default=500, type=int, help="Max gene set size.")
     ap.add_argument("--min", action="store", dest="min",
-                    default=15, type=int, help="Min gene set size.")
+                                    default=15, type=int, help="Min gene set size.")
     ap.add_argument("--seed", action="store", dest="seed",
                     default="timestamp", help="Random seed used for permutations.")
     ap.add_argument("--ogllv", action="store", type=str2bool, nargs='?', const=True, dest="override",
@@ -66,9 +66,9 @@ def main():
     ap.add_argument("--nplot", action="store", dest="nplot", default=25,
                     type=int, help="Number of enrichment results to plot.")
     ap.add_argument("--zip", action="store", type=str2bool, nargs='?', const=True,
-                    dest="zip", default=True, help="Create ZIP bundle of results.")
+                                    dest="zip", default=True, help="Create ZIP bundle of results.")
     ap.add_argument("--cpu", action="store", dest="cpu",
-                    default=1, type=int, help="Job CPU Count.")
+                                    default=1, type=int, help="Job CPU Count.")
     options = ap.parse_args()
 
     sys.path.insert(1, options.libdir)

@@ -34,9 +34,9 @@ def read_sets(gene_sets_dbfile_list):
 def read_gct(gct):
     dataset=pandas.read_csv(gct, sep='\t', header=2, index_col=[
         0, 1], skip_blank_lines=True)
-    dataset.index.names=["NAME", "Description"]
+    dataset.index.names=["Name", "Description"]
     dataset_descriptions=dataset.index.to_frame(index=False)
-    dataset_descriptions.set_index(["NAME"], inplace=True)
+    dataset_descriptions.set_index(["Name"], inplace=True)
     dataset.index=dataset.index.droplevel(1)  # Drop gene descriptions
     return {'data': dataset, 'row_descriptions': dataset_descriptions["Description"].values}
 
@@ -54,7 +54,7 @@ def read_chip(chip):
 # Accepts an expression dataset in GCT format, a CHIP file, and a
 # collapse metric and returns a pandas dataframe formatted version of the
 # dataset collapsed from probe level to gene level using the specified metric.
-def collapse_dataset(dataset, chip, method="sum"):
+def collapse_dataset(dataset, chip, method="sum", drop=True):
     import pandas as pd
     if isinstance(dataset, pandas.DataFrame):
         dataset=dataset
@@ -64,11 +64,15 @@ def collapse_dataset(dataset, chip, method="sum"):
         chip=read_chip(chip)
     if isinstance(dataset, dict) == True:
         dataset=dataset['data']
-    joined_df=chip.join(dataset, how='inner') # 
-    joined_df.reset_index(drop=True, inplace=True)
+    joined_df=chip.join(dataset, how='right')
+    joined_df.reset_index(drop=False, inplace=True)
+    mappings=joined_df[["Name",
+                             "Gene Symbol"]].drop_duplicates().copy().sort_values('Gene Symbol').rename(columns={'Name':'Dataset ID(s)'}) # Save mapping details for reporting
+    joined_df=joined_df.drop("Name", axis=1).dropna(subset=['Gene Symbol'])
     annotations=joined_df[["Gene Symbol",
-                             "Gene Title"]].drop_duplicates().copy()
+                             "Gene Title"]].drop_duplicates().copy() # Save gene annotations for reporting
     joined_df.drop("Gene Title", axis=1, inplace=True)
+    # Do Mathematical Collapse Operations
     if method.lower() == "sum":
         collapsed_df=joined_df.groupby(["Gene Symbol"]).sum()
     if method.lower() == "mean":
@@ -80,24 +84,23 @@ def collapse_dataset(dataset, chip, method="sum"):
     if method.lower() == "absmax":
         collapsed_df = joined_df.loc[joined_df.groupby(['Gene Symbol']).idxmax()]
     collapsed_df.index.name="Name"
-    return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values}
+    # Group mapping details
+    mappings=pandas.DataFrame(mappings.groupby('Gene Symbol',dropna=False)['Dataset ID(s)'].apply(list))
+    mappings['Dataset ID(s)'] = [','.join(map(str, l)) for l in mappings['Dataset ID(s)']]
+    return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values, 'mappings': mappings}
 
 
 # Save a GCT result to a file, ensuring the filename has the extension .gct
 def write_gct(gct, file_name, check_file_extension=True):
     if check_file_extension:
         file_name = check_extension(file_name, ".gct")
-
     rows = str(len(gct['data']))
     columns = str(len(gct['data'].columns))
-
     if len(gct['row_descriptions'])!=int(rows):
         sys.exit("Number of row descriptions ("+ len(gct['row_descriptions'])+ ") not equal to number of row names ("+ rows+ ").")
-
     row_descriptions = gct['row_descriptions']
     if row_descriptions == None:
         row_descriptions = ['NA']*int(rows)
-
     m = gct['data'].copy()
     m.insert(loc=0, column='Description', value=gct['row_descriptions'])
     with open(file_name, 'w') as file:

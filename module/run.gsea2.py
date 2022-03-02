@@ -12,6 +12,16 @@ import numpy
 import dominate
 from dominate.tags import *
 
+def str2bool(v):
+	if isinstance(v, bool):
+		return v
+	if v.lower() in ('yes', 'true', 't', 'y', '1'):
+		return True
+	elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+		return False
+	else:
+		raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def main():
 	usage="%prog [options]" + "\n"
 	ap = argparse.ArgumentParser()
@@ -21,8 +31,8 @@ def main():
 	ap.add_argument("--gsdb",action="store",dest="gsdb",help="Gene Set Database File.")
 	ap.add_argument("--nperm",action="store",dest="nperm",default=1000,type=int,help="Number of permutations.")
 	ap.add_argument("--cls",action="store",dest="cls",help="CLS file.")
-	ap.add_argument("--reverse",action="store",dest="reverse",default="False",help="Reverse the phenotype comparison defined in the CLS file.")
-	ap.add_argument("--permute",action="store",dest="perm",default="False",help="Reverse the phenotype comparison defined in the CLS file.")
+	ap.add_argument("--reverse",action="store",type=str2bool,nargs='?',const=True,dest="reverse",default=False,help="Reverse the phenotype comparison defined in the CLS file.")
+	ap.add_argument("--permute",action="store",type=str2bool,nargs='?',const=True,dest="perm",default=False,help="Reverse the phenotype comparison defined in the CLS file.")
 	ap.add_argument("--perm",action="store",dest="perm",default="sample",help="Permutation mode. Options are 'sample' (phenotype) and 'set' (gene set).")
 	ap.add_argument("--collapse",action="store",dest="collapse",default="none",help="Method for computing mathematical collapse. Supports 'none' ('no collapse'), 'sum', 'mean', 'median', 'max', 'absmax'")
 	ap.add_argument("--chip",action="store",dest="chip",default="none",help="Chip file used for performing collapse.")
@@ -32,9 +42,9 @@ def main():
 	ap.add_argument("--max",action="store",dest="max",default=500,type=int,help="Max gene set size.")
 	ap.add_argument("--min",action="store",dest="min",default=15,type=int,help="Min gene set size.")
 	ap.add_argument("--seed",action="store",dest="seed",default="timestamp",help="Random seed used for permutations.")
-	ap.add_argument("--ogllv",action="store",dest="override",default="False",help="Override reasonableness check for input dataset gene list size.")
+	ap.add_argument("--ogllv",action="store",type=str2bool,nargs='?',const=True,dest="override",default=False,help="Override reasonableness check for input dataset gene list size.")
 	ap.add_argument("--nplot",action="store",dest="nplot",default=25,type=int,help="Number of enrichment results to plot.")
-	ap.add_argument("--zip",action="store",dest="zip",default="True",help="Create ZIP bundle of results.")
+	ap.add_argument("--zip",action="store",type=str2bool,nargs='?',const=True,dest="zip",default=True,help="Create ZIP bundle of results.")
 	ap.add_argument("--cpu",action="store",dest="cpu",default=1,type=int,help="Job CPU Count.")
 	options = ap.parse_args()
 
@@ -66,7 +76,7 @@ def main():
 	if options.dataset.split(".")[-1] == "gct":
 		if options.collapse != "none":
 			chip_file=GSEAlib.read_chip(options.chip)
-			input_ds = GSEAlib.collapse_dataset(options.dataset, chip_file, method=options.collapse)
+			input_ds = GSEAlib.collapse_dataset(options.dataset, chip_file, method=options.collapse, drop=True)
 		else:
 			input_ds = GSEAlib.read_gct(options.dataset)
 		input_ds=input_ds['data']
@@ -78,21 +88,21 @@ def main():
 			input_ds.index.name="Name"
 		if options.collapse != "none":
 			chip_file=GSEAlib.read_chip(options.chip)
-			input_ds = GSEAlib.collapse_dataset(input_ds, chip_file, method=options.collapse)
+			input_ds = GSEAlib.collapse_dataset(input_ds, chip_file, method=options.collapse, drop=True)
 			input_ds['mappings'].to_csv('input/collapse_dataset_mapping_details.tsv',sep="\t",na_rep="No Symbol Mapping")
 			input_ds=input_ds['data']
 
-	if len(input_ds)<10000 and options.override=="False" and options.collapse=="none":
+	if len(input_ds)<10000 and options.override==False and options.collapse=="none":
 		sys.exit(print("Only ", len(input_ds), "genes were identified in the dataset.\nEither the dataset did not contain all expressed genes, or collapse dataset may need to be run with an appropriate chip file.\n\nIf this was intentional, to bypass this check you can set 'override gene list length validation' (--ogllv) to 'True' but this is not recommended."))
-	if len(input_ds)<10000 and options.override=="False" and options.collapse != "none":
+	if len(input_ds)<10000 and options.override==False and options.collapse != "none":
 		sys.exit(print("Only ", len(input_ds), "genes were identified in the dataset.\nEither the dataset did not contain all expressed genes, or there was possibly a problem with the chip selected for collapse dataset.\n\nIf this was intentional, to bypass this check you can set 'override gene list length validation' (--ogllv) to 'True' but this is not recommended."))
-	if len(input_ds)<10000 and options.override=="True":
+	if len(input_ds)<10000 and options.override==True:
 		print("Only", len(input_ds), "genes were identified in the dataset, but the user specified overriding this check. Continuing analysis, as-is however this is not recommended. The input dataset should include all expressed genes.")
 
 	## Parse CLS file
 	labels, phenotypes=GSEAlib.read_cls(options.cls)
 	phenotypes=GSEAlib.match_phenotypes(input_ds,phenotypes)
-	if options.reverse=="True" and phenotypes.columns[0]=="Labels":
+	if options.reverse==True and phenotypes.columns[0]=="Labels":
 		phenotypes["Phenotypes"]=numpy.where((phenotypes["Phenotypes"]==0)|(phenotypes["Phenotypes"]==1), phenotypes["Phenotypes"]^1, phenotypes["Phenotypes"])
 		labels={0:labels[1],1:labels[0]}
 	phenotypes=phenotypes.sort_values('Phenotypes')
@@ -183,7 +193,7 @@ def main():
 		f.write(gsea_index.render())
 
 	#Zip up results
-	if options.zip == "True":
+	if options.zip == True:
 		gsea_files=[]
 		for folderName, subfolders, filenames in os.walk(os.path.relpath(os.getcwd())):
 			for filename in filenames:

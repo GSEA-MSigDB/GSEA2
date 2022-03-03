@@ -183,12 +183,16 @@ def main():
     for set in range(len(gsea_pos)):
         if "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
+            report_set = pandas.DataFrame(gsea_pos.iloc[set].copy())
+            report_set.index.values[0] = "Gene Set"
+            report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
+                0] + " Enriched in Phentype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0])
             page = open(
                 "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'r')
             page_str = page.read()
             doc = dominate.document(title=gsea_pos.iloc[set]['index'])
-            doc += raw(pandas.DataFrame(gsea_pos.iloc[set]
-                                        ).to_html(header=False, render_links=True, escape=False, justify='left'))
+            doc += raw(report_set.to_html(header=False,
+                                          render_links=True, escape=False, justify='left'))
             doc += raw(page_str)
             with open("plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
@@ -213,12 +217,16 @@ def main():
     for set in range(len(gsea_neg)):
         if "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
+            report_set = pandas.DataFrame(gsea_neg.iloc[set].copy())
+            report_set.index.values[0] = "Gene Set"
+            report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
+                0] + " Enriched in Phentype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0])
             page = open(
                 "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'r')
             page_str = page.read()
             doc = dominate.document(title=gsea_neg.iloc[set]['index'])
-            doc += raw(pandas.DataFrame(gsea_neg.iloc[set]
-                                        ).to_html(header=False, render_links=True, escape=False, justify='left'))
+            doc += raw(report_set.to_html(header=False,
+                                          render_links=True, escape=False, justify='left'))
             doc += raw(page_str)
             with open("plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())

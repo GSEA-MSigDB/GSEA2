@@ -183,7 +183,7 @@ def main():
     for set in range(len(gsea_pos)):
         if "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
-            report_set = pandas.DataFrame(gsea_pos.iloc[set]).copy()
+            report_set = pandas.DataFrame(gsea_pos.iloc[set]).copy(deep=True)
             report_set.index.values[0] = "Gene Set"
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + " Enriched in Phentype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0])
@@ -217,7 +217,7 @@ def main():
     for set in range(len(gsea_neg)):
         if "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
-            report_set = pandas.DataFrame(gsea_neg.iloc[set]).copy()
+            report_set = pandas.DataFrame(gsea_neg.iloc[set]).copy(deep=True)
             report_set.index.values[0] = "Gene Set"
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + " Enriched in Phentype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0])

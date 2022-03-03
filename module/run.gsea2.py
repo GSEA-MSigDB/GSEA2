@@ -13,6 +13,7 @@ import pandas
 import numpy
 import dominate
 from dominate.tags import *
+from dominate.util import raw
 
 
 # Better boolean command line parsing
@@ -181,6 +182,17 @@ def main():
     gsea_pos.insert(1, 'Details', '')
     for set in range(len(gsea_pos)):
         if "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html" in plots:
+            # Edit in the needed information to the per-set enrichment reports
+            page = open(
+                "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'r')
+            page_str = page.read()
+            doc = dominate.document(title=gsea_pos.iloc[set]['index'])
+            doc += raw(pandas.DataFrame(gsea_pos.iloc[set]
+                                        ).to_html(header=False, render_links=True, escape=False, justify='left'))
+            doc += raw(page_str)
+            with open("plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'w') as f:
+                f.write(doc.render())
+            # HTMLify the positive report
             gsea_pos.at[set, "Details"] = "<a href=plot/" + \
                 gsea_pos.iloc[set]['index'].lower(
             ) + ".html target='_blank'>Details...</a>"
@@ -190,7 +202,7 @@ def main():
     gsea_pos = gsea_pos.rename(
         columns={'index': 'Gene Set<br>follow link to MSigDB'})
     gsea_pos = gsea_pos.reindex(list(range(1, len(gsea_pos))), axis=0)
-    gsea_pos.to_html(open('gsea_report_for_positve_enrichment.html', 'w'),
+    gsea_pos.to_html(open('gsea_report_for_positive_enrichment.html', 'w'),
                      render_links=True, escape=False, justify='center')
 
     # Negative Enrichment Report
@@ -200,6 +212,17 @@ def main():
     gsea_neg.insert(1, 'Details', '')
     for set in range(len(gsea_neg)):
         if "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html" in plots:
+            # Edit in the needed information to the per-set enrichment reports
+            page = open(
+                "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'r')
+            page_str = page.read()
+            doc = dominate.document(title=gsea_neg.iloc[set]['index'])
+            doc += raw(pandas.DataFrame(gsea_neg.iloc[set]
+                                        ).to_html(header=False, render_links=True, escape=False, justify='left'))
+            doc += raw(page_str)
+            with open("plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'w') as f:
+                f.write(doc.render())
+            # HTMLify the negative report
             gsea_neg.at[set, "Details"] = "<a href=plot/" + \
                 gsea_neg.iloc[set]['index'].lower(
             ) + ".html target='_blank'>Details...</a>"
@@ -246,7 +269,7 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
             gsea_stats['P-value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
         li(a("Detailed enrichment results in html format",
-             href="gsea_report_for_negitive_enrichment.html", target='_blank')),
+             href="gsea_report_for_negative_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",
              href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
     )

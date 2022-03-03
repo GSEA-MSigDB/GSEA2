@@ -42,8 +42,6 @@ def main():
     ap.add_argument("--cls", action="store", dest="cls", help="CLS file.")
     ap.add_argument("--reverse", action="store", type=str2bool, nargs='?', const=True, dest="reverse",
                     default=False, help="Reverse the phenotype comparison defined in the CLS file.")
-    ap.add_argument("--permute", action="store", type=str2bool, nargs='?', const=True, dest="perm",
-                    default=False, help="Reverse the phenotype comparison defined in the CLS file.")
     ap.add_argument("--perm", action="store", dest="perm", default="sample",
                     help="Permutation mode. Options are 'sample' (phenotype) and 'set' (gene set).")
     ap.add_argument("--collapse", action="store", dest="collapse", default="none",
@@ -183,10 +181,11 @@ def main():
     for set in range(len(gsea_pos)):
         if "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
-            report_set = pandas.DataFrame(gsea_pos.iloc[set]).copy(deep=True)
-            report_set.index.values[0] = "Gene Set"
+            report_set = pandas.DataFrame(gsea_pos.iloc[set]).copy(
+                deep=True)
+            report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
-                0] + " Enriched in Phentype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0])
+                0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
                 "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'r')
             page_str = page.read()
@@ -217,10 +216,11 @@ def main():
     for set in range(len(gsea_neg)):
         if "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
-            report_set = pandas.DataFrame(gsea_neg.iloc[set]).copy(deep=True)
-            report_set.index.values[0] = "Gene Set"
+            report_set = pandas.DataFrame(gsea_neg.iloc[set]).copy(
+                deep=True)
+            report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
-                0] + " Enriched in Phentype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0])
+                0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
                 "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'r')
             page_str = page.read()

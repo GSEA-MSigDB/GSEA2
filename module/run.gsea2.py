@@ -14,7 +14,8 @@ import numpy
 import dominate
 from dominate.tags import *
 from dominate.util import raw
-import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 
 # Better boolean command line parsing
@@ -192,7 +193,27 @@ def main():
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
                 ranked_genes.columns[0], ascending=False)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
-            # continue work here
+            gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
+                .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
+                .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
+            # Construct plotly heatmap
+            # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
+            fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
+                                0.975, 0.025], vertical_spacing=0.02)
+            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={
+                             'x': 1, 'y': 0.5}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list()), row=1, col=1)  # Insert the main heatmap using the row normalized values
+            fig = fig.update_traces(
+                text=gs_expression, hovertemplate="%{text}", row=1, col=1)  # Update the heatmap trace to use the raw expression values
+            fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(
+            ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"]), row=2, col=1)  # Add the phenotype labels using the 0-1 vector to the second slot
+            fig = fig.update_traces(text=pandas.DataFrame(
+                phenotypes['Labels']).transpose(), hovertemplate="%{text}", row=2, col=1)  # Update the phenotype labels slot to use the phenotype names
+            fig = fig.update_layout(
+                xaxis2_showticklabels=True, yaxis2_showticklabels=True, xaxis_side='top', xaxis2_side='bottom')  # Format the axes
+            fig = fig.update_layout(
+                title="Row Normalized Expression Heatmap for " + gsea_pos.iloc[gs]['index'], margin={'t': 150})  # add a title to the plot
+            # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
+            heatmap_fig = fig.to_html(full_html=False, default_width='33%')
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
@@ -206,6 +227,7 @@ def main():
             doc += raw(report_set.to_html(header=False,
                                           render_links=True, escape=False, justify='left'))
             doc += raw(page_str)
+            doc += raw(heatmap_fig)
             with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
             # HTMLify the positive report
@@ -237,6 +259,27 @@ def main():
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
                 ranked_genes.columns[0], ascending=True)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
+            gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
+                .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
+                .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
+            # Construct plotly heatmap
+            # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
+            fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
+                                0.975, 0.025], vertical_spacing=0.02)
+            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={
+                             'x': 1, 'y': 0.5}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list()), row=1, col=1)  # Insert the main heatmap using the row normalized values
+            fig = fig.update_traces(
+                text=gs_expression, hovertemplate="%{text}", row=1, col=1)  # Update the heatmap trace to use the raw expression values
+            fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(
+            ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"]), row=2, col=1)  # Add the phenotype labels using the 0-1 vector to the second slot
+            fig = fig.update_traces(text=pandas.DataFrame(
+                phenotypes['Labels']).transpose(), hovertemplate="%{text}", row=2, col=1)  # Update the phenotype labels slot to use the phenotype names
+            fig = fig.update_layout(
+                xaxis2_showticklabels=True, yaxis2_showticklabels=True, xaxis_side='top', xaxis2_side='bottom')  # Format the axes
+            fig = fig.update_layout(
+                title="Row Normalized Expression Heatmap for " + gsea_pos.iloc[gs]['index'], margin={'t': 150})  # add a title to the plot
+            # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
+            heatmap_fig = fig.to_html(full_html=False, default_width='33%')
             # continue work here
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
@@ -251,6 +294,7 @@ def main():
             doc += raw(report_set.to_html(header=False,
                                           render_links=True, escape=False, justify='left'))
             doc += raw(page_str)
+            doc += raw(heatmap_fig)
             with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
             # HTMLify the negative report

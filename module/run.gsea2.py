@@ -213,7 +213,8 @@ def main():
             fig = fig.update_layout(
                 title="Row Normalized Expression Heatmap for " + gsea_pos.iloc[gs]['index'], margin={'t': 150})  # add a title to the plot
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
-            heatmap_fig = fig.to_html(full_html=False, default_width='33%')
+            heatmap_fig = fig.to_html(
+                full_html=False, include_plotlyjs=False, default_width='33%')
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
@@ -279,7 +280,8 @@ def main():
             fig = fig.update_layout(
                 title="Row Normalized Expression Heatmap for " + gsea_pos.iloc[gs]['index'], margin={'t': 150})  # add a title to the plot
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
-            heatmap_fig = fig.to_html(full_html=False, default_width='33%')
+            heatmap_fig = fig.to_html(
+                full_html=False, include_plotlyjs=False, default_width='33%')
             # continue work here
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(

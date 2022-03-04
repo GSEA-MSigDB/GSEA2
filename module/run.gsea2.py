@@ -172,32 +172,34 @@ def main():
     plots = [result for result in results if "plot" in result]
     gsea_stats = pandas.read_csv(
         'float.set_x_statistic.tsv', sep="\t", index_col=0)
+    ranked_genes = pandas.read_csv(
+        'score.gene_x_metric.tsv', sep="\t", index_col=0)
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
     gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
         ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, False)).reset_index()
     gsea_pos.insert(1, 'Details', '')
-    for set in range(len(gsea_pos)):
-        if "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html" in plots:
+    for gs in range(len(gsea_pos)):
+        if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
-            report_set = pandas.DataFrame(gsea_pos.iloc[set]).copy(
+            report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
             report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
-                "plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'r')
+                "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
-            doc = dominate.document(title=gsea_pos.iloc[set]['index'])
+            doc = dominate.document(title=gsea_pos.iloc[gs]['index'])
             doc += raw(report_set.to_html(header=False,
                                           render_links=True, escape=False, justify='left'))
             doc += raw(page_str)
-            with open("plot/" + gsea_pos.iloc[set]['index'].lower() + ".html", 'w') as f:
+            with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
             # HTMLify the positive report
-            gsea_pos.at[set, "Details"] = "<a href=plot/" + \
-                gsea_pos.iloc[set]['index'].lower(
+            gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
+                gsea_pos.iloc[gs]['index'].lower(
             ) + ".html target='_blank'>Details...</a>"
     gsea_pos["index"] = gsea_pos.apply(
         lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
@@ -213,26 +215,26 @@ def main():
     gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
         ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, True)).reset_index()
     gsea_neg.insert(1, 'Details', '')
-    for set in range(len(gsea_neg)):
-        if "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html" in plots:
+    for gs in range(len(gsea_neg)):
+        if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
             # Edit in the needed information to the per-set enrichment reports
-            report_set = pandas.DataFrame(gsea_neg.iloc[set]).copy(
+            report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                 deep=True)
             report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
-                "plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'r')
+                "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
-            doc = dominate.document(title=gsea_neg.iloc[set]['index'])
+            doc = dominate.document(title=gsea_neg.iloc[gs]['index'])
             doc += raw(report_set.to_html(header=False,
                                           render_links=True, escape=False, justify='left'))
             doc += raw(page_str)
-            with open("plot/" + gsea_neg.iloc[set]['index'].lower() + ".html", 'w') as f:
+            with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
             # HTMLify the negative report
-            gsea_neg.at[set, "Details"] = "<a href=plot/" + \
-                gsea_neg.iloc[set]['index'].lower(
+            gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
+                gsea_neg.iloc[gs]['index'].lower(
             ) + ".html target='_blank'>Details...</a>"
     gsea_neg["index"] = gsea_neg.apply(
         lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)

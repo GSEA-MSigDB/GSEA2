@@ -14,6 +14,7 @@ import numpy
 import dominate
 from dominate.tags import *
 from dominate.util import raw
+import plotly.express as px
 
 
 # Better boolean command line parsing
@@ -181,7 +182,17 @@ def main():
         ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, False)).reset_index()
     gsea_pos.insert(1, 'Details', '')
     for gs in range(len(gsea_pos)):
+        # Compute original set size, filtered set, and filtered size
+        unfiltered_len = len(genesets[gsea_pos.iloc[gs]['index']])
+        filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
+            list(ranked_genes.index.values)))
+        filtered_len = len(filtered_gs)
         if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
+            # Only do heatmap work if we need to
+            ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
+                ranked_genes.columns[0], ascending=False)
+            gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
+            # continue work here
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
@@ -216,7 +227,17 @@ def main():
         ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, True)).reset_index()
     gsea_neg.insert(1, 'Details', '')
     for gs in range(len(gsea_neg)):
+        # Compute original set size, filtered set, and filtered size
+        unfiltered_len = len(genesets[gsea_neg.iloc[gs]['index']])
+        filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
+            list(ranked_genes.index.values)))
+        filtered_len = len(filtered_gs)
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
+            # Only do heatmap work if we need to
+            ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
+                ranked_genes.columns[0], ascending=True)
+            gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
+            # continue work here
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                 deep=True)

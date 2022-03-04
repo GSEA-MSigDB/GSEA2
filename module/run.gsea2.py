@@ -210,8 +210,6 @@ def main():
                 phenotypes['Labels']).transpose(), hovertemplate="%{text}", row=2, col=1)  # Update the phenotype labels slot to use the phenotype names
             fig = fig.update_layout(
                 xaxis2_showticklabels=True, yaxis2_showticklabels=True, xaxis_side='top', xaxis2_side='bottom')  # Format the axes
-            fig = fig.update_layout(
-                title="Row Normalized Expression Heatmap for " + gsea_pos.iloc[gs]['index'], margin={'t': 150})  # add a title to the plot
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn', default_width='33%')
@@ -225,9 +223,15 @@ def main():
                 "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
             doc = dominate.document(title=gsea_pos.iloc[gs]['index'])
+            doc += h3("Enrichment Details")
             doc += raw(report_set.to_html(header=False,
                                           render_links=True, escape=False, justify='left'))
+            doc += raw("<br>")
+            doc += h3("Enrichment Plot")
             doc += raw(page_str)
+            doc += raw("<br>")
+            doc += h3("Row Normalized Expression Heatmap for " +
+                      gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
             with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
@@ -277,8 +281,6 @@ def main():
                 phenotypes['Labels']).transpose(), hovertemplate="%{text}", row=2, col=1)  # Update the phenotype labels slot to use the phenotype names
             fig = fig.update_layout(
                 xaxis2_showticklabels=True, yaxis2_showticklabels=True, xaxis_side='top', xaxis2_side='bottom')  # Format the axes
-            fig = fig.update_layout(
-                title="Row Normalized Expression Heatmap for " + gsea_pos.iloc[gs]['index'], margin={'t': 150})  # add a title to the plot
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn', default_width='33%')
@@ -293,9 +295,15 @@ def main():
                 "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
             doc = dominate.document(title=gsea_neg.iloc[gs]['index'])
+            doc += h3("Enrichment Details")
             doc += raw(report_set.to_html(header=False,
                                           render_links=True, escape=False, justify='left'))
+            doc += raw("<br>")
+            doc += h3("Enrichment Plot")
             doc += raw(page_str)
+            doc += raw("<br>")
+            doc += h3("Row Normalized Expression Heatmap for " +
+                      gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
             with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())

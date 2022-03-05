@@ -177,6 +177,10 @@ def main():
     ranked_genes = pandas.read_csv(
         'score.gene_x_metric.tsv', sep="\t", index_col=0)
 
+    # Set a spacing size parameter needed to pad sample names in the heatmap plots
+    spacing_size = max([len(i)
+                        for i in gs_expression_norm.columns.to_list()]) * 0.005
+
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
     gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
@@ -199,20 +203,19 @@ def main():
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
             fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
-                                0.975, 0.025], vertical_spacing=0.02)
-            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={
-                             'x': 1, 'y': 0.5}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list()), row=1, col=1)  # Insert the main heatmap using the row normalized values
-            fig = fig.update_traces(
-                text=gs_expression, hovertemplate="%{text}", row=1, col=1)  # Update the heatmap trace to use the raw expression values
+                                0.015, 0.985], vertical_spacing=spacing_size)
+            # Populate the first plot slot with the phenotype label information
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(
-            ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"]), row=2, col=1)  # Add the phenotype labels using the 0-1 vector to the second slot
-            fig = fig.update_traces(text=pandas.DataFrame(
-                phenotypes['Labels']).transpose(), hovertemplate="%{text}", row=2, col=1)  # Update the phenotype labels slot to use the phenotype names
-            fig = fig.update_layout(
-                xaxis2_showticklabels=True, yaxis2_showticklabels=True, xaxis_side='top', xaxis2_side='bottom')  # Format the axes
+            ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"], xgap=3, name='Phenotype'), row=1, col=1)
+            # Add the plot containing the normalized expression heatmap annotaated with the input expression data's values
+            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': .125, 'thickness': 10}, x=gs_expression_norm.columns.to_list(
+            ), y=gs_expression_norm.index.to_list(), name="Normalized Expression", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
+            # Set the plot layout parameters to fit the data dimensions
+            fig = fig.update_layout(height=round(20 * (filtered_len)), width=round(23 * len(
+                phenotypes['Labels'])), xaxis_side='top', xaxis2_side='top', xaxis2_tickangle=-90).update_xaxes(automargin=True).update_yaxes(automargin=True)
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
-                full_html=False, include_plotlyjs='cdn', default_width='33%')
+                full_html=False, include_plotlyjs='cdn')
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
@@ -270,20 +273,19 @@ def main():
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
             fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
-                                0.975, 0.025], vertical_spacing=0.02)
-            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={
-                             'x': 1, 'y': 0.5}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list()), row=1, col=1)  # Insert the main heatmap using the row normalized values
-            fig = fig.update_traces(
-                text=gs_expression, hovertemplate="%{text}", row=1, col=1)  # Update the heatmap trace to use the raw expression values
+                                0.015, 0.985], vertical_spacing=spacing_size)
+            # Populate the first plot slot with the phenotype label information
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(
-            ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"]), row=2, col=1)  # Add the phenotype labels using the 0-1 vector to the second slot
-            fig = fig.update_traces(text=pandas.DataFrame(
-                phenotypes['Labels']).transpose(), hovertemplate="%{text}", row=2, col=1)  # Update the phenotype labels slot to use the phenotype names
-            fig = fig.update_layout(
-                xaxis2_showticklabels=True, yaxis2_showticklabels=True, xaxis_side='top', xaxis2_side='bottom')  # Format the axes
+            ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"], xgap=3, name='Phenotype'), row=1, col=1)
+            # Add the plot containing the normalized expression heatmap annotaated with the input expression data's values
+            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': .125, 'thickness': 10}, x=gs_expression_norm.columns.to_list(
+            ), y=gs_expression_norm.index.to_list(), name="Normalized Expression", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
+            # Set the plot layout parameters to fit the data dimensions
+            fig = fig.update_layout(height=round(20 * (filtered_len)), width=round(23 * len(
+                phenotypes['Labels'])), xaxis_side='top', xaxis2_side='top', xaxis2_tickangle=-90).update_xaxes(automargin=True).update_yaxes(automargin=True)
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
-                full_html=False, include_plotlyjs='cdn', default_width='33%')
+                full_html=False, include_plotlyjs='cdn')
             # continue work here
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(

@@ -179,7 +179,7 @@ def main():
 
     # Set a spacing size parameter needed to pad sample names in the heatmap plots
     spacing_size = max([len(i)
-                        for i in gs_expression_norm.columns.to_list()]) * 0.005
+                        for i in input_ds.columns.to_list()]) * 0.005
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]

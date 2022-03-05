@@ -207,12 +207,12 @@ def main():
             # Populate the first plot slot with the phenotype label information
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(
             ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"], xgap=3, name='Phenotype'), row=1, col=1)
-            # Add the plot containing the normalized expression heatmap annotaated with the input expression data's values
+            # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': .125, 'thickness': 10}, x=gs_expression_norm.columns.to_list(
             ), y=gs_expression_norm.index.to_list(), name="Normalized Expression", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
             fig = fig.update_layout(height=round(20 * (filtered_len)), width=round(23 * len(
-                phenotypes['Labels'])), xaxis_side='top', xaxis2_side='top', xaxis2_tickangle=-90).update_xaxes(automargin=False).update_yaxes(automargin=False)
+                phenotypes['Labels'])), xaxis_side='top', xaxis2_side='top', xaxis2_tickangle=-90, autosize=False).update_xaxes(automargin=False).update_yaxes(automargin=False)
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn')
@@ -277,12 +277,12 @@ def main():
             # Populate the first plot slot with the phenotype label information
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(
             ), colorscale='spectral', showscale=False, x=phenotypes['Labels'], y=["Phenotype"], xgap=3, name='Phenotype'), row=1, col=1)
-            # Add the plot containing the normalized expression heatmap annotaated with the input expression data's values
+            # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': .125, 'thickness': 10}, x=gs_expression_norm.columns.to_list(
             ), y=gs_expression_norm.index.to_list(), name="Normalized Expression", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
             fig = fig.update_layout(height=round(20 * (filtered_len)), width=round(23 * len(
-                phenotypes['Labels'])), xaxis_side='top', xaxis2_side='top', xaxis2_tickangle=-90).update_xaxes(automargin=False).update_yaxes(automargin=False)
+                phenotypes['Labels'])), xaxis_side='top', xaxis2_side='top', xaxis2_tickangle=-90, autosize=False).update_xaxes(automargin=False).update_yaxes(automargin=False)
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn')

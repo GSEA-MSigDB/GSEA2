@@ -1,5 +1,5 @@
 #GSEA2
-#Sat Feb 26 00:54:46 UTC 2022
+#Tue Mar 08 21:57:33 UTC 2022
 JVMLevel=
 LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.0.4
 author=
@@ -31,7 +31,7 @@ p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);js\=Jensen-Shannon (GSEA-Future)
 p11_MODE=
 p11_TYPE=Floating Point
 p11_default_value=1
-p11_description=Weight for ks or auc enrichment method. 1.0 is equivlent to the old "scoring scheme\=weighted" option.
+p11_description=Weight for ks or auc enrichment method.<br>\nSetting 1.0 is equivalent to the old "scoring scheme\=weighted" option.<br> \nSetting 0 when running the Kolmogorov-Smirnov enrichment method is equivalent to the unweighted Kolmogorov-Smirnov statistic ("scoring scheme\=classic" option in prior versions of GSEA)
 p11_fileFormat=
 p11_flag=--weight\=
 p11_name=weight

@@ -4,37 +4,6 @@ import pandas
 import numpy
 
 
-# Simple GMT/GMX to Dict parser
-def read_sets(gene_sets_dbfile_list):
-    genesets = {}
-    genesets_descr = {}
-    for gsdb in gene_sets_dbfile_list:
-        gsdb_split = gsdb.split(".")
-        if gsdb_split[-1] == "gmt":
-            with open(gsdb) as f:
-                temp = f.read().splitlines()
-                for i in range(len(temp)):
-                    gs_line = temp[i].split("\t")
-                    gene_set_name = gs_line[0]
-                    gene_set_desc = gs_line[1]
-                    gene_set_tags = gs_line[2:len(gs_line)]
-                    genesets[gene_set_name] = list(set(gene_set_tags))
-                    # Not used yet but should end up in reports eventually
-                    genesets_descr[gene_set_name] = gene_set_desc
-        else:  # is a gmx formatted file
-            df_temp = pandas.read_csv(
-                gsdb, sep='\t', skip_blank_lines=True).transpose().dropna(how='all')
-            for i in range(len(df_temp)):
-                gs_line = df_temp.iloc[i][~df_temp.iloc[i].isnull()]
-                gene_set_name = gs_line.name
-                gene_set_desc = gs_line[0]
-                gene_set_tags = gs_line[1:len(gs_line)]
-                genesets[gene_set_name] = list(set(gene_set_tags))
-                # Not used yet but should end up in reports eventually
-                genesets_descr[gene_set_name] = gene_set_desc
-    return genesets, genesets_descr
-
-
 # Simple implementation of a GCT parser
 # Accepts a GCT file and returns a Pandas Dataframe with a single index
 def read_gct(gct):
@@ -175,6 +144,39 @@ def match_phenotypes(expr, phen):
         sys.exit(
             "The number of samples in the CLS file did not match the number of samples in the dataset.")
     return phen
+
+
+# Simple GMT/GMX to Dict parser
+def read_sets(gene_sets_dbfile_list):
+    genesets = {}
+    genesets_descr = {}
+    genesets_len = {}
+    for gsdb in gene_sets_dbfile_list:
+        gsdb_split = gsdb.split(".")
+        if gsdb_split[-1] == "gmt":
+            with open(gsdb) as f:
+                temp = f.read().splitlines()
+                for i in range(len(temp)):
+                    gs_line = temp[i].split("\t")
+                    gene_set_name = gs_line[0]
+                    gene_set_desc = gs_line[1]
+                    gene_set_tags = gs_line[2:len(gs_line)]
+                    genesets[gene_set_name] = list(set(gene_set_tags))
+                    # Not used yet but should end up in reports eventually
+                    genesets_descr[gene_set_name] = gene_set_desc
+        else:  # is a gmx formatted file
+            df_temp = pandas.read_csv(
+                gsdb, sep='\t', skip_blank_lines=True).transpose().dropna(how='all')
+            for i in range(len(df_temp)):
+                gs_line = df_temp.iloc[i][~df_temp.iloc[i].isnull()]
+                gene_set_name = gs_line.name
+                gene_set_desc = gs_line[0]
+                gene_set_tags = gs_line[1:len(gs_line)]
+                genesets[gene_set_name] = list(set(gene_set_tags))
+                # Not used yet but should end up in reports eventually
+                genesets_descr[gene_set_name] = gene_set_desc
+    genesets_len = {key: len(value) for key, value in genesets.items()}
+    return {'genesets': genesets, 'descriptions': genesets_descr, 'lengths': genesets_len}
 
 
 # Get file paths

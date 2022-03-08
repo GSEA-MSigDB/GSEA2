@@ -374,7 +374,6 @@ def main():
              href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
     )
     gsea_index += h3("Dataset details")
-    gsea_index += h3("Gene set details")
     if options.collapse != "none":
         gsea_index += ul(
             li("The Dataset has " + str(input_length) + "native features"),
@@ -386,7 +385,7 @@ def main():
             li("The Dataset has " + str(input_length) + " features (genes)"),
             li("No probe set => gene symbol collapsing was requested, so all " +
                str(input_length) + " features were used"))
-
+    gsea_index += h3("Gene set details")
     gsea_index += ul(
         li("Gene set size filters (min=" + str(options.min) + ", max=" + str(options.max) + ") resulted in filtering out " +
            str(len(genesets) - len(passing_sets)) + " / " + str(len(genesets)) + " gene sets"),

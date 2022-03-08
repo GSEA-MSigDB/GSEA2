@@ -112,7 +112,7 @@ p16_value=
 p1_MODE=IN
 p1_TYPE=FILE
 p1_default_value=
-p1_description=gct, tsv
+p1_description=Input expression dataset in gct or tsv format
 p1_fileFormat=gct
 p1_flag=--dataset\=
 p1_name=expression.dataset

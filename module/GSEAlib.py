@@ -67,7 +67,7 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
         'Gene Symbol', dropna=False)['Dataset ID(s)'].apply(list))
     mappings['Dataset ID(s)'] = [','.join(map(str, l))
                                  for l in mappings['Dataset ID(s)']]
-    return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values, 'mappings': mappings, 'input_length': input_len, 'collapse_len': len(collapsed_df.index)}
+    return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values, 'mappings': mappings, 'input_length': input_len, 'collapse_length': len(collapsed_df.index)}
 
 
 # Save a GCT result to a file, ensuring the filename has the extension .gct

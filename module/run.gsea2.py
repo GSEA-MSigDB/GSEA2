@@ -412,7 +412,7 @@ def main():
         li(a("Liberzon A, et al. (Bioinformatics, 2011).",
              href='https://doi.org/10.1093/bioinformatics/btr260', target='_blank')),
         li(a("Liberzon A, et al. (Cell Systems 2015).",
-             href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4707969/', target='_blank''))
+             href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4707969/', target='_blank'))
     )
 
     with open('index.html', 'w') as f:

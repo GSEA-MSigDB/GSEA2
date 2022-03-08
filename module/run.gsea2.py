@@ -199,7 +199,7 @@ def main():
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
             fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
-                                0.025, 0.975], vertical_spacing=0.005)
+                                0.025, 0.975], vertical_spacing=0.005, row_width=[filtered_len, 1])
             # Populate the first plot slot with the phenotype label information
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
                 phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
@@ -207,11 +207,12 @@ def main():
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': .125, 'thickness': 10}, x=gs_expression_norm.columns.to_list(
             ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
-            fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(
-                scaleanchor='y2', showticklabels=True), xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'))
+            fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
+                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 * (filtered_len))
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn', default_width='50%')
+            # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
@@ -260,7 +261,7 @@ def main():
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=True)
+                ranked_genes.columns[0], ascending=False)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
             gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
                 .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
@@ -268,7 +269,7 @@ def main():
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
             fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
-                                0.025, 0.975], vertical_spacing=0.005)
+                0.025, 0.975], vertical_spacing=0.005, row_width=[filtered_len, 1])
             # Populate the first plot slot with the phenotype label information
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
                 phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
@@ -276,11 +277,12 @@ def main():
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': .125, 'thickness': 10}, x=gs_expression_norm.columns.to_list(
             ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
-            fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(
-                scaleanchor='y2', showticklabels=True), xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'))
+            fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
+                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 * (filtered_len))
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn', default_width='50%')
+            # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                 deep=True)

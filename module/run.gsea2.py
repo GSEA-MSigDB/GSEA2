@@ -204,7 +204,8 @@ def main():
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
                 phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
             # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
-            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': 200, 'lenmode'='pixels', 'thickness': 10}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
+            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10}, x=gs_expression_norm.columns.to_list(
+            ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
             fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
                                     xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 * (filtered_len))
@@ -273,7 +274,8 @@ def main():
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
                 phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
             # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
-            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': 200, 'lenmode'='pixels', 'thickness': 10}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
+            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10}, x=gs_expression_norm.columns.to_list(
+            ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
             fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
                                     xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 * (filtered_len))

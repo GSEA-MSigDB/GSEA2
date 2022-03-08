@@ -13,7 +13,7 @@ def read_gct(gct):
     dataset_descriptions = dataset.index.to_frame(index=False)
     dataset_descriptions.set_index(["Name"], inplace=True)
     dataset.index = dataset.index.droplevel(1)  # Drop gene descriptions
-    return {'data': dataset, 'row_descriptions': dataset_descriptions["Description"].values}
+    return {'data': dataset, 'row_descriptions': dataset_descriptions["Description"].values, 'input_length': len(dataset.index)}
 
 
 # Simple implementation of a CHIP Parser for use with ssGSEA
@@ -40,6 +40,7 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
         chip = read_chip(chip)
     if isinstance(dataset, dict) == True:
         dataset = dataset['data']
+    input_len = len(dataset.index)
     joined_df = chip.join(dataset, how='right')
     joined_df.reset_index(drop=False, inplace=True)
     mappings = joined_df[["Name",
@@ -66,7 +67,7 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
         'Gene Symbol', dropna=False)['Dataset ID(s)'].apply(list))
     mappings['Dataset ID(s)'] = [','.join(map(str, l))
                                  for l in mappings['Dataset ID(s)']]
-    return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values, 'mappings': mappings}
+    return {'data': collapsed_df, 'row_descriptions': annotations["Gene Title"].values, 'mappings': mappings, 'input_length': input_len, collapse_len = len(collapsed_df.index)}
 
 
 # Save a GCT result to a file, ensuring the filename has the extension .gct
@@ -177,6 +178,18 @@ def read_sets(gene_sets_dbfile_list):
                 genesets_descr[gene_set_name] = gene_set_desc
     genesets_len = {key: len(value) for key, value in genesets.items()}
     return {'genesets': genesets, 'descriptions': genesets_descr, 'lengths': genesets_len}
+
+
+# Restrict Gene sets to input universe
+def filter_sets(genesets_dict, dataset_index):
+    genesets_filtered = {}
+    genesets_len_filtered = {}
+    for (key, value) in genesets_dict.items():
+        genesets_filtered[key] = list(
+            set(genesets_dict[key]) & set(list(dataset_index.values)))
+    genesets_len_filtered = {key: len(value)
+                             for key, value in genesets_filtered.items()}
+    return {'genesets': genesets_filtered, 'lengths': genesets_len_filtered}
 
 
 # Get file paths

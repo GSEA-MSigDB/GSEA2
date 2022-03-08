@@ -86,15 +86,6 @@ def main():
         options.seed = int(round(float(options.seed)))
         random.seed(options.seed)
 
-    # Parse GMT/GMX files from a list of inputs and create a name:members dict written out as a json file
-    if options.gsdb != None:
-        with open(options.gsdb) as f:
-            gene_sets_dbfile_list = f.read().splitlines()
-
-    genesets, genesets_descr = GSEAlib.read_sets(gene_sets_dbfile_list)
-    with open('input/set_to_genes.json', 'w') as path:
-        json.dump(genesets, path,  indent=2)
-
     # Parse GCT file
     if options.dataset.split(".")[-1] == "gct":
         if options.collapse != "none":
@@ -103,8 +94,10 @@ def main():
                 options.dataset, chip_file, method=options.collapse, drop=True)
             input_ds['mappings'].to_csv(
                 'input/collapse_dataset_mapping_details.tsv', sep="\t", na_rep="No Symbol Mapping")
+            collapse_length = input_ds['collapse_length']
         else:
             input_ds = GSEAlib.read_gct(options.dataset)
+        input_length = input_ds['input_length']
         input_ds = input_ds['data']
     else:
         input_ds = pandas.read_csv(
@@ -114,12 +107,15 @@ def main():
             input_ds.drop(
                 input_ds.columns[[description_loc]], axis=1, inplace=True)
             input_ds.index.name = "Name"
+            input_length = len(input_ds.index)
         if options.collapse != "none":
             chip_file = GSEAlib.read_chip(options.chip)
             input_ds = GSEAlib.collapse_dataset(
                 input_ds, chip_file, method=options.collapse, drop=True)
             input_ds['mappings'].to_csv(
                 'input/collapse_dataset_mapping_details.tsv', sep="\t", na_rep="No Symbol Mapping")
+            input_length = input_ds['input_length']
+            collapse_length = input_ds['collapse_length']
             input_ds = input_ds['data']
 
     if len(input_ds) < 10000 and options.override == False and options.collapse == "none":
@@ -144,6 +140,28 @@ def main():
     pandas.DataFrame(phenotypes['Phenotypes']).transpose().to_csv(
         'input/target_by_sample.tsv', sep="\t", index=False)
 
+    # Parse GMT/GMX gene sets files from a list of inputs and create a name:members dict written out as a json file
+    if options.gsdb != None:
+        with open(options.gsdb) as f:
+            gene_sets_dbfile_list = f.read().splitlines()
+
+    gs_data = GSEAlib.read_sets(gene_sets_dbfile_list)
+    genesets = gs_data['genesets']
+    genesets_descr = gs_data['descriptions']
+    with open('input/raw_set_to_genes.json', 'w') as path:
+        json.dump(genesets, path,  indent=2)
+
+    # Filter gene sets to just genes in input dataset
+    gs_data_subset = GSEAlib.filter_sets(genesets, input_ds.index)
+    gs_data_subset_sets = gs_data_subset['genesets']
+    gs_data_subset_lengths = gs_data_subset['lengths']
+    passing_lengths = dict((key, value) for key, value in gs_data_subset_lengths.items(
+    ) if (value >= options.min and value <= options.max))
+    passing_sets = {key: gs_data_subset_sets[key]
+                    for key in passing_lengths.keys()}
+    with open('input/filtered_set_to_genes.json', 'w') as path:
+        json.dump(genesets, path,  indent=2)
+
     # Construct GSEA Settings json file
     gsea_settings = {
         "number_of_permutations": options.nperm,
@@ -164,7 +182,7 @@ def main():
         json.dump(gsea_settings, path,  indent=2)
 
     # Run GSEA
-    subprocess.check_output(['gsea', 'standard', 'input/gsea_settings.json', 'input/set_to_genes.json',
+    subprocess.check_output(['gsea', 'standard', 'input/gsea_settings.json', 'input/filtered_set_to_genes.json',
                              'input/target_by_sample.tsv', 'input/gene_by_sample.tsv', os.getcwd()])
 
     # Parse Results
@@ -354,6 +372,26 @@ def main():
              href="gsea_report_for_negative_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",
              href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
+    )
+    gsea_index += h3("Dataset details")
+    gsea_index += h3("Gene set details")
+    if options.collapse != "none":
+        gsea_index += ul(
+            li("The Dataset has " + str(input_length) + "native features"),
+            li("After collapsing features into gene symbols, there are: " +
+               str(collapse_length) + " genes"),
+            li("Collapse method: \"" + options.collapse + "\" was used to collapse features to Gene Symbols"))
+    else:
+        gsea_index += ul(
+            li("The Dataset has " + str(input_length) + " features (genes)"),
+            li("No probe set => gene symbol collapsing was requested, so all " +
+               str(input_length) + " features were used"))
+
+    gsea_index += ul(
+        li("Gene set size filters (min=" + str(options.min) + ", max=" + str(options.max) + ") resulted in filtering out " +
+           str(len(genesets) - len(passing_sets)) + " / " + str(len(genesets)) + " gene sets"),
+        li("The remaining " + str(len(passing_sets)) +
+           " gene sets were used in the analysis")
     )
 
     with open('index.html', 'w') as f:

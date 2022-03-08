@@ -227,6 +227,7 @@ def main():
             fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
                                 0.025, 0.975], vertical_spacing=0.005, row_width=[filtered_len, 1])
             # Populate the first plot slot with the phenotype label information
+            # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
                 phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
             # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
@@ -297,6 +298,7 @@ def main():
             fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
                 0.025, 0.975], vertical_spacing=0.005, row_width=[filtered_len, 1])
             # Populate the first plot slot with the phenotype label information
+            # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
                 phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
             # Add the plot containing the normalized expression heatmap annotated with the input expression data's values

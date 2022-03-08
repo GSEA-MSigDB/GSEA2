@@ -195,6 +195,14 @@ def main():
     ranked_genes = pandas.read_csv(
         'score.gene_x_metric.tsv', sep="\t", index_col=0)
 
+    # Add set sizes to enrichment report
+    gsea_stats.insert(0, 'Size', '')
+    for gs in range(len(gsea_stats)):
+        gsea_stats.loc[gsea_stats.index[gs],
+                       'Size'] = passing_lengths[gsea_stats.index[gs]]
+    gsea_stats.to_csv(
+        'float.set_x_statistic.tsv', sep="\t")
+
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
     gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(

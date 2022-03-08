@@ -352,8 +352,8 @@ def main():
     gsea_index += h3("Enrichment in phenotype: " + str(
         labels[0]) + " (" + str(sum(phenotypes['Phenotypes'] == 0)) + " samples)")
     gsea_index += ul(
-        li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0)])) + " / " + str(
-            len(gsea_stats)) + " gene sets are upregulated in phenotype" + labels[1]),
+        li(str(len(gsea_stats[(gsea_stats['Enrichment'] >= 0)])) + " / " + str(
+            len(gsea_stats)) + " gene sets are upregulated in phenotype " + b(str(labels[0]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
             gsea_stats['Q-value'] < 0.05)])) + " gene sets are significant at FDR qValue < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
@@ -368,8 +368,8 @@ def main():
     gsea_index += h3("Enrichment in phenotype: " + str(
         labels[1]) + " (" + str(sum(phenotypes['Phenotypes'] == 1)) + " samples)")
     gsea_index += ul(
-        li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0)])) + " / " + str(
-            len(gsea_stats)) + " gene sets are upregulated in phenotype" + labels[1]),
+        li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0)])) + " / " + str(
+            len(gsea_stats)) + " gene sets are upregulated in phenotype " + b(str(labels[1]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
             gsea_stats['Q-value'] < 0.05)])) + " gene sets are significant at FDR qValue < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (

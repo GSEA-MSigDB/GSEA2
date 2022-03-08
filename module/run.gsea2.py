@@ -392,6 +392,28 @@ def main():
         li("The remaining " + str(len(passing_sets)) +
            " gene sets were used in the analysis")
     )
+    gsea_index += h3("Reproducibility")
+    gsea_index += ul(
+        li("Random seed used for permutation generation: " + str(options.seed)),
+        li(a("Parameters passed to GSEA.jl (.json file)",
+             href='input/gsea_settings.json'))
+    )
+    gsea_index += h3("Citing GSEA and MSigDB")
+    gsea_index += p('To cite your use of the GSEA software please reference the following:')
+    gsea_index += ul(
+        li(a("Subramanian, A., Tamayo, P., et al. (2005, PNAS).",
+             href='https://www.pnas.org/content/102/43/15545', target='_blank')),
+        li(a("Mootha, V. K., Lindgren, C. M., et al. (2003, Nature Genetics).",
+             href='http://www.nature.com/ng/journal/v34/n3/abs/ng1180.html', target='_blank'))
+    )
+    gsea_index += p('For use of the Molecular Signatures Database (MSigDB), to cite please reference one or more of the following',
+                    br(), 'as appropriate, along with the source for the gene set as listed on the gene set page:')
+    gsea_index += ul(
+        li(a("Liberzon A, et al. (Bioinformatics, 2011).",
+             href='https://doi.org/10.1093/bioinformatics/btr260', target='_blank')),
+        li(a("Liberzon A, et al. (Cell Systems 2015).",
+             href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4707969/', target='_blank''))
+    )
 
     with open('index.html', 'w') as f:
         f.write(gsea_index.render())

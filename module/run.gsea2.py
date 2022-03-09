@@ -239,10 +239,10 @@ def main():
             ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
             fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
-                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 + 20 * (filtered_len))
+                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 + (20 * filtered_len), width=22 * len(phenotypes))
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
-                full_html=False, include_plotlyjs='cdn', default_width='50%')
+                full_html=False, include_plotlyjs='cdn')
             # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
@@ -314,10 +314,10 @@ def main():
             ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Set the plot layout parameters to fit the data dimensions
             fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
-                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 + 20 * (filtered_len))
+                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 + (20 * filtered_len), width=22 * len(phenotypes))
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
-                full_html=False, include_plotlyjs='cdn', default_width='50%')
+                full_html=False, include_plotlyjs='cdn')
             # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(

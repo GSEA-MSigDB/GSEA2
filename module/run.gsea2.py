@@ -224,8 +224,12 @@ def main():
                 .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
-            fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
-                                0.025, 0.975], vertical_spacing=0.005, row_width=[filtered_len, 1])
+            layout = [[{}], [{"rowspan": len(gs_expression_norm)}]]
+            layout.extend([[None]] * (len(gs_expression_norm) - 1))
+            heights = [1 / (1 + len(gs_expression_norm))] * \
+                (1 + len(gs_expression_norm))
+            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=1, specs=layout, shared_xaxes=True,
+                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)))
             # Populate the first plot slot with the phenotype label information
             # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
@@ -295,8 +299,12 @@ def main():
                 .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
-            fig = make_subplots(rows=2, cols=1, column_widths=[1], row_heights=[
-                0.025, 0.975], vertical_spacing=0.005, row_width=[filtered_len, 1])
+            layout = [[{}], [{"rowspan": len(gs_expression_norm)}]]
+            layout.extend([[None]] * (len(gs_expression_norm) - 1))
+            heights = [1 / (1 + len(gs_expression_norm))] * \
+                (1 + len(gs_expression_norm))
+            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=1, specs=layout, shared_xaxes=True,
+                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)))
             # Populate the first plot slot with the phenotype label information
             # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(

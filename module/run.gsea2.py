@@ -259,7 +259,7 @@ def main():
                                           render_links=True, escape=False, justify='left'))
             doc += raw("<br>")
             doc += h3("Enrichment Plot")
-            doc += raw(page_str)
+            doc += raw(page_str.replace("<!doctype html>", ""))
             doc += h3("Row Normalized Expression Heatmap for " +
                       gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
@@ -334,7 +334,7 @@ def main():
                                           render_links=True, escape=False, justify='left'))
             doc += raw("<br>")
             doc += h3("Enrichment Plot")
-            doc += raw(page_str)
+            doc += raw(page_str.replace("<!doctype html>", ""))
             doc += h3("Row Normalized Expression Heatmap for " +
                       gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)

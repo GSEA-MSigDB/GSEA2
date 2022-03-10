@@ -191,9 +191,9 @@ def main():
     results = GSEAlib.result_paths(os.getcwd())
     plots = [result for result in results if "plot" in result]
     gsea_stats = pandas.read_csv(
-        'float.set_x_statistic.tsv', sep="\t", index_col=0)
+        'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
-        'score.gene_x_metric.tsv', sep="\t", index_col=0)
+        'gene_x_metric_x_score.tsv', sep="\t", index_col=0)
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -201,12 +201,12 @@ def main():
         gsea_stats.loc[gsea_stats.index[gs],
                        'Size'] = passing_lengths[gsea_stats.index[gs]]
     gsea_stats.to_csv(
-        'float.set_x_statistic.tsv', sep="\t")
+        'set_x_statistic_x_number.tsv', sep="\t")
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
     gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
-        ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, False)).reset_index()
+        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(False)).reset_index()
     gsea_pos.insert(1, 'Details', '')
     for gs in range(len(gsea_pos)):
         # Compute original set size, filtered set, and filtered size
@@ -281,7 +281,7 @@ def main():
     # Negative Enrichment Report
     gsea_neg = gsea_stats[gsea_stats.loc[:, "Enrichment"] < 0]
     gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
-        ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, True)).reset_index()
+        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(False)).reset_index()
     gsea_neg.insert(1, 'Details', '')
     for gs in range(len(gsea_neg)):
         # Compute original set size, filtered set, and filtered size
@@ -292,7 +292,7 @@ def main():
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=False)
+                ranked_genes.columns[0], ascending=True)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
             gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
                 .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\

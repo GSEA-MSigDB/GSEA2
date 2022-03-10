@@ -217,7 +217,7 @@ def main():
         if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=False)
+                ranked_genes.columns[0], ascending=True)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
             gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
                 .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\

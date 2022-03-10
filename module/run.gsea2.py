@@ -193,7 +193,7 @@ def main():
     gsea_stats = pandas.read_csv(
         'float.set_x_statistic.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
-        'score.gene_x_metric.tsv', sep="\t", index_col=0)
+        'gene_x_metric_x_score.tsv', sep="\t", index_col=0)
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -224,12 +224,13 @@ def main():
                 .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
-            layout = [[{}], [{"rowspan": len(gs_expression_norm)}]]
-            layout.extend([[None]] * (len(gs_expression_norm) - 1))
+            layout = [[{}, {}], [{"rowspan": len(gs_expression_norm), "colspan": 1},
+                                 {"rowspan": len(gs_expression_norm), "colspan": 1}]]
+            layout.extend([[None, None]] * (len(gs_expression_norm) - 1))
             heights = [1 / (1 + len(gs_expression_norm))] * \
                 (1 + len(gs_expression_norm))
-            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=1, specs=layout, shared_xaxes=True,
-                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)))
+            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=2, specs=layout, shared_xaxes=False,
+                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)), column_widths=[len(gs_expression_norm.columns) / (1 + len(gs_expression_norm.columns)), 1 / (1 + len(gs_expression_norm.columns))], horizontal_spacing=0.01)
             # Populate the first plot slot with the phenotype label information
             # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
@@ -237,9 +238,19 @@ def main():
             # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10}, x=gs_expression_norm.columns.to_list(
             ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
+            # Add a plot containing the gene rankings in the gene list
+            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale='RdBu_r', showscale=False, zmax=float(ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(
+            ), y=ranked_gs_genes.index.to_list(), name=""), row=2, col=2)
             # Set the plot layout parameters to fit the data dimensions
-            fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
-                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 + (20 * filtered_len), width=22 * len(phenotypes))
+            # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
+            # ⎡ (2,1) x3,y3 ⎤  ⎡ (2,2) x4,y4 ⎤
+            fig = fig.update_layout(
+                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', scaleanchor='y3', showticklabels=True), yaxis=dict(),
+                xaxis2=dict(), yaxis2=dict(),
+                xaxis3=dict(scaleanchor='y3', showticklabels=False), yaxis3=dict(scaleanchor='x', showticklabels=True),
+                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False, scaleanchor='x'),
+                margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=20.01 + (22 * len(phenotypes)))
+
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn')
@@ -299,12 +310,13 @@ def main():
                 .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
             # Construct plotly heatmap
             # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
-            layout = [[{}], [{"rowspan": len(gs_expression_norm)}]]
-            layout.extend([[None]] * (len(gs_expression_norm) - 1))
+            layout = [[{}, {}], [{"rowspan": len(gs_expression_norm), "colspan": 1},
+                                 {"rowspan": len(gs_expression_norm), "colspan": 1}]]
+            layout.extend([[None, None]] * (len(gs_expression_norm) - 1))
             heights = [1 / (1 + len(gs_expression_norm))] * \
                 (1 + len(gs_expression_norm))
-            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=1, specs=layout, shared_xaxes=True,
-                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)))
+            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=2, specs=layout, shared_xaxes=False,
+                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)), column_widths=[len(gs_expression_norm.columns) / (1 + len(gs_expression_norm.columns)), 1 / (1 + len(gs_expression_norm.columns))], horizontal_spacing=0.01)
             # Populate the first plot slot with the phenotype label information
             # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
             fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
@@ -312,9 +324,18 @@ def main():
             # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'x': 1.02, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10}, x=gs_expression_norm.columns.to_list(
             ), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
+            # Add a plot containing the gene rankings in the gene list
+            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale='RdBu_r', showscale=False, zmax=float(ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(
+            ), y=ranked_gs_genes.index.to_list(), name=""), row=2, col=2)
             # Set the plot layout parameters to fit the data dimensions
-            fig = fig.update_layout(xaxis_dtick=1, xaxis_side='top', xaxis_type='category', xaxis_tickangle=-90, yaxis2_dtick=1, xaxis=dict(scaleanchor='y2', showticklabels=True),
-                                    xaxis2=dict(scaleanchor='y2', showticklabels=False), yaxis2=dict(scaleanchor='x2'), margin=dict(autoexpand=True, b=0, r=0), height=20 + (20 * filtered_len), width=22 * len(phenotypes))
+            # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
+            # ⎡ (2,1) x3,y3 ⎤  ⎡ (2,2) x4,y4 ⎤
+            fig = fig.update_layout(
+                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', scaleanchor='y3', showticklabels=True), yaxis=dict(),
+                xaxis2=dict(), yaxis2=dict(),
+                xaxis3=dict(scaleanchor='y3', showticklabels=False), yaxis3=dict(scaleanchor='x', showticklabels=True),
+                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False, scaleanchor='x'),
+                margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=20.01 + (22 * len(phenotypes)))
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(
                 full_html=False, include_plotlyjs='cdn')

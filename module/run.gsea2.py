@@ -281,7 +281,7 @@ def main():
     # Negative Enrichment Report
     gsea_neg = gsea_stats[gsea_stats.loc[:, "Enrichment"] < 0]
     gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
-        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(False)).reset_index()
+        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(True)).reset_index()
     gsea_neg.insert(1, 'Details', '')
     for gs in range(len(gsea_neg)):
         # Compute original set size, filtered set, and filtered size
@@ -292,7 +292,7 @@ def main():
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=True)
+                ranked_genes.columns[0], ascending=False)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
             gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
                 .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\

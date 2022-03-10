@@ -54,7 +54,7 @@ def main():
                     dest="rank_metric", help="Metric for ranking genes.")
     ap.add_argument("--alg", action="store", dest="method",
                     help="Enrichment Method. 'ks' (old GSEA) and 'js' (next gen GSEA) supported.")
-    ap.add_argument("--weight", action="store", dest="weight", default=1.0,
+    ap.add_argument("--exponent", action="store", dest="exponent", default=1.0,
                     type=float, help="Weight for ks or auc enrichment method.")
     ap.add_argument("--max", action="store", dest="max",
                                     default=500, type=int, help="Max gene set size.")
@@ -168,7 +168,7 @@ def main():
         "permutation": options.perm,
         "metric": options.rank_metric,
         "algorithm": options.method,
-        "power": options.weight,
+        "exponent": options.exponent,
         "maximum_gene_set_size": options.max,
         "minimum_gene_set_size": options.min,
         "remove_gene_set_genes": True,
@@ -191,7 +191,7 @@ def main():
     results = GSEAlib.result_paths(os.getcwd())
     plots = [result for result in results if "plot" in result]
     gsea_stats = pandas.read_csv(
-        'float.set_x_statistic.tsv', sep="\t", index_col=0)
+        'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
         'gene_x_metric_x_score.tsv', sep="\t", index_col=0)
 
@@ -201,12 +201,12 @@ def main():
         gsea_stats.loc[gsea_stats.index[gs],
                        'Size'] = passing_lengths[gsea_stats.index[gs]]
     gsea_stats.to_csv(
-        'float.set_x_statistic.tsv', sep="\t")
+        'set_x_statistic_x_number.tsv', sep="\t")
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
     gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
-        ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, False)).reset_index()
+        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(False)).reset_index()
     gsea_pos.insert(1, 'Details', '')
     for gs in range(len(gsea_pos)):
         # Compute original set size, filtered set, and filtered size
@@ -217,7 +217,7 @@ def main():
         if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=False)
+                ranked_genes.columns[0], ascending=True)
             gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
             gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
                 .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
@@ -292,7 +292,7 @@ def main():
     # Negative Enrichment Report
     gsea_neg = gsea_stats[gsea_stats.loc[:, "Enrichment"] < 0]
     gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
-        ["Q-value", "P-value", "Enrichment"], axis=0, ascending=(True, True, True)).reset_index()
+        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(True)).reset_index()
     gsea_neg.insert(1, 'Details', '')
     for gs in range(len(gsea_neg)):
         # Compute original set size, filtered set, and filtered size
@@ -386,11 +386,11 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] >= 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ",  b(str(labels[0]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Q-value'] < 0.05)])) + " gene sets are significant at FDR qValue < 25%"),
+            gsea_stats['Adjusted global pvalue'] < 0.05)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['P-value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
+            gsea_stats['Local pvalue'] < 0.01)])) + " gene sets are significantly enriched at local (permutation based) pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['P-value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
+            gsea_stats['Local pvalue'] < 0.05)])) + " gene sets are significantly enriched at local (permutation based) pValue < 5%"),
         li(a("Detailed enrichment results in html format",
              href="gsea_report_for_positive_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",
@@ -402,11 +402,11 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ", b(str(labels[1]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Q-value'] < 0.05)])) + " gene sets are significant at FDR qValue < 25%"),
+            gsea_stats['Adjusted global pvalue'] < 0.05)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['P-value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
+            gsea_stats['Local pvalue'] < 0.01)])) + " gene sets are significantly enriched at local (permutation based) pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['P-value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
+            gsea_stats['Local pvalue'] < 0.05)])) + " gene sets are significantly enriched at local (permutation based) pValue pValue < 5%"),
         li(a("Detailed enrichment results in html format",
              href="gsea_report_for_negative_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",

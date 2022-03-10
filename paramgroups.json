@@ -19,7 +19,7 @@
         "parameters": [
             "metric.for.ranking.genes",
             "enrichment.algorithm",
-            "weight",
+            "weighting.exponent",
             "max.gene.set.size",
             "min.gene.set.size",
             "seed.for.permutation",

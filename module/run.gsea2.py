@@ -54,7 +54,7 @@ def main():
                     dest="rank_metric", help="Metric for ranking genes.")
     ap.add_argument("--alg", action="store", dest="method",
                     help="Enrichment Method. 'ks' (old GSEA) and 'js' (next gen GSEA) supported.")
-    ap.add_argument("--weight", action="store", dest="weight", default=1.0,
+    ap.add_argument("--exponent", action="store", dest="exponent", default=1.0,
                     type=float, help="Weight for ks or auc enrichment method.")
     ap.add_argument("--max", action="store", dest="max",
                                     default=500, type=int, help="Max gene set size.")
@@ -168,7 +168,7 @@ def main():
         "permutation": options.perm,
         "metric": options.rank_metric,
         "algorithm": options.method,
-        "power": options.weight,
+        "exponent": options.exponent,
         "maximum_gene_set_size": options.max,
         "minimum_gene_set_size": options.min,
         "remove_gene_set_genes": True,

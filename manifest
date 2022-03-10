@@ -1,11 +1,11 @@
 #GSEA2
-#Thu Mar 10 06:23:05 UTC 2022
+#Thu Mar 10 07:02:28 UTC 2022
 JVMLevel=
 LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.1
 author=
-commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.algorithm> <weight> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
+commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.algorithm> <weighting.exponent> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
 cpuType=any
-description=New GSEA
+description=New GSEA (GSEA.jl 0.8.1)
 documentationUrl=
 fileFormat=
 job.cpuCount=3
@@ -31,14 +31,14 @@ p10_value=kolmogorov_smirnov\=Kolmogorov-Smirnov (Classic GSEA);jensen_shannon\=
 p11_MODE=
 p11_TYPE=Floating Point
 p11_default_value=1
-p11_description=Weight for ks or auc enrichment method.<br>\nSetting 1.0 is equivalent to the old "scoring scheme\=weighted" option.<br> \nSetting 0 when running the Kolmogorov-Smirnov enrichment method is equivalent to the unweighted Kolmogorov-Smirnov statistic ("scoring scheme\=classic" option in prior versions of GSEA)
+p11_description=Exponent for weighting the Kolmogorov-Smirnov or AUC enrichment method.<br>\nSetting 1.0 is equivalent to the old "scoring scheme\=weighted" option.<br> \nSetting 0 when running the Kolmogorov-Smirnov enrichment method is equivalent to the unweighted Kolmogorov-Smirnov statistic ("scoring scheme\=classic" option in prior versions of GSEA)
 p11_fileFormat=
-p11_flag=--weight\=
-p11_name=weight
+p11_flag=--exponent\=
+p11_name=weighting.exponent
 p11_numValues=1..1
 p11_optional=
-p11_prefix=--weight\=
-p11_prefix_when_specified=--weight\=
+p11_prefix=--exponent\=
+p11_prefix_when_specified=--exponent\=
 p11_type=java.lang.Float
 p11_value=
 p12_MODE=
@@ -237,4 +237,4 @@ src.repo=
 taskDoc=
 taskType=
 userid=acastanza
-version=WIP Enrichment Reports
+version=GSEA.jl 0.8.1

@@ -52,7 +52,7 @@ def main():
                     default="none", help="Chip file used for performing collapse.")
     ap.add_argument("--metric", action="store",
                     dest="rank_metric", help="Metric for ranking genes.")
-    ap.add_argument("--method", action="store", dest="method",
+    ap.add_argument("--alg", action="store", dest="method",
                     help="Enrichment Method. 'ks' (old GSEA) and 'js' (next gen GSEA) supported.")
     ap.add_argument("--weight", action="store", dest="weight", default=1.0,
                     type=float, help="Weight for ks or auc enrichment method.")
@@ -168,7 +168,7 @@ def main():
         "permutation": options.perm,
         "metric": options.rank_metric,
         "algorithm": options.method,
-        "weight": options.weight,
+        "power": options.weight,
         "maximum_gene_set_size": options.max,
         "minimum_gene_set_size": options.min,
         "remove_gene_set_genes": True,

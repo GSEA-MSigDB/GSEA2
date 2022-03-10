@@ -1,15 +1,15 @@
 #GSEA2
-#Tue Mar 08 21:57:33 UTC 2022
+#Thu Mar 10 00:39:42 UTC 2022
 JVMLevel=
-LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.0.4
+LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.1
 author=
-commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.method> <weight> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
+commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.algorithm> <weight> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
 cpuType=any
 description=New GSEA
 documentationUrl=
 fileFormat=
 job.cpuCount=3
-job.docker.image=acastanza/gsea2\:0.7.1
+job.docker.image=acastanza/gsea2\:0.8.0
 job.memory=
 job.walltime=
 language=any
@@ -17,17 +17,17 @@ name=GSEA2
 os=any
 p10_MODE=
 p10_TYPE=TEXT
-p10_default_value=ks
-p10_description=Which method to use for running GSEA, the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), or the new Jensen-Shannon metric (GSEA-Future).
+p10_default_value=kolmogorov_smirnov
+p10_description=Which algorithm to use for running GSEA, the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), or the new Jensen-Shannon metric (GSEA-Future).
 p10_fileFormat=
-p10_flag=--method\=
-p10_name=enrichment.method
+p10_flag=--alg\=
+p10_name=enrichment.algorithm
 p10_numValues=1..1
 p10_optional=
-p10_prefix=--method\=
-p10_prefix_when_specified=--method\=
+p10_prefix=--alg\=
+p10_prefix_when_specified=--alg\=
 p10_type=java.lang.String
-p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);js\=Jensen-Shannon (GSEA-Future)
+p10_value=kolmogorov_smirnov\=Kolmogorov-Smirnov (Classic GSEA);jensen_shannon\=Jensen-Shannon (GSEA-Future)
 p11_MODE=
 p11_TYPE=Floating Point
 p11_default_value=1

@@ -18,7 +18,7 @@
         "hidden": false,
         "parameters": [
             "metric.for.ranking.genes",
-            "enrichment.method",
+            "enrichment.algorithm",
             "weight",
             "max.gene.set.size",
             "min.gene.set.size",

@@ -194,6 +194,8 @@ def main():
         'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
         'gene_x_metric_x_score.tsv', sep="\t", index_col=0)
+    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale='RdBu_r', zmid=0)[
+        'colorscale']  # Create a colorscale for the ranking subset
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -239,7 +241,7 @@ def main():
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'title': {'text': 'Row Normalized Expression', 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10,
                                                                                              'orientation': 'h', 'xanchor': 'left', 'yanchor': 'bottom'}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Add a plot containing the gene rankings in the gene list
-            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale='RdBu_r', colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
+            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
                 ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""), row=2, col=2)
             # Set the plot layout parameters to fit the data dimensions
             # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
@@ -325,7 +327,7 @@ def main():
             fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'title': {'text': 'Row Normalized Expression', 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10,
                                                                                              'orientation': 'h', 'xanchor': 'left', 'yanchor': 'bottom'}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
             # Add a plot containing the gene rankings in the gene list
-            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale='RdBu_r', colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
+            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
                 ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""), row=2, col=2)
             # Set the plot layout parameters to fit the data dimensions
             # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]

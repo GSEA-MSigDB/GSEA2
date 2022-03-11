@@ -245,10 +245,10 @@ def main():
             # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
             # ⎡ (2,1) x3,y3 ⎤  ⎡ (2,2) x4,y4 ⎤
             fig = fig.update_layout(
-                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', scaleanchor='y3', showticklabels=True), yaxis=dict(),
+                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', showticklabels=True, scaleanchor='x3'), yaxis=dict(),
                 xaxis2=dict(), yaxis2=dict(),
-                xaxis3=dict(scaleanchor='y3', showticklabels=False), yaxis3=dict(dtick=1, showticklabels=True, scaleanchor='x'),
-                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False, scaleanchor='x'),
+                xaxis3=dict(showticklabels=False), yaxis3=dict(dtick=1, showticklabels=True),
+                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False),
                 margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=250.01 + (22 * len(phenotypes)))
 
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
@@ -331,10 +331,10 @@ def main():
             # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
             # ⎡ (2,1) x3,y3 ⎤  ⎡ (2,2) x4,y4 ⎤
             fig = fig.update_layout(
-                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', scaleanchor='y3', showticklabels=True), yaxis=dict(),
+                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', showticklabels=True, scaleanchor='x3'), yaxis=dict(),
                 xaxis2=dict(), yaxis2=dict(),
-                xaxis3=dict(scaleanchor='y3', showticklabels=False), yaxis3=dict(dtick=1, showticklabels=True, scaleanchor='x'),
-                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False, scaleanchor='x'),
+                xaxis3=dict(showticklabels=False), yaxis3=dict(dtick=1, showticklabels=True),
+                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False),
                 margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=250.01 + (22 * len(phenotypes)))
             # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
             heatmap_fig = fig.to_html(

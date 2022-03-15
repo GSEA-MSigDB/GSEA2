@@ -16,6 +16,7 @@ from dominate.tags import *
 from dominate.util import raw
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+from scipy.integrate import simps
 
 
 # Better boolean command line parsing
@@ -381,7 +382,7 @@ def main():
         title="GSEA Report for Dataset " + os.path.splitext(os.path.basename(options.dataset))[0])
     gsea_index += h1("GSEA Report for Dataset " +
                      os.path.splitext(os.path.basename(options.dataset))[0])
-    gsea_index += h2(labels[0] + " vs. " + labels[1])
+    gsea_index += h2(str(labels[0]) + " vs. " + str(labels[1]))
     gsea_index += h3("Enrichment in phenotype: " + str(
         labels[0]) + " (" + str(sum(phenotypes['Phenotypes'] == 0)) + " samples)")
     gsea_index += ul(
@@ -432,6 +433,19 @@ def main():
            str(len(genesets) - len(passing_sets)) + " / " + str(len(genesets)) + " gene sets"),
         li("The remaining " + str(len(passing_sets)) +
            " gene sets were used in the analysis")
+    )
+    gsea_index += h3("Gene markers for the " +
+                     str(labels[0]) + " vs. " + str(labels[1]) + " comparison")
+    gsea_index += ul(
+        li("The dataset has " + str(len(ranked_genes)) + "features (genes)"),
+        li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0)) + " (" + str(round(
+            numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values > 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
+        li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(
+            numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values < 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
+        li(a("Detailed rank ordered gene list for all features in the dataset (.tsv file)",
+             href='gene_x_metric_x_score.tsv')),
+        li(a("Heat map and gene list correlation profile for all features in the dataset",
+             href='heat_map_corr_plot.html'))
     )
     gsea_index += h3("Reproducibility")
     gsea_index += ul(

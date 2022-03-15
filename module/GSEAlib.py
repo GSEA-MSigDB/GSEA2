@@ -249,3 +249,21 @@ def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending)
         full_html=False, include_plotlyjs='cdn')
     # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
     return(heatmap_fig)
+
+
+# Plot Barchart of gene ranking
+def plot_set_heatmap(ranked_genes, labels):
+    corplot_data = ranked_genes.sort_values(
+        ranked_genes.columns[0], ascending=False)
+    corplot_bar = px.bar(corplot_data, y=corplot_data.columns[0], color=corplot_data.columns[0],
+                         color_continuous_scale='RdBu_r', color_continuous_midpoint=0)
+    corplot_bar = corplot_bar.update_traces(marker_line_width=0)
+    corplot_bar = corplot_bar.add_vline(x=numpy.where(numpy.diff(numpy.sign(corplot_data.iloc[:, 0].values)))[
+        0][0] + 1, line_dash="dashdot", annotation_text="zero-cross", line_color="grey")
+    corplot_bar = corplot_bar.add_annotation(x=0, y=0, text=str(
+        labels[0]) + " (positively correlated)", font={'color': "#EF553B"}, xanchor='left', yanchor='top', showarrow=False)
+    corplot_bar = corplot_bar.add_annotation(x=len(corplot_data), y=0, text=str(
+        labels[1]) + " (negatively correlated)", font={'color': "#636EFA"}, xanchor='right', yanchor='bottom', showarrow=False)
+    corr_plot_fig = corplot_bar.to_html(
+        full_html=False, include_plotlyjs='cdn', default_width='50%')
+    return(corr_plot_fig)

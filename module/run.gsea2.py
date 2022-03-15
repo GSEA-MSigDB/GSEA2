@@ -212,6 +212,7 @@ def main():
         unfiltered_len = len(genesets[gsea_pos.iloc[gs]['index']])
         filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
             list(ranked_genes.index.values)))
+        filtered_len = len(filtered_gs)
         if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             heatmap_fig = GSEAlib.plot_set_heatmap(
@@ -260,6 +261,7 @@ def main():
         unfiltered_len = len(genesets[gsea_neg.iloc[gs]['index']])
         filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
             list(ranked_genes.index.values)))
+        filtered_len = len(filtered_gs)
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
             heatmap_fig = GSEAlib.plot_set_heatmap(
@@ -297,6 +299,23 @@ def main():
     gsea_neg = gsea_neg.reindex(list(range(1, len(gsea_neg))), axis=0)
     gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html',
                           'w'), render_links=True, escape=False, justify='center')
+
+    # Create Report for Dataset top markers
+    dataset_markers = numpy.append(ranked_genes.sort_values(ranked_genes.columns[0], ascending=False).index.values[0:50], ranked_genes.sort_values(
+        ranked_genes.columns[0], ascending=False).index.values[len(ranked_genes) - 50:len(ranked_genes)])
+    heatmap_fig = GSEAlib.plot_set_heatmap(
+        input_ds, phenotypes, ranked_genes, list(dataset_markers), ascending=False)
+    corr_plot_fig = GSEAlib.plot_gene_rankings(ranked_genes, labels)
+    doc = dominate.document(title="Heat map and correlation plot for " +
+                            os.path.splitext(os.path.basename(options.dataset))[0])
+    doc += h3("Row Normalized Expression Heatmap for the top 50 features for each phenotype in " +
+              os.path.splitext(os.path.basename(options.dataset))[0])  # add a title for the heatmap
+    doc += raw(heatmap_fig)
+    doc += raw("<br>")
+    doc += h3("Ranked Gene List Correlation Profile")
+    doc += raw(corr_plot_fig)
+    with open("heat_map_corr_plot.html", 'w') as f:
+        f.write(doc.render())
 
     # Create Report Index using dominate package
     gsea_index = dominate.document(

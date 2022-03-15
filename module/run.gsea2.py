@@ -304,7 +304,7 @@ def main():
     dataset_markers = numpy.append(ranked_genes.sort_values(ranked_genes.columns[0], ascending=False).index.values[0:50], ranked_genes.sort_values(
         ranked_genes.columns[0], ascending=False).index.values[len(ranked_genes) - 50:len(ranked_genes)])
     heatmap_fig = GSEAlib.plot_set_heatmap(
-        input_ds, phenotypes, ranked_genes, list(dataset_markers), ascending=False)
+        input_ds, phenotypes, ranked_genes, list(dataset_markers), ascending=True)
     corr_plot_fig = GSEAlib.plot_gene_rankings(ranked_genes, labels)
     doc = dominate.document(title="Heat map and correlation plot for " +
                             os.path.splitext(os.path.basename(options.dataset))[0])

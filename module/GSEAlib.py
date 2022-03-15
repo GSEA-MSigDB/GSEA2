@@ -4,6 +4,7 @@ import pandas
 import numpy
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+import plotly.express as px
 
 
 # Simple implementation of a GCT parser
@@ -252,7 +253,7 @@ def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending)
 
 
 # Plot Barchart of gene ranking
-def plot_set_heatmap(ranked_genes, labels):
+def plot_gene_rankings(ranked_genes, labels):
     corplot_data = ranked_genes.sort_values(
         ranked_genes.columns[0], ascending=False)
     corplot_bar = px.bar(corplot_data, y=corplot_data.columns[0], color=corplot_data.columns[0],

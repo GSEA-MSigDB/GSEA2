@@ -14,8 +14,6 @@ import numpy
 import dominate
 from dominate.tags import *
 from dominate.util import raw
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 from scipy.integrate import simps
 
 
@@ -195,8 +193,6 @@ def main():
         'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
         'gene_x_metric_x_score.tsv', sep="\t", index_col=0)
-    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale='RdBu_r', zmid=0)[
-        'colorscale']  # Create a colorscale for the ranking subset
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -216,48 +212,10 @@ def main():
         unfiltered_len = len(genesets[gsea_pos.iloc[gs]['index']])
         filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
             list(ranked_genes.index.values)))
-        filtered_len = len(filtered_gs)
         if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
-            ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=True)
-            gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
-            gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
-                .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
-                .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
-            # Construct plotly heatmap
-            # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
-            layout = [[{}, {}], [{"rowspan": len(gs_expression_norm), "colspan": 1},
-                                 {"rowspan": len(gs_expression_norm), "colspan": 1}]]
-            layout.extend([[None, None]] * (len(gs_expression_norm) - 1))
-            heights = [1 / (1 + len(gs_expression_norm))] * \
-                (1 + len(gs_expression_norm))
-            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=2, specs=layout, shared_xaxes=False,
-                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)), column_widths=[len(gs_expression_norm.columns) / (1 + len(gs_expression_norm.columns)), 1 / (1 + len(gs_expression_norm.columns))], horizontal_spacing=0.01)
-            # Populate the first plot slot with the phenotype label information
-            # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
-            fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
-                phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
-            # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
-            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'title': {'text': 'Row Normalized Expression', 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10,
-                                                                                             'orientation': 'h', 'xanchor': 'left', 'yanchor': 'bottom'}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
-            # Add a plot containing the gene rankings in the gene list
-            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
-                ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""), row=2, col=2)
-            # Set the plot layout parameters to fit the data dimensions
-            # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
-            # ⎡ (2,1) x3,y3 ⎤  ⎡ (2,2) x4,y4 ⎤
-            fig = fig.update_layout(
-                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', showticklabels=True, scaleanchor='x3'), yaxis=dict(),
-                xaxis2=dict(), yaxis2=dict(),
-                xaxis3=dict(showticklabels=False), yaxis3=dict(dtick=1, showticklabels=True),
-                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False),
-                margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=250.01 + (22 * len(phenotypes)))
-
-            # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
-            heatmap_fig = fig.to_html(
-                full_html=False, include_plotlyjs='cdn')
-            # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
+            heatmap_fig = GSEAlib.plot_set_heatmap(
+                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
@@ -302,47 +260,10 @@ def main():
         unfiltered_len = len(genesets[gsea_neg.iloc[gs]['index']])
         filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
             list(ranked_genes.index.values)))
-        filtered_len = len(filtered_gs)
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
             # Only do heatmap work if we need to
-            ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
-                ranked_genes.columns[0], ascending=False)
-            gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
-            gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
-                .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
-                .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
-            # Construct plotly heatmap
-            # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
-            layout = [[{}, {}], [{"rowspan": len(gs_expression_norm), "colspan": 1},
-                                 {"rowspan": len(gs_expression_norm), "colspan": 1}]]
-            layout.extend([[None, None]] * (len(gs_expression_norm) - 1))
-            heights = [1 / (1 + len(gs_expression_norm))] * \
-                (1 + len(gs_expression_norm))
-            fig = make_subplots(rows=1 + len(gs_expression_norm), cols=2, specs=layout, shared_xaxes=False,
-                                row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)), column_widths=[len(gs_expression_norm.columns) / (1 + len(gs_expression_norm.columns)), 1 / (1 + len(gs_expression_norm.columns))], horizontal_spacing=0.01)
-            # Populate the first plot slot with the phenotype label information
-            # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
-            fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
-                phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
-            # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
-            fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'title': {'text': 'Row Normalized Expression', 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10,
-                                                                                             'orientation': 'h', 'xanchor': 'left', 'yanchor': 'bottom'}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
-            # Add a plot containing the gene rankings in the gene list
-            fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
-                ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""), row=2, col=2)
-            # Set the plot layout parameters to fit the data dimensions
-            # [ (1,1) x,y   ]  [ (1,2) x2,y2 ]
-            # ⎡ (2,1) x3,y3 ⎤  ⎡ (2,2) x4,y4 ⎤
-            fig = fig.update_layout(
-                xaxis=dict(dtick=1, side='top', tickangle=-90, type='category', showticklabels=True, scaleanchor='x3'), yaxis=dict(),
-                xaxis2=dict(), yaxis2=dict(),
-                xaxis3=dict(showticklabels=False), yaxis3=dict(dtick=1, showticklabels=True),
-                xaxis4=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis4=dict(showticklabels=False),
-                margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=250.01 + (22 * len(phenotypes)))
-            # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
-            heatmap_fig = fig.to_html(
-                full_html=False, include_plotlyjs='cdn')
-            # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
+            heatmap_fig = GSEAlib.plot_set_heatmap(
+                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
             # Edit in the needed information to the per-set enrichment reports
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                 deep=True)

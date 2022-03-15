@@ -260,7 +260,7 @@ def plot_gene_rankings(ranked_genes, labels):
                          color_continuous_scale='RdBu_r', color_continuous_midpoint=0)
     corplot_bar = corplot_bar.update_traces(marker_line_width=0)
     corplot_bar = corplot_bar.add_vline(x=numpy.where(numpy.diff(numpy.sign(corplot_data.iloc[:, 0].values)))[
-        0][0] + 1, line_dash="dashdot", annotation_text="zero-cross", line_color="grey")
+        0][0] + 0.5, line_dash="dashdot", annotation_text="zero-cross", line_color="grey")
     corplot_bar = corplot_bar.add_annotation(x=0, y=0, text=str(
         labels[0]) + " (positively correlated)", font={'color': "#EF553B"}, xanchor='left', yanchor='top', showarrow=False)
     corplot_bar = corplot_bar.add_annotation(x=len(corplot_data), y=0, text=str(

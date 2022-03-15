@@ -377,7 +377,7 @@ def main():
     gsea_index += h3("Gene markers for the " +
                      str(labels[0]) + " vs. " + str(labels[1]) + " comparison")
     gsea_index += ul(
-        li("The dataset has " + str(len(ranked_genes)) + "features (genes)"),
+        li("The dataset has " + str(len(ranked_genes)) + " features (genes)"),
         li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0)) + " (" + str(round(
             numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values > 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
         li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(

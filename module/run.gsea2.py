@@ -181,7 +181,7 @@ def main():
         json.dump(gsea_settings, path,  indent=2)
 
     # Run GSEA
-    subprocess.check_output(['gsea', 'standard', 'input/gsea_settings.json', 'input/filtered_set_to_genes.json',
+    subprocess.check_output(['gsea', 'metric-rank', 'input/gsea_settings.json', 'input/filtered_set_to_genes.json',
                              'input/target_by_sample.tsv', 'input/gene_by_sample.tsv', os.getcwd()])
 
     # Parse Results
@@ -205,7 +205,7 @@ def main():
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
     gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
-        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(False)).reset_index()
+        ["Enrichment"], axis=0, ascending=(False)).reset_index()
     gsea_pos.insert(1, 'Details', '')
     for gs in range(len(gsea_pos)):
         # Compute original set size, filtered set, and filtered size
@@ -254,7 +254,7 @@ def main():
     # Negative Enrichment Report
     gsea_neg = gsea_stats[gsea_stats.loc[:, "Enrichment"] < 0]
     gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
-        ["Gene-set-size-normalized enrichment"], axis=0, ascending=(True)).reset_index()
+        ["Enrichment"], axis=0, ascending=(True)).reset_index()
     gsea_neg.insert(1, 'Details', '')
     for gs in range(len(gsea_neg)):
         # Compute original set size, filtered set, and filtered size
@@ -331,9 +331,9 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
             gsea_stats['Adjusted global pvalue'] < 0.05)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Local pvalue'] < 0.01)])) + " gene sets are significantly enriched at local (permutation based) pValue < 1%"),
+            gsea_stats['Global pvalue'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Local pvalue'] < 0.05)])) + " gene sets are significantly enriched at local (permutation based) pValue < 5%"),
+            gsea_stats['Global pvalue'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
         li(a("Detailed enrichment results in html format",
              href="gsea_report_for_positive_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",
@@ -347,9 +347,9 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
             gsea_stats['Adjusted global pvalue'] < 0.05)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Local pvalue'] < 0.01)])) + " gene sets are significantly enriched at local (permutation based) pValue < 1%"),
+            gsea_stats['Global pvalue'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Local pvalue'] < 0.05)])) + " gene sets are significantly enriched at local (permutation based) pValue pValue < 5%"),
+            gsea_stats['Global pvalue'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
         li(a("Detailed enrichment results in html format",
              href="gsea_report_for_negative_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",

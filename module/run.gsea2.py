@@ -105,8 +105,8 @@ def main():
             description_loc = input_ds.columns.str.lower().to_list().index('description')
             input_ds.drop(
                 input_ds.columns[[description_loc]], axis=1, inplace=True)
-            input_ds.index.name = "Name"
-            input_length = len(input_ds.index)
+        input_ds.index.name = "Name"
+        input_length = len(input_ds.index)
         if options.collapse != "none":
             chip_file = GSEAlib.read_chip(options.chip)
             input_ds = GSEAlib.collapse_dataset(

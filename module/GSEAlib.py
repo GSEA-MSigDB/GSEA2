@@ -2,6 +2,7 @@ import os
 import sys
 import pandas
 import numpy
+import json
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import plotly.express as px
@@ -168,7 +169,7 @@ def read_sets(gene_sets_dbfile_list):
                     genesets[gene_set_name] = list(set(gene_set_tags))
                     # Not used yet but should end up in reports eventually
                     genesets_descr[gene_set_name] = gene_set_desc
-        else:  # is a gmx formatted file
+        elif gsdb_split[-1] == "gmx":  # is a gmx formatted file
             df_temp = pandas.read_csv(
                 gsdb, sep='\t', skip_blank_lines=True).transpose().dropna(how='all')
             for i in range(len(df_temp)):
@@ -179,6 +180,17 @@ def read_sets(gene_sets_dbfile_list):
                 genesets[gene_set_name] = list(set(gene_set_tags))
                 # Not used yet but should end up in reports eventually
                 genesets_descr[gene_set_name] = gene_set_desc
+        elif gsdb_split[-1] == "json":
+            with open(gsdb) as f:
+                temp = json.load(f)
+            gene_set_tags = {key: temp[key]['geneSymbols']
+                             for key in temp.keys()}
+            genesets.update(gene_set_tags)
+            gene_set_desc = {key: temp[key]['msigdbURL']
+                             for key in temp.keys()}
+            genesets_descr.update(gene_set_desc)
+        else:
+            sys.exit("The Gene Set Database format was not recognised.")
     genesets_len = {key: len(value) for key, value in genesets.items()}
     return {'genesets': genesets, 'descriptions': genesets_descr, 'lengths': genesets_len}
 

@@ -264,7 +264,7 @@ def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending)
     return(heatmap_fig)
 
 
-# Plot Barchart of gene ranking
+# Plot Barchart of top gene ranking
 def plot_gene_rankings(ranked_genes, labels):
     corplot_data = ranked_genes.sort_values(
         ranked_genes.columns[0], ascending=False)
@@ -280,3 +280,27 @@ def plot_gene_rankings(ranked_genes, labels):
     corr_plot_fig = corplot_bar.to_html(
         full_html=False, include_plotlyjs='cdn', default_width='50%')
     return(corr_plot_fig)
+
+
+# Plot Preranked Heatmap for a given set of genes
+def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending):
+    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale='RdBu_r', zmid=0)[
+        'colorscale']  # Create a colorscale for the ranking subset
+    filtered_len = len(filtered_gs)
+    ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
+        ranked_genes.columns[0], ascending=ascending)
+    gs_expression = input_ds.loc[ranked_gs_genes.index].copy()
+    gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
+        .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
+        .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
+    # Construct plotly heatmap for the ranked list
+    fig = go.Figure(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
+        ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""))
+    fig = fig.update_layout(
+        xaxis=dict(dtick=1, side='top', tickangle=-90, showticklabels=True, yaxis=dict(dtick=1, showticklabels=True),
+                   margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len)))
+    # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
+    heatmap_fig = fig.to_html(
+        full_html=False, include_plotlyjs='cdn')
+    # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
+    return(heatmap_fig)

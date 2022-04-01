@@ -297,8 +297,8 @@ def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, as
     fig = go.Figure(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
         ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""))
     fig = fig.update_layout(
-        xaxis=dict(dtick=1, side='top', tickangle=-90, showticklabels=True, yaxis=dict(dtick=1, showticklabels=True),
-                   margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len)))
+        xaxis=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis=dict(dtick=1, showticklabels=True),
+        margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len))
     # save the <div> into python ## Reference for output options: https://plotly.com/python-api-reference/generated/plotly.io.to_html.html
     heatmap_fig = fig.to_html(
         full_html=False, include_plotlyjs='cdn')

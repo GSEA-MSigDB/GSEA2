@@ -365,7 +365,7 @@ def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
     neg_perm = random_score_matrix[random_score_matrix <= 0]
     xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
                           numpy.max(pos_perm) + 0.1, 0.0025)
-    set_kde = gaussian_kde(random_score_matrix.loc)
+    set_kde = gaussian_kde(random_score_matrix)
     # Compute Positive Permutation Statistics
     pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=set_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
         width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)')

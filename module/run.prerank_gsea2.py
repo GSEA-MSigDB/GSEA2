@@ -229,7 +229,7 @@ def main():
             heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
                 input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
             null_es_fig = GSEAlib.plot_set_perm_displot_indepkde(
-                random_es_distribution.loc[report_set.columns.values[0]], report_set.loc['Enrichment'])
+                random_es_distribution.loc[report_set.columns.values[0]], report_set.loc['Enrichment'].values[0])
             # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
@@ -285,7 +285,7 @@ def main():
             heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
                 input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
             null_es_fig = GSEAlib.plot_set_perm_displot_indepkde(
-                random_es_distribution.loc[report_set.columns.values[0]], report_set.loc['Enrichment'])
+                random_es_distribution.loc[report_set.columns.values[0]], report_set.loc['Enrichment'].values[0])
             # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])

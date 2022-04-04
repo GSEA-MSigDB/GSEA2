@@ -315,8 +315,8 @@ def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, as
 
 # Plot Permutation Distplot with Indepdenent KDE
 def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
-    pos_perm = random_score_matrix.loc[random_score_matrix.loc >= 0]
-    neg_perm = random_score_matrix.loc[random_score_matrix.loc <= 0]
+    pos_perm = random_score_matrix[random_score_matrix >= 0]
+    neg_perm = random_score_matrix[random_score_matrix <= 0]
     xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
                           numpy.max(pos_perm) + 0.1, 0.0025)
     # Compute Positive Permutation Statistics
@@ -361,8 +361,8 @@ def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
 
 # Plot Permutation Distplot with Joint KDE
 def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
-    pos_perm = random_score_matrix.loc[random_score_matrix.loc >= 0]
-    neg_perm = random_score_matrix.loc[random_score_matrix.loc <= 0]
+    pos_perm = random_score_matrix[random_score_matrix >= 0]
+    neg_perm = random_score_matrix[random_score_matrix <= 0]
     xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
                           numpy.max(pos_perm) + 0.1, 0.0025)
     set_kde = gaussian_kde(random_score_matrix.loc)

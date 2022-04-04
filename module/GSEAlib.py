@@ -337,7 +337,7 @@ def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
                          marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)')
     # Create Plot
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
-                                 {}]], row_heights=[0.8, 0.2], shared_xaxes=True)
+                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.05, shared_xaxes=True)
     set_distplot = set_distplot.add_trace(
         set_pos_histogram, secondary_y=False, row=1, col=1)
     set_distplot = set_distplot.add_trace(
@@ -382,7 +382,7 @@ def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
                          marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)')
     # Create Plot
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
-                                 {}]], row_heights=[0.8, 0.2], shared_xaxes=True)
+                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.05, shared_xaxes=True)
     set_distplot = set_distplot.add_trace(
         set_pos_histogram, secondary_y=False, row=1, col=1)
     set_distplot = set_distplot.add_trace(

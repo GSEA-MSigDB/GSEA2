@@ -198,6 +198,8 @@ def main():
         'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
         'input/gene_by_sample.tsv', sep="\t", index_col=0)
+    random_es_distribution = pandas.read_csv(
+        'set_x_random_x_enrichment.tsv', sep="\t", index_col=0)
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -219,13 +221,16 @@ def main():
             list(ranked_genes.index.values)))
         filtered_len = len(filtered_gs)
         if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
-            # Only do heatmap work if we need to
-            heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
-                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
-            # Edit in the needed information to the per-set enrichment reports
+            # Get Enrichment Statistics for the set of interest
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
             report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
+            # Only do plotting work if we need to
+            heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
+                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
+            null_es_fig = GSEAlib.plot_set_perm_displot_indepkde(
+                random_score_matrix[report_set['Gene Set']], report_set['Enrichment'])
+            # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
@@ -241,6 +246,10 @@ def main():
             doc += h3("Row Normalized Expression Heatmap for " +
                       gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
+            doc += raw("<br>")
+            doc += h3("Random Enrichment Score Distribution for" +
+                      gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
+            doc += raw(null_es_fig)
             with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
             # HTMLify the positive report
@@ -268,13 +277,16 @@ def main():
             list(ranked_genes.index.values)))
         filtered_len = len(filtered_gs)
         if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
-            # Only do heatmap work if we need to
-            heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
-                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
-            # Edit in the needed information to the per-set enrichment reports
+            # Get Enrichment Statistics for the set of interest
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                 deep=True)
             report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
+            # Only do plotting work if we need to
+            heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
+                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
+            null_es_fig = GSEAlib.plot_set_perm_displot_indepkde(
+                random_score_matrix[report_set['Gene Set']], report_set['Enrichment'])
+            # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
@@ -290,6 +302,10 @@ def main():
             doc += h3("Row Normalized Expression Heatmap for " +
                       gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
+            doc += raw("<br>")
+            doc += h3("Random Enrichment Score Distribution for" +
+                      gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
+            doc += raw(null_es_fig)
             with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
                 f.write(doc.render())
             # HTMLify the negative report

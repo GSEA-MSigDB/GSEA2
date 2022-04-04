@@ -3,9 +3,12 @@ import sys
 import pandas
 import numpy
 import json
+import math
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import plotly.express as px
+# import plotly.figure_factory as ff
+from scipy.stats import gaussian_kde
 
 
 # Simple implementation of a GCT parser
@@ -234,8 +237,6 @@ def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending)
     layout = [[{}, {}], [{"rowspan": len(gs_expression_norm), "colspan": 1},
                          {"rowspan": len(gs_expression_norm), "colspan": 1}]]
     layout.extend([[None, None]] * (len(gs_expression_norm) - 1))
-    heights = [1 / (1 + len(gs_expression_norm))] * \
-        (1 + len(gs_expression_norm))
     fig = make_subplots(rows=1 + len(gs_expression_norm), cols=2, specs=layout, shared_xaxes=False,
                         row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)), column_widths=[len(gs_expression_norm.columns) / (1 + len(gs_expression_norm.columns)), 1 / (1 + len(gs_expression_norm.columns))], horizontal_spacing=0.01)
     # Populate the first plot slot with the phenotype label information
@@ -293,9 +294,15 @@ def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, as
     gs_expression_norm = gs_expression.subtract(gs_expression.min(axis=1), axis=0)\
         .divide(gs_expression.max(axis=1) - gs_expression.min(axis=1), axis=0)\
         .combine_first(gs_expression)  # Row Normalize Gene Set gene expression
+    # Construct plotly heatmap
+    # Instantiate a plot containing slots for the main heatmap and a slot for the phenotype label bar
+    layout = [[{"rowspan": len(gs_expression_norm), "colspan": 1}]]
+    layout.extend([[None]] * (len(gs_expression_norm) - 1))
+    fig = make_subplots(rows=len(gs_expression_norm), cols=1, specs=layout, shared_xaxes=False,
+                        row_heights=[1 / len(gs_expression_norm)] * len(gs_expression_norm), column_widths=[1], horizontal_spacing=0.01)
     # Construct plotly heatmap for the ranked list
-    fig = go.Figure(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
-        ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""))
+    fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'right'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'v', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
+        ranked_genes.max()), zmin=float(ranked_genes.min()), x=ranked_gs_genes.columns.to_list(), y=ranked_gs_genes.index.to_list(), name=""), row=1, col=1)
     fig = fig.update_layout(
         xaxis=dict(dtick=1, side='top', tickangle=-90, showticklabels=True), yaxis=dict(dtick=1, showticklabels=True),
         margin=dict(autoexpand=True, b=0, r=0), height=20.01 + (20 * filtered_len), width=250.01 + (22 * len(phenotypes)))
@@ -304,3 +311,94 @@ def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, as
         full_html=False, include_plotlyjs='cdn')
     # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
     return(heatmap_fig)
+
+
+# Plot Permutation Distplot with Indepdenent KDE
+def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
+    pos_perm = random_score_matrix.loc[random_score_matrix.loc >= 0]
+    neg_perm = random_score_matrix.loc[random_score_matrix.loc <= 0]
+    xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
+                          numpy.max(pos_perm) + 0.1, 0.0025)
+    # Compute Positive Permutation Statistics
+    pos_perm_kde = gaussian_kde(pos_perm)
+    pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=pos_perm_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)')
+    set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
+        color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)')
+    set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)')
+    # Compute Negative Permutation Statistics
+    neg_perm_kde = gaussian_kde(neg_perm)
+    neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=neg_perm_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)')
+    set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
+        color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)')
+    set_neg_rug = go.Box(x=neg_perm, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)')
+    # Create Plot
+    set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
+                                 {}]], row_heights=[0.8, 0.2], shared_xaxes=True)
+    set_distplot = set_distplot.add_trace(
+        set_pos_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        pos_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_pos_rug, row=2, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        neg_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_rug, row=2, col=1)
+    set_distplot = set_distplot.add_vline(
+        x=true_es, annotation_text="Set True ES", line_color="grey")
+    set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score"))
+    set_distplot_fig = set_distplot.to_html(
+        full_html=False, include_plotlyjs='cdn', default_width='50%')
+    return(set_distplot_fig)
+
+
+# Plot Permutation Distplot with Joint KDE
+def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
+    pos_perm = random_score_matrix.loc[random_score_matrix.loc >= 0]
+    neg_perm = random_score_matrix.loc[random_score_matrix.loc <= 0]
+    xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
+                          numpy.max(pos_perm) + 0.1, 0.0025)
+    set_kde = gaussian_kde(random_score_matrix.loc)
+    # Compute Positive Permutation Statistics
+    pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=set_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)')
+    set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
+        color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)')
+    set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)')
+    # Compute Negative Permutation Statistics
+    neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=set_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)')
+    set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
+        color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)')
+    set_neg_rug = go.Box(x=neg_perm, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)')
+    # Create Plot
+    set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
+                                 {}]], row_heights=[0.8, 0.2], shared_xaxes=True)
+    set_distplot = set_distplot.add_trace(
+        set_pos_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        pos_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_pos_rug, row=2, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        neg_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_rug, row=2, col=1)
+    set_distplot = set_distplot.add_vline(
+        x=true_es, annotation_text="Set True ES", line_color="grey")
+    set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score"))
+    set_distplot_fig = set_distplot.to_html(
+        full_html=False, include_plotlyjs='cdn', default_width='50%')
+    return(set_distplot_fig)

@@ -278,8 +278,10 @@ def plot_gene_rankings(ranked_genes, labels):
         labels[0]) + " (positively correlated)", font={'color': "#EF553B"}, xanchor='left', yanchor='top', showarrow=False)
     corplot_bar = corplot_bar.add_annotation(x=len(corplot_data), y=0, text=str(
         labels[1]) + " (negatively correlated)", font={'color': "#636EFA"}, xanchor='right', yanchor='bottom', showarrow=False)
+    corplot_bar = corplot_bar.update_layout(
+        margin=dict(autoexpand=True, t=24), width=1280)
     corr_plot_fig = corplot_bar.to_html(
-        full_html=False, include_plotlyjs='cdn', default_width='50%')
+        full_html=False, include_plotlyjs='cdn')
     return(corr_plot_fig)
 
 

@@ -353,7 +353,7 @@ def set_perm_indepkde_displot(random_score_matrix, true_es):
     set_distplot = set_distplot.add_vline(
         x=true_es, line_dash="dashdot", annotation_text="Set True ES", annotation_position="top", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), height=800, width=1280)
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)
@@ -398,7 +398,7 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
     set_distplot = set_distplot.add_vline(
         x=true_es, line_dash="dashdot", annotation_text="Set True ES", annotation_position="top", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), height=800, width=1280)
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)
@@ -442,7 +442,7 @@ def global_es_indepkde_distplot(score_matrix):
     set_distplot = set_distplot.add_trace(
         set_neg_rug, row=2, col=1)
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Enrichment Scores"),
-                                              yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), height=800, width=1280)
+                                              yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)
@@ -485,7 +485,7 @@ def global_es_jointkde_distplot(score_matrix):
     set_distplot = set_distplot.add_trace(
         set_neg_rug, row=2, col=1)
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Enrichment Scores"),
-                                              yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), height=800, width=1280)
+                                              yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)

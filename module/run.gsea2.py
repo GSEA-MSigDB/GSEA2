@@ -242,7 +242,7 @@ def main():
                       gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
             doc += raw("<br>")
-            doc += h3("Random Enrichment Score Distribution for" +
+            doc += h3("Random Enrichment Score Distribution for " +
                       gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
             doc += raw(null_es_fig)
             with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:

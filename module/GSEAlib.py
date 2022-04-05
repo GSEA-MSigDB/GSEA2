@@ -314,7 +314,7 @@ def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, as
 
 
 # Plot Permutation Distplot with Indepdenent KDE
-def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
+def set_perm_indepkde_displot(random_score_matrix, true_es):
     pos_perm = random_score_matrix[random_score_matrix >= 0]
     neg_perm = random_score_matrix[random_score_matrix <= 0]
     xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
@@ -351,16 +351,16 @@ def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
     set_distplot = set_distplot.add_trace(
         set_neg_rug, row=2, col=1)
     set_distplot = set_distplot.add_vline(
-        x=true_es, annotation_text="Set True ES", line_color="grey")
+        x=true_es, line_dash="dashdot", annotation_text="Set True ES", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score", autorange="reversed"), height=800, width=1280)
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)
 
 
 # Plot Permutation Distplot with Joint KDE
-def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
+def set_perm_jointkde_displot(random_score_matrix, true_es):
     pos_perm = random_score_matrix[random_score_matrix >= 0]
     neg_perm = random_score_matrix[random_score_matrix <= 0]
     xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
@@ -396,9 +396,96 @@ def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
     set_distplot = set_distplot.add_trace(
         set_neg_rug, row=2, col=1)
     set_distplot = set_distplot.add_vline(
-        x=true_es, annotation_text="Set True ES", line_color="grey")
+        x=true_es, line_dash="dashdot", annotation_text="Set True ES", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score", autorange="reversed"), height=800, width=1280)
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), height=800, width=1280)
+    set_distplot_fig = set_distplot.to_html(
+        full_html=False, include_plotlyjs='cdn')
+    return(set_distplot_fig)
+
+
+# Plot Global ES Distplot with Indepdenent KDE
+def global_es_indepkde_distplot(score_matrix):
+    pos_es = score_matrix[score_matrix >= 0]
+    neg_es = score_matrix[score_matrix <= 0]
+    xrange = numpy.arange(numpy.min(neg_es) - 0.1,
+                          numpy.max(pos_es) + 0.1, 0.0025)
+    # Compute Positive ES Statistics
+    pos_es_kde = gaussian_kde(pos_es)
+    pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=pos_es_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[1]), name='ES Gaussian KDE (Pos)')
+    set_pos_histogram = go.Histogram(x=pos_es, marker=dict(
+        color=px.colors.qualitative.Pastel1[0]), name='ES Histogram (Pos)')
+    set_pos_rug = go.Box(x=pos_es, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='ES Rugplot (Pos)')
+    # Compute Negative ES Statistics
+    neg_es_kde = gaussian_kde(neg_es)
+    neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=neg_es_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[0]), name='ES Gaussian KDE (Neg)')
+    set_neg_histogram = go.Histogram(x=neg_es, marker=dict(
+        color=px.colors.qualitative.Pastel1[1]), name='ES Histogram (Neg)')
+    set_neg_rug = go.Box(x=neg_es, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='ES Rugplot (Neg)')
+    # Create Plot
+    set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
+                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
+    set_distplot = set_distplot.add_trace(
+        set_pos_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        pos_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_pos_rug, row=2, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        neg_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_rug, row=2, col=1)
+    set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Enrichment Scores"),
+                                              yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), height=800, width=1280)
+    set_distplot_fig = set_distplot.to_html(
+        full_html=False, include_plotlyjs='cdn')
+    return(set_distplot_fig)
+
+
+# Plot Global ES Distplot with Joint KDE
+def global_es_jointkde_distplot(score_matrix):
+    pos_es = score_matrix[score_matrix >= 0]
+    neg_es = score_matrix[score_matrix <= 0]
+    xrange = numpy.arange(numpy.min(neg_es) - 0.1,
+                          numpy.max(pos_es) + 0.1, 0.0025)
+    set_kde = gaussian_kde(score_matrix)
+    # Compute Positive ES Statistics
+    pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=set_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[1]), name='ES Gaussian KDE (Pos)')
+    set_pos_histogram = go.Histogram(x=pos_es, marker=dict(
+        color=px.colors.qualitative.Pastel1[0]), name='ES Histogram (Pos)')
+    set_pos_rug = go.Box(x=pos_es, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='ES Rugplot (Pos)')
+    # Compute Negative ES Statistics
+    neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=set_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
+        width=1.5, color=px.colors.qualitative.Plotly[0]), name='ES Gaussian KDE (Neg)')
+    set_neg_histogram = go.Histogram(x=neg_es, marker=dict(
+        color=px.colors.qualitative.Pastel1[1]), name='ES Histogram (Neg)')
+    set_neg_rug = go.Box(x=neg_es, marker_symbol='line-ns-open',
+                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='ES Rugplot (Neg)')
+    # Create Plot
+    set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
+                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
+    set_distplot = set_distplot.add_trace(
+        set_pos_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        pos_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_pos_rug, row=2, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_histogram, secondary_y=False, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        neg_kde_plot, secondary_y=True, row=1, col=1)
+    set_distplot = set_distplot.add_trace(
+        set_neg_rug, row=2, col=1)
+    set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Enrichment Scores"),
+                                              yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)

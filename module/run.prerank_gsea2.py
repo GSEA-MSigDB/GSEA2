@@ -228,7 +228,7 @@ def main():
             # Only do plotting work if we need to
             heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
                 input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
-            null_es_fig = GSEAlib.plot_set_perm_displot_indepkde(
+            null_es_fig = GSEAlib.set_perm_indepkde_displot(
                 random_es_distribution.loc[gsea_pos.iloc[gs]['index']], report_set.loc['Enrichment'].values[0])
             # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
@@ -284,7 +284,7 @@ def main():
             # Only do plotting work if we need to
             heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
                 input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
-            null_es_fig = GSEAlib.plot_set_perm_displot_indepkde(
+            null_es_fig = GSEAlib.set_perm_indepkde_displot(
                 random_es_distribution.loc[gsea_neg.iloc[gs]['index']], report_set.loc['Enrichment'].values[0])
             # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
@@ -327,6 +327,7 @@ def main():
     heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
         input_ds, phenotypes, ranked_genes, list(dataset_markers), ascending=True)
     corr_plot_fig = GSEAlib.plot_gene_rankings(ranked_genes, labels)
+    global_es_distplot_fig = GSEAlib.global_es_jointkde_distplot(gsea_stats)
     doc = dominate.document(title="Heat map and correlation plot for " +
                             os.path.splitext(os.path.basename(options.dataset))[0])
     doc += h3("Row Normalized Expression Heatmap for the top 50 features for each phenotype in " +
@@ -335,6 +336,9 @@ def main():
     doc += raw("<br>")
     doc += h3("Ranked Gene List Correlation Profile")
     doc += raw(corr_plot_fig)
+    doc += raw("<br>")
+    doc += h3("Global Enrichment Score Distribution")
+    doc += raw(global_es_distplot_fig)
     with open("heat_map_corr_plot.html", 'w') as f:
         f.write(doc.render())
 

@@ -353,9 +353,9 @@ def plot_set_perm_displot_indepkde(random_score_matrix, true_es):
     set_distplot = set_distplot.add_vline(
         x=true_es, annotation_text="Set True ES", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score"), height=800)
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score"), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
-        full_html=False, include_plotlyjs='cdn', default_width='66%')
+        full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)
 
 
@@ -382,7 +382,7 @@ def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
                          marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)')
     # Create Plot
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
-                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.1, shared_xaxes=True)
+                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
     set_distplot = set_distplot.add_trace(
         set_pos_histogram, secondary_y=False, row=1, col=1)
     set_distplot = set_distplot.add_trace(
@@ -398,7 +398,7 @@ def plot_set_perm_displot_jointkde(random_score_matrix, true_es):
     set_distplot = set_distplot.add_vline(
         x=true_es, annotation_text="Set True ES", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score"), height=800)
+                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Score"), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
-        full_html=False, include_plotlyjs='cdn', default_width='66%')
+        full_html=False, include_plotlyjs='cdn')
     return(set_distplot_fig)

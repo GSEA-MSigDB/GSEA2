@@ -351,7 +351,7 @@ def set_perm_indepkde_displot(random_score_matrix, true_es):
     set_distplot = set_distplot.add_trace(
         set_neg_rug, row=2, col=1)
     set_distplot = set_distplot.add_vline(
-        x=true_es, line_dash="dashdot", annotation_text="Set True ES", line_color="grey")
+        x=true_es, line_dash="dashdot", annotation_text="Set True ES", annotation_position="top", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
                                               yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
@@ -396,7 +396,7 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
     set_distplot = set_distplot.add_trace(
         set_neg_rug, row=2, col=1)
     set_distplot = set_distplot.add_vline(
-        x=true_es, line_dash="dashdot", annotation_text="Set True ES", line_color="grey")
+        x=true_es, line_dash="dashdot", annotation_text="Set True ES", annotation_position="top", line_color="grey")
     set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
                                               yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(

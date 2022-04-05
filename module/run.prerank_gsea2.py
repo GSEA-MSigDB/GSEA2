@@ -327,7 +327,8 @@ def main():
     heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
         input_ds, phenotypes, ranked_genes, list(dataset_markers), ascending=True)
     corr_plot_fig = GSEAlib.plot_gene_rankings(ranked_genes, labels)
-    global_es_distplot_fig = GSEAlib.global_es_jointkde_distplot(gsea_stats)
+    global_es_distplot_fig = GSEAlib.global_es_jointkde_distplot(
+        gsea_stats['Enrichment'])
     doc = dominate.document(title="Heat map and correlation plot for " +
                             os.path.splitext(os.path.basename(options.dataset))[0])
     doc += h3("Row Normalized Expression Heatmap for the top 50 features for each phenotype in " +

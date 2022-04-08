@@ -540,5 +540,5 @@ def get_leading_edge(page_str):
                         es_index, 'Core Enrichment'] = 'No'
     set_le_info = set_le_info.sort_values(
         ["Rank Metric Score"], axis=0, ascending=(False)).reset_index()
-    set_le_info.rename({'index': 'Gene Symbol'}, axis=0, inplace=True)
+    set_le_info.rename({'index': 'Gene Symbol'}, axis=1, inplace=True)
     return(set_le_info)

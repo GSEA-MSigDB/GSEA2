@@ -496,7 +496,7 @@ def global_es_jointkde_distplot(score_matrix):
 
 def get_leading_edge(page_str):
     content = ast.literal_eval(page_str.split(
-        "\n")[5].split(', ')[1].strip(']['))
+        "\n")[4].split(', ')[1].strip(']['))
     set_members = content[1]['text']
     gene_list = content[0]['text']
     gene_list_rank = content[0]['x']

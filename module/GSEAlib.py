@@ -491,7 +491,7 @@ def global_es_jointkde_distplot(score_matrix):
                                               yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
-    return(set_distplot_fig)
+    return(set_distplot)
 
 
 def get_leading_edge(page_str):
@@ -541,4 +541,5 @@ def get_leading_edge(page_str):
     set_le_info = set_le_info.sort_values(
         ["Rank Metric Score"], axis=0, ascending=(False)).reset_index()
     set_le_info.rename({'index': 'Gene Symbol'}, axis=1, inplace=True)
+    set_le_info.index = set_le_info.index + 1
     return(set_le_info)

@@ -220,17 +220,19 @@ def main():
             report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                 deep=True)
             report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
+            set_enrichment_score = report_set.loc['Enrichment'].values[0]
             # Only do plotting work if we need to
             heatmap_fig = GSEAlib.plot_set_heatmap(
                 input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
             null_es_fig = GSEAlib.set_perm_indepkde_displot(
-                random_es_distribution.loc[gsea_pos.iloc[gs]['index']], report_set.loc['Enrichment'].values[0])
+                random_es_distribution.loc[gsea_pos.iloc[gs]['index']], set_enrichment_score)
             # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
                 "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
+            leading_edge_table = GSEAlib.get_leading_edge(page_str)
             doc = dominate.document(title=gsea_pos.iloc[gs]['index'])
             doc += h3("Enrichment Details")
             doc += raw(report_set.to_html(header=False,
@@ -238,6 +240,10 @@ def main():
             doc += raw("<br>")
             doc += h3("Enrichment Plot")
             doc += raw(page_str.replace("<!doctype html>", ""))
+            doc += raw("<br>")
+            doc += h3("Table: GSEA details")
+            doc += raw(leading_edge_table.to_html(header=True,
+                                                  render_links=True, escape=False, justify='left'))
             doc += h3("Row Normalized Expression Heatmap for " +
                       gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
@@ -276,17 +282,19 @@ def main():
             report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                 deep=True)
             report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
+            set_enrichment_score = report_set.loc['Enrichment'].values[0]
             # Only do plotting work if we need to
             heatmap_fig = GSEAlib.plot_set_heatmap(
                 input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
             null_es_fig = GSEAlib.set_perm_indepkde_displot(
-                random_es_distribution.loc[gsea_neg.iloc[gs]['index']], report_set.loc['Enrichment'].values[0])
+                random_es_distribution.loc[gsea_neg.iloc[gs]['index']], set_enrichment_score)
             # Edit in the needed information to the per-set enrichment reports
             report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                 0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
             page = open(
                 "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
+            leading_edge_table = GSEAlib.get_leading_edge(page_str)
             doc = dominate.document(title=gsea_neg.iloc[gs]['index'])
             doc += h3("Enrichment Details")
             doc += raw(report_set.to_html(header=False,
@@ -294,6 +302,10 @@ def main():
             doc += raw("<br>")
             doc += h3("Enrichment Plot")
             doc += raw(page_str.replace("<!doctype html>", ""))
+            doc += raw("<br>")
+            doc += h3("Table: GSEA details")
+            doc += raw(leading_edge_table.to_html(header=True,
+                                                  render_links=True, escape=False, justify='left'))
             doc += h3("Row Normalized Expression Heatmap for " +
                       gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)

@@ -542,4 +542,12 @@ def get_leading_edge(page_str):
         ["Rank Metric Score"], axis=0, ascending=(False)).reset_index()
     set_le_info.rename({'index': 'Gene Symbol'}, axis=1, inplace=True)
     set_le_info.index = set_le_info.index + 1
+    set_le_info.style.apply(highlight_leading_edge, subset=[
+                            'Core Enrichment'], axis=1)
     return(set_le_info)
+
+
+def highlight_leading_edge(column):
+    highlight = 'background-color: #e6ffe6;'
+    default = ''
+    return [highlight if v == 'Yes' else default for v in column]

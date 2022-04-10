@@ -247,8 +247,7 @@ def main():
             doc += raw(page_str.replace("<!doctype html>", ""))
             doc += raw("<br>")
             doc += h3("Table: GSEA details")
-            doc += raw(leading_edge_table.to_html(header=True,
-                                                  render_links=True, escape=False, justify='left'))
+            doc += raw(leading_edge_table.to_html())
             doc += h3("Ranked List Heatmap for " +
                       gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
@@ -309,8 +308,7 @@ def main():
             doc += raw(page_str.replace("<!doctype html>", ""))
             doc += raw("<br>")
             doc += h3("Table: GSEA details")
-            doc += raw(leading_edge_table.to_html(header=True,
-                                                  render_links=True, escape=False, justify='left'))
+            doc += raw(leading_edge_table.to_html())
             doc += h3("Ranked List Heatmap for " +
                       gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)

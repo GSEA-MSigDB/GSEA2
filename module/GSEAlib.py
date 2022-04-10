@@ -542,9 +542,15 @@ def get_leading_edge(page_str):
         ["Rank Metric Score"], axis=0, ascending=(False)).reset_index()
     set_le_info.rename({'index': 'Gene Symbol'}, axis=1, inplace=True)
     set_le_info.index = set_le_info.index + 1
-    set_le_info.style.apply(highlight_leading_edge, subset=[
-                            'Core Enrichment'], axis=1)
-    return(set_le_info)
+    set_le_info_styled = set_le_info.style.set_table_styles(
+        [{"selector": "", "props": [("border", "1px solid grey")]},
+         {"selector": "tbody td", "props": [("border", "1px solid grey")]},
+            {"selector": "th", "props": [("border", "1px solid grey")]}
+         ]
+    )
+    set_le_info_styled = set_le_info_styled.apply(highlight_leading_edge, subset=[
+        'Core Enrichment'], axis=1)
+    return(set_le_info_styled)
 
 
 def highlight_leading_edge(column):

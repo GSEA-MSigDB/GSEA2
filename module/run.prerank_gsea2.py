@@ -237,7 +237,8 @@ def main():
             page = open(
                 "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
-            leading_edge_table = GSEAlib.get_leading_edge(page_str)
+            leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
+                page_str)
             doc = dominate.document(title=gsea_pos.iloc[gs]['index'])
             doc += h3("Enrichment Details")
             doc += raw(report_set.to_html(header=False,
@@ -248,6 +249,9 @@ def main():
             doc += raw("<br>")
             doc += h3("Table: GSEA details")
             doc += raw(leading_edge_table.to_html())
+            doc += p('Investigate core enrichment with ', a("MSigDB Webtools",
+                                                            href='https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp?geneIdList=' + leading_edge_subset, target='_blank'), " or ", a("Query NDEx", href='https://www.ndexbio.org/iquery/?genes=' + leading_edge_subset, target='_blank'))
+            doc += raw("<br>")
             doc += h3("Ranked List Heatmap for " +
                       gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)
@@ -298,7 +302,8 @@ def main():
             page = open(
                 "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
             page_str = page.read()
-            leading_edge_table = GSEAlib.get_leading_edge(page_str)
+            leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
+                page_str)
             doc = dominate.document(title=gsea_neg.iloc[gs]['index'])
             doc += h3("Enrichment Details")
             doc += raw(report_set.to_html(header=False,
@@ -309,6 +314,9 @@ def main():
             doc += raw("<br>")
             doc += h3("Table: GSEA details")
             doc += raw(leading_edge_table.to_html())
+            doc += p('Investigate core enrichment with ', a("MSigDB Webtools",
+                                                            href='https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp?geneIdList=' + leading_edge_subset, target='_blank'), " or ", a("Query NDEx", href='https://www.ndexbio.org/iquery/?genes=' + leading_edge_subset, target='_blank'))
+            doc += raw("<br>")
             doc += h3("Ranked List Heatmap for " +
                       gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
             doc += raw(heatmap_fig)

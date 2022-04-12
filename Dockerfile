@@ -38,6 +38,8 @@ RUN gsea -h
 RUN mkdir /module
 COPY module/* /module/
 RUN chmod a+x /module/run.gsea2.py
+RUN chmod a+x /module/run.prerank_gsea2.py
+RUN chmod a+x /module/run.ssgsea2.py
 
 # Default command
 CMD ["gsea", "-h"]

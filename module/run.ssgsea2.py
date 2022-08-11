@@ -52,9 +52,9 @@ def main():
     # ap.add_argument("--metric", action="store",
     #                 dest="rank_metric", help="Metric for ranking genes.")
     ap.add_argument("--alg", action="store", dest="method",
-                    help="Enrichment Method. 'ks' (old GSEA) and 'js' (next gen GSEA) supported.")
+                    help="Enrichment Method. 'ks' (Kolmogorov Smirnov, old GSEA), 'ksa' (Kolmogorov Smirnov area), and 'cidac' (cumulative information divergence with antisymmetricity and complementation, next generation GSEA) supported.")
     ap.add_argument("--exponent", action="store", dest="exponent", default=1.0,
-                    type=float, help="Weight for ks or auc enrichment method.")
+                    type=float, help="Weight for ks or ksa enrichment method.")
     ap.add_argument("--max", action="store", dest="max",
                                     default=500, type=int, help="Max gene set size.")
     ap.add_argument("--min", action="store", dest="min",
@@ -98,6 +98,26 @@ def main():
             input_ds = GSEAlib.read_gct(options.dataset)
         input_length = input_ds['input_length']
         input_ds = input_ds['data']
+    elif options.dataset.split(".")[-1] == "rnk":
+        input_ds = pandas.read_csv(
+            options.dataset, sep='\t', index_col=0, skip_blank_lines=True, header=None)
+        if any(input_ds.index.str.startswith('#')):
+            input_ds = input_ds.rename(columns=input_ds.iloc[int(
+                numpy.where(input_ds.index.str.startswith('#'))[0])])
+            input_ds = input_ds[input_ds.index.str.startswith('#') != True]
+        else:
+            input_ds = input_ds.rename(columns={1: "Preranked Metric"})
+        input_ds.index.name = "Name"
+        input_length = len(input_ds.index)
+        if options.collapse != "none":
+            chip_file = GSEAlib.read_chip(options.chip)
+            input_ds = GSEAlib.collapse_dataset(
+                input_ds, chip_file, method=options.collapse, drop=True)
+            input_ds['mappings'].to_csv(
+                'input/collapse_dataset_mapping_details.tsv', sep="\t", na_rep="No Symbol Mapping")
+            input_length = input_ds['input_length']
+            collapse_length = input_ds['collapse_length']
+            input_ds = input_ds['data']
     else:
         input_ds = pandas.read_csv(
             options.dataset, sep='\t', index_col=0, skip_blank_lines=True)
@@ -181,8 +201,8 @@ def main():
         json.dump(gsea_settings, path,  indent=2)
 
     # Run GSEA
-    subprocess.check_output(['gsea', 'data-rank', 'input/gsea_settings.json', 'input/filtered_set_to_genes.json',
-                             'input/gene_by_sample.tsv', os.getcwd()])
+    subprocess.check_output(['gsea', 'data-rank', 'input/gsea_settings.json',
+                             'input/gene_by_sample.tsv', 'input/filtered_set_to_genes.json', os.getcwd()])
 
     # Not Processing Results into figures for ssGSEA (yet?)
 

@@ -118,18 +118,30 @@ def read_cls(path):
     if "numeric" in lines[0]:
         labels = {0: 'Pos', 1: 'Neg'}
         phens = lines[2].strip('\n').split()
-        labs = [lines[1].strip('\n').strip("#").split()[0]
-                for i in range(len(phens))]
-        return labels, pandas.concat([pandas.Series(labs, name='Numeric'), pandas.Series(phens, name='Phenotypes')], axis=1)
-    else:
+        assignments = [lines[1].strip('\n').strip("#").split()[0]
+                       for i in range(len(phens))]
+        return labels, pandas.concat([pandas.Series(assignments, name='Numeric'), pandas.Series(phens, name='Phenotypes')], axis=1)
+    else:  # Get the categorical labels assigned to the categorical phenotypes in the CLS as 'labels'
         labels = {
             label: i for i, label in enumerate(lines[1][1:-1].split())
         }
         try:
-            labs = lines[2][:-1].split()
-            phens = [labels[lab] for lab in lines[2].strip('\n').split()]
+            # get the assignments of samples to an indicator label
+            assignments = lines[2][:-1].split()
+            # get the unique list of indicator labels used
+            unique_assignments = pandas.Series(
+                assignments).drop_duplicates().tolist()
+            # create an alternate list of phentype labels from the sample assignment indicator labels
+            alt_labels = {
+                label: i for i, label in enumerate(unique_assignments)
+            }
+            if labels.keys == alt_labels.keys:  # If the labels defined in the cls match the sample indicator labels exactly exactly use them to substitute the numeric phentype assignments
+                phens = [labels[lab] for lab in lines[2].strip('\n').split()]
+            else:  # If the sample indicator labels don't match the phenotype labels exactly, assume the indicators are ordered according to the CLS spec and substitute the numeric phennotype assigments using the order
+                phens = [alt_labels[lab]
+                         for lab in lines[2].strip('\n').split()]
             labels = {value: key for (key, value) in labels.items()}
-            return labels, pandas.concat([pandas.Series(labs, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
+            return labels, pandas.concat([pandas.Series(assignments, name='Labels'), pandas.Series(phens, name='Phenotypes')], axis=1)
         except KeyError:  # Assume phenotype row is already ints
             phens = list(map(int, lines[2].strip('\n').split()))
             labels = {value: key for (key, value) in labels.items()}
@@ -513,29 +525,28 @@ def global_es_jointkde_distplot(score_matrix):
 
 
 def get_leading_edge(page_str):
-    content = ast.literal_eval(page_str.split(
-        "\n")[4].split(', ')[1].strip(']['))
-    set_members = content[1]['text']
-    gene_list = content[0]['text']
-    gene_list_rank = content[0]['x']
-    gene_list_metric = content[0]['y']
-    es_index = content[4]['x']
-    set_es = content[4]['y'][0]
+    content = ast.literal_eval(page_str.split("\n")[8].strip())
+    set_members = content[0][1]['text']
+    gene_list = content[0][0]['text']
+    gene_list_rank = content[0][0]['x']
+    gene_list_metric = content[0][0]['y']
+    es_index = content[0][4]['x']
+    set_es = content[0][4]['y'][0]
     gene_ranks = dict(zip(gene_list, gene_list_rank))
     gene_metrics = dict(zip(gene_list, gene_list_metric))
     set_ranks = {k: int(v) for k, v in gene_ranks.items() if k in set_members}
     set_rank_metrics = {k: v for k,
                         v in gene_metrics.items() if k in set_members}
     # Extract negative distribution
-    neg_symbols = content[2]['text']
-    neg_running_es = content[2]['y']
+    neg_symbols = content[0][2]['text']
+    neg_running_es = content[0][2]['y']
     neg_es = min(neg_running_es)
     scored_neg_genes = dict(zip(neg_symbols, neg_running_es))
     negative_set = {k: v for k, v in scored_neg_genes.items()
                     if k in set_members}
     # Extract positive distribution
-    pos_symbols = content[3]['text']
-    pos_running_es = content[3]['y']
+    pos_symbols = content[0][3]['text']
+    pos_running_es = content[0][3]['y']
     scored_pos_genes = dict(zip(pos_symbols, pos_running_es))
     # Get complete Running ES Dict
     running_es = {gene: max(

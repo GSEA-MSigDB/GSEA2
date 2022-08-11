@@ -1,15 +1,15 @@
 #GSEA2
-#Tue Mar 29 19:14:00 UTC 2022
+#Wed Aug 10 18:48:50 UTC 2022
 JVMLevel=
-LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.2
+LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.4
 author=
 commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.algorithm> <weighting.exponent> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
 cpuType=any
-description=New GSEA (GSEA.jl 0.9.0)
+description=New GSEA (GSEA.jl 0.11.4)
 documentationUrl=
 fileFormat=
 job.cpuCount=3
-job.docker.image=acastanza/gsea2\:0.9.0
+job.docker.image=acastanza/gsea2\:0.11.4
 job.memory=
 job.walltime=
 language=any
@@ -17,8 +17,8 @@ name=GSEA2
 os=any
 p10_MODE=
 p10_TYPE=TEXT
-p10_default_value=kolmogorov_smirnov
-p10_description=Which algorithm to use for running GSEA, the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), or the new Jensen-Shannon metric (GSEA-Future).
+p10_default_value=ks
+p10_description=Which algorithm to use for running GSEA the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), an "area under the curve" variant of the Kolmogorov-Smirnov enrichment statistic, or "CIDAC" (cumulative information divergence with antisymmetricity and complementation) the next-generation GSEA method.
 p10_fileFormat=
 p10_flag=--alg\=
 p10_name=enrichment.algorithm
@@ -27,11 +27,11 @@ p10_optional=
 p10_prefix=--alg\=
 p10_prefix_when_specified=--alg\=
 p10_type=java.lang.String
-p10_value=kolmogorov_smirnov\=Kolmogorov-Smirnov (Classic GSEA);jensen_shannon\=Jensen-Shannon (GSEA-Future)
+p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);ksa\=Kolmogorov-Smirnov Area;cidac\=CIDAC (GSEA-Future)
 p11_MODE=
 p11_TYPE=Floating Point
 p11_default_value=1
-p11_description=Exponent for weighting the Kolmogorov-Smirnov or AUC enrichment method.<br>\nSetting 1.0 is equivalent to the old "scoring scheme\=weighted" option.<br> \nSetting 0 when running the Kolmogorov-Smirnov enrichment method is equivalent to the unweighted Kolmogorov-Smirnov statistic ("scoring scheme\=classic" option in prior versions of GSEA)
+p11_description=Exponent for weighting the Kolmogorov-Smirnov or Kolmogorov-Smirnov Area enrichment method.<br>\nSetting 1.0 is equivalent to the old "scoring scheme\=weighted" option.<br> \nSetting 0 when running the Kolmogorov-Smirnov enrichment method is equivalent to the unweighted Kolmogorov-Smirnov statistic ("scoring scheme\=classic" option in prior versions of GSEA)
 p11_fileFormat=
 p11_flag=--exponent\=
 p11_name=weighting.exponent
@@ -230,11 +230,11 @@ p9_optional=
 p9_prefix=--metric\=
 p9_prefix_when_specified=--metric\=
 p9_type=java.lang.String
-p9_value=signal_to_noise_ratio\=signal_to_noise_ratio;pearson_correlation\=pearson_correlation;information_correlation\=information_correlation;cosine_distance\=cosine_distance;median_difference\=median_difference
+p9_value=signal_to_noise_ratio\=signal_to_noise_ratio;pearson_correlation\=pearson_correlation;information_correlation\=information_correlation;cosine_distance\=cosine_distance;median_difference\=median_difference;mean_difference\=mean_difference
 privacy=public
 quality=development
 src.repo=
 taskDoc=
 taskType=
 userid=acastanza
-version=GSEA.jl 0.9.0
+version=GSEA.jl 0.11.4

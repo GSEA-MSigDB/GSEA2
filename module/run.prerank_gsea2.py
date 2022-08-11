@@ -290,7 +290,7 @@ def main():
     gsea_pos.drop("URL", axis=1, inplace=True)
     gsea_pos = gsea_pos.rename(
         columns={'index': 'Gene Set<br>follow link to MSigDB'})
-    gsea_pos = gsea_pos.reindex(list(range(1, len(gsea_pos))), axis=0)
+    gsea_pos.index += 1
     gsea_pos.to_html(open('gsea_report_for_positive_enrichment.html', 'w'),
                      render_links=True, escape=False, justify='center')
 
@@ -355,7 +355,7 @@ def main():
     gsea_neg.drop("URL", axis=1, inplace=True)
     gsea_neg = gsea_neg.rename(
         columns={'index': 'Gene Set<br>follow link to MSigDB'})
-    gsea_neg = gsea_neg.reindex(list(range(1, len(gsea_neg))), axis=0)
+    gsea_neg.index += 1
     gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html',
                           'w'), render_links=True, escape=False, justify='center')
 

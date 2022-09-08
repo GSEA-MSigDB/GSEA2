@@ -177,7 +177,7 @@ def main():
     gs_data_subset_sets = gs_data_subset['genesets']
     gs_data_subset_lengths = gs_data_subset['lengths']
     passing_lengths = dict((key, value) for key, value in gs_data_subset_lengths.items(
-    ) if (value >= options.min and value <= options.max))
+    ) if (value >= max(options.min, 1) and value <= options.max))
     passing_sets = {key: gs_data_subset_sets[key]
                     for key in passing_lengths.keys()}
     with open('input/filtered_set_to_genes.json', 'w') as path:

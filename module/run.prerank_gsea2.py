@@ -231,131 +231,133 @@ def main():
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
-    gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
-        ["Enrichment"], axis=0, ascending=(False)).reset_index()
-    gsea_pos.insert(1, 'Details', '')
-    for gs in range(len(gsea_pos)):
-        # Compute original set size, filtered set, and filtered size
-        unfiltered_len = len(genesets[gsea_pos.iloc[gs]['index']])
-        filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
-            list(ranked_genes.index.values)))
-        filtered_len = len(filtered_gs)
-        if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
-            # Get Enrichment Statistics for the set of interest
-            report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
-                deep=True)
-            report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
-            set_enrichment_score = report_set.loc['Enrichment'].values[0]
-            # Only do plotting work if we need to
-            heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
-                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
-            null_es_fig = GSEAlib.set_perm_indepkde_displot(
-                random_es_distribution.loc[gsea_pos.iloc[gs]['index']], set_enrichment_score)
-            # Edit in the needed information to the per-set enrichment reports
-            report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
-                0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
-            page = open(
-                "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
-            page_str = page.read()
-            leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
-                page_str)
-            doc = dominate.document(title=gsea_pos.iloc[gs]['index'])
-            doc += h3("Enrichment Details")
-            doc += raw(report_set.to_html(header=False,
-                                          render_links=True, escape=False, justify='left'))
-            doc += raw("<br>")
-            doc += h3("Enrichment Plot")
-            doc += raw(page_str.replace("<!doctype html>", ""))
-            doc += raw("<br>")
-            doc += h3("Table: GSEA details")
-            doc += raw(leading_edge_table.to_html())
-            doc += p('Investigate core enrichment with ', a("MSigDB Webtools",
-                                                            href='https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp?geneIdList=' + leading_edge_subset, target='_blank'), " or ", a("Query NDEx", href='https://www.ndexbio.org/iquery/?genes=' + leading_edge_subset, target='_blank'))
-            doc += raw("<br>")
-            doc += h3("Ranked List Heatmap for " +
-                      gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
-            doc += raw(heatmap_fig)
-            doc += raw("<br>")
-            doc += h3("Random Enrichment Score Distribution for " +
-                      gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
-            doc += raw(null_es_fig)
-            with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
-                f.write(doc.render())
-            # HTMLify the positive report
-            gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
-                gsea_pos.iloc[gs]['index'].lower(
-            ) + ".html target='_blank'>Details...</a>"
-    gsea_pos["index"] = gsea_pos.apply(
-        lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
-    gsea_pos.drop("URL", axis=1, inplace=True)
-    gsea_pos = gsea_pos.rename(
-        columns={'index': 'Gene Set<br>follow link to MSigDB'})
-    gsea_pos.index += 1
+    if len(gsea_pos) > 0:
+        gsea_pos = genesets_descr.merge(gsea_pos, how='inner', left_index=True, right_index=True).sort_values(
+            ["Enrichment"], axis=0, ascending=(False)).reset_index()
+        gsea_pos.insert(1, 'Details', '')
+        for gs in range(len(gsea_pos)):
+            # Compute original set size, filtered set, and filtered size
+            unfiltered_len = len(genesets[gsea_pos.iloc[gs]['index']])
+            filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
+                list(ranked_genes.index.values)))
+            filtered_len = len(filtered_gs)
+            if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
+                # Get Enrichment Statistics for the set of interest
+                report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
+                    deep=True)
+                report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
+                set_enrichment_score = report_set.loc['Enrichment'].values[0]
+                # Only do plotting work if we need to
+                heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
+                    input_ds, phenotypes, ranked_genes, filtered_gs, ascending=True)
+                null_es_fig = GSEAlib.set_perm_indepkde_displot(
+                    random_es_distribution.loc[gsea_pos.iloc[gs]['index']], set_enrichment_score)
+                # Edit in the needed information to the per-set enrichment reports
+                report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
+                    0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
+                page = open(
+                    "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
+                page_str = page.read()
+                leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
+                    page_str)
+                doc = dominate.document(title=gsea_pos.iloc[gs]['index'])
+                doc += h3("Enrichment Details")
+                doc += raw(report_set.to_html(header=False,
+                                              render_links=True, escape=False, justify='left'))
+                doc += raw("<br>")
+                doc += h3("Enrichment Plot")
+                doc += raw(page_str.replace("<!doctype html>", ""))
+                doc += raw("<br>")
+                doc += h3("Table: GSEA details")
+                doc += raw(leading_edge_table.to_html())
+                doc += p('Investigate core enrichment with ', a("MSigDB Webtools",
+                                                                href='https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp?geneIdList=' + leading_edge_subset, target='_blank'), " or ", a("Query NDEx", href='https://www.ndexbio.org/iquery/?genes=' + leading_edge_subset, target='_blank'))
+                doc += raw("<br>")
+                doc += h3("Ranked List Heatmap for " +
+                          gsea_pos.iloc[gs]['index'])  # add a title for the heatmap
+                doc += raw(heatmap_fig)
+                doc += raw("<br>")
+                doc += h3("Random Enrichment Score Distribution for " +
+                          gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
+                doc += raw(null_es_fig)
+                with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
+                    f.write(doc.render())
+                # HTMLify the positive report
+                gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
+                    gsea_pos.iloc[gs]['index'].lower(
+                ) + ".html target='_blank'>Details...</a>"
+        gsea_pos["index"] = gsea_pos.apply(
+            lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
+        gsea_pos.drop("URL", axis=1, inplace=True)
+        gsea_pos = gsea_pos.rename(
+            columns={'index': 'Gene Set<br>follow link to MSigDB'})
+        gsea_pos.index += 1
     gsea_pos.to_html(open('gsea_report_for_positive_enrichment.html', 'w'),
                      render_links=True, escape=False, justify='center')
 
     # Negative Enrichment Report
     gsea_neg = gsea_stats[gsea_stats.loc[:, "Enrichment"] < 0]
-    gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
-        ["Enrichment"], axis=0, ascending=(True)).reset_index()
-    gsea_neg.insert(1, 'Details', '')
-    for gs in range(len(gsea_neg)):
-        # Compute original set size, filtered set, and filtered size
-        unfiltered_len = len(genesets[gsea_neg.iloc[gs]['index']])
-        filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
-            list(ranked_genes.index.values)))
-        filtered_len = len(filtered_gs)
-        if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
-            # Get Enrichment Statistics for the set of interest
-            report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
-                deep=True)
-            report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
-            set_enrichment_score = report_set.loc['Enrichment'].values[0]
-            # Only do plotting work if we need to
-            heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
-                input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
-            null_es_fig = GSEAlib.set_perm_indepkde_displot(
-                random_es_distribution.loc[gsea_neg.iloc[gs]['index']], set_enrichment_score)
-            # Edit in the needed information to the per-set enrichment reports
-            report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
-                0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
-            page = open(
-                "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
-            page_str = page.read()
-            leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
-                page_str)
-            doc = dominate.document(title=gsea_neg.iloc[gs]['index'])
-            doc += h3("Enrichment Details")
-            doc += raw(report_set.to_html(header=False,
-                                          render_links=True, escape=False, justify='left'))
-            doc += raw("<br>")
-            doc += h3("Enrichment Plot")
-            doc += raw(page_str.replace("<!doctype html>", ""))
-            doc += raw("<br>")
-            doc += h3("Table: GSEA details")
-            doc += raw(leading_edge_table.to_html())
-            doc += p('Investigate core enrichment with ', a("MSigDB Webtools",
-                                                            href='https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp?geneIdList=' + leading_edge_subset, target='_blank'), " or ", a("Query NDEx", href='https://www.ndexbio.org/iquery/?genes=' + leading_edge_subset, target='_blank'))
-            doc += raw("<br>")
-            doc += h3("Ranked List Heatmap for " +
-                      gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
-            doc += raw(heatmap_fig)
-            doc += raw("<br>")
-            doc += h3("Random Enrichment Score Distribution for " +
-                      gsea_neg.iloc[gs]['index'])  # add a title for the ES distplot
-            doc += raw(null_es_fig)
-            with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
-                f.write(doc.render())
-            # HTMLify the negative report
-            gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
-                gsea_neg.iloc[gs]['index'].lower(
-            ) + ".html target='_blank'>Details...</a>"
-    gsea_neg["index"] = gsea_neg.apply(
-        lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
-    gsea_neg.drop("URL", axis=1, inplace=True)
-    gsea_neg = gsea_neg.rename(
-        columns={'index': 'Gene Set<br>follow link to MSigDB'})
-    gsea_neg.index += 1
+    if len(gsea_neg) > 0:
+        gsea_neg = genesets_descr.merge(gsea_neg, how='inner', left_index=True, right_index=True).sort_values(
+            ["Enrichment"], axis=0, ascending=(True)).reset_index()
+        gsea_neg.insert(1, 'Details', '')
+        for gs in range(len(gsea_neg)):
+            # Compute original set size, filtered set, and filtered size
+            unfiltered_len = len(genesets[gsea_neg.iloc[gs]['index']])
+            filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
+                list(ranked_genes.index.values)))
+            filtered_len = len(filtered_gs)
+            if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
+                # Get Enrichment Statistics for the set of interest
+                report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
+                    deep=True)
+                report_set.rename({'index': 'Gene Set'}, axis=0, inplace=True)
+                set_enrichment_score = report_set.loc['Enrichment'].values[0]
+                # Only do plotting work if we need to
+                heatmap_fig = GSEAlib.plot_set_prerank_heatmap(
+                    input_ds, phenotypes, ranked_genes, filtered_gs, ascending=False)
+                null_es_fig = GSEAlib.set_perm_indepkde_displot(
+                    random_es_distribution.loc[gsea_neg.iloc[gs]['index']], set_enrichment_score)
+                # Edit in the needed information to the per-set enrichment reports
+                report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
+                    0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
+                page = open(
+                    "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
+                page_str = page.read()
+                leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
+                    page_str)
+                doc = dominate.document(title=gsea_neg.iloc[gs]['index'])
+                doc += h3("Enrichment Details")
+                doc += raw(report_set.to_html(header=False,
+                                              render_links=True, escape=False, justify='left'))
+                doc += raw("<br>")
+                doc += h3("Enrichment Plot")
+                doc += raw(page_str.replace("<!doctype html>", ""))
+                doc += raw("<br>")
+                doc += h3("Table: GSEA details")
+                doc += raw(leading_edge_table.to_html())
+                doc += p('Investigate core enrichment with ', a("MSigDB Webtools",
+                                                                href='https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp?geneIdList=' + leading_edge_subset, target='_blank'), " or ", a("Query NDEx", href='https://www.ndexbio.org/iquery/?genes=' + leading_edge_subset, target='_blank'))
+                doc += raw("<br>")
+                doc += h3("Ranked List Heatmap for " +
+                          gsea_neg.iloc[gs]['index'])  # add a title for the heatmap
+                doc += raw(heatmap_fig)
+                doc += raw("<br>")
+                doc += h3("Random Enrichment Score Distribution for " +
+                          gsea_neg.iloc[gs]['index'])  # add a title for the ES distplot
+                doc += raw(null_es_fig)
+                with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
+                    f.write(doc.render())
+                # HTMLify the negative report
+                gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
+                    gsea_neg.iloc[gs]['index'].lower(
+                ) + ".html target='_blank'>Details...</a>"
+        gsea_neg["index"] = gsea_neg.apply(
+            lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
+        gsea_neg.drop("URL", axis=1, inplace=True)
+        gsea_neg = gsea_neg.rename(
+            columns={'index': 'Gene Set<br>follow link to MSigDB'})
+        gsea_neg.index += 1
     gsea_neg.to_html(open('gsea_report_for_negative_enrichment.html',
                           'w'), render_links=True, escape=False, justify='center')
 

@@ -50,6 +50,7 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
         dataset = dataset['data']
     input_len = len(dataset.index)
     joined_df = chip.join(dataset, how='right')
+    joined_df.index.name = "Name"
     joined_df.reset_index(drop=False, inplace=True)
     mappings = joined_df[["Name",
                           "Gene Symbol"]].drop_duplicates().copy().sort_values('Gene Symbol').rename(columns={'Name': 'Dataset ID(s)'})  # Save mapping details for reporting

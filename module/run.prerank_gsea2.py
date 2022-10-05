@@ -395,7 +395,7 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] >= 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ",  b(str(labels[0]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Adjusted global p value'] < 0.05)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
+            gsea_stats['Adjusted global p value'] < 0.25)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
             gsea_stats['Global p value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
@@ -411,7 +411,7 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ", b(str(labels[1]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Adjusted global p value'] < 0.05)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
+            gsea_stats['Adjusted global p value'] < 0.25)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
             gsea_stats['Global p value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (

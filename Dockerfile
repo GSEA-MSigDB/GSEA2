@@ -8,7 +8,7 @@ RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
 
 # Install GSEA dependencies
-RUN git clone -b 0.11.4 https://github.com/KwatMDPhD/GSEA.jl
+RUN git clone -b 0.13.1 https://github.com/KwatMDPhD/GSEA.jl
 RUN cd GSEA.jl && julia --project --eval 'using Pkg; Pkg.instantiate()'
 RUN cd GSEA.jl && julia --project deps/build.jl app tarball
 
@@ -32,7 +32,7 @@ RUN pip install scipy==1.8.0 pandas==1.4.1 argparse==1.4.0 dominate==2.6.0 plotl
 # Display software versions
 RUN python3 --version
 RUN julia --version
-RUN gsea -h
+RUN gsea --help
 
 # Copy module files
 RUN mkdir /module

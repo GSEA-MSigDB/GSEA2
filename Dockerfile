@@ -8,7 +8,7 @@ RUN apt-get update && apt-get upgrade --yes
 RUN apt-get install build-essential unzip git --yes
 
 # Install GSEA dependencies
-RUN git clone -b 2022.11.14-release-candidate https://github.com/GSEA-MSigDB/GSEA.jl
+RUN git clone -b 2022.11.14 https://github.com/KwatMDPhD/GSEA.jl
 RUN cd GSEA.jl && julia --project --eval 'using Pkg; Pkg.instantiate()'
 RUN cd GSEA.jl && julia --project deps/build.jl app tarball
 

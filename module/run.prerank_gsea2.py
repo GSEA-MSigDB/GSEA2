@@ -190,6 +190,7 @@ def main():
     gsea_settings = {
         "number_of_permutations": options.nperm,
         "permutation": 'set',
+        "feature_name": "Gene",
         # "metric": options.rank_metric,
         "algorithm": options.method,
         "exponent": options.exponent,

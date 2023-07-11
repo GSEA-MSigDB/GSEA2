@@ -1,0 +1,188 @@
+#GSEAPreranked2
+#Tue Jul 11 18:43:28 UTC 2023
+JVMLevel=
+LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:589\:1.3.2
+author=
+commandLine=python3 <libdir>run.prerank_gsea2.py --libdir\=<libdir> <ranked.list> <gene.sets.database> <number.of.permutations> <collapse.dataset> <chip.platform.file> <enrichment.algorithm> <weighting.exponent> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
+cpuType=any
+description=New Preranked GSEA (GSEA.jl 0.13.3)
+documentationUrl=
+fileFormat=
+job.cpuCount=3
+job.docker.image=acastanza/gsea2\:0.13.3
+job.memory=
+job.walltime=
+language=any
+name=GSEAPreranked2
+os=any
+p10_MODE=
+p10_TYPE=TEXT
+p10_default_value=timestamp
+p10_description=Numerical seed used to initiate the random permutation matrix.
+p10_fileFormat=
+p10_flag=--seed\=
+p10_name=seed.for.permutation
+p10_numValues=1..1
+p10_optional=
+p10_prefix=--seed\=
+p10_prefix_when_specified=--seed\=
+p10_type=java.lang.String
+p10_value=
+p11_MODE=
+p11_TYPE=TEXT
+p11_default_value=False
+p11_description=GSEA will check the length of the input dataset to ensure a reasonable number of genes are included.
+p11_fileFormat=
+p11_flag=--ogllv\=
+p11_name=override.gene.list.length.validation
+p11_numValues=1..1
+p11_optional=
+p11_prefix=--ogllv\=
+p11_prefix_when_specified=--ogllv\=
+p11_type=java.lang.String
+p11_value=True\=True;False\=False
+p12_MODE=
+p12_TYPE=Integer
+p12_default_value=20
+p12_description=Number of top gene sets to produce enrichment plots for.
+p12_fileFormat=
+p12_flag=--nplot\=
+p12_name=plot.graphs
+p12_numValues=0..1
+p12_optional=
+p12_prefix=--nplot\=
+p12_prefix_when_specified=--nplot\=
+p12_range=0+
+p12_type=java.lang.Integer
+p12_value=
+p1_MODE=IN
+p1_TYPE=FILE
+p1_default_value=
+p1_description=Input preranked dataset in gct or tsv format
+p1_fileFormat=gct
+p1_flag=--dataset\=
+p1_name=ranked.list
+p1_numValues=1..1
+p1_optional=
+p1_prefix=--dataset\=
+p1_prefix_when_specified=--dataset\=
+p1_type=java.io.File
+p1_value=
+p2_MODE=IN
+p2_TYPE=FILE
+p2_choiceDir=ftp\://ftp.broadinstitute.org/pub/gsea/gene_sets/
+p2_choiceDirFilter=*2022.1.Hs.symbols.gmt
+p2_default_value=
+p2_description=Gene sets database from GSEA website. Upload a gene set if your gene set is not listed as a choice from MSigDB.
+p2_fileFormat=gmt
+p2_flag=--gsdb\=
+p2_name=gene.sets.database
+p2_numValues=1+
+p2_optional=
+p2_prefix=--gsdb\=
+p2_prefix_when_specified=--gsdb\=
+p2_type=java.io.File
+p2_value=
+p3_MODE=
+p3_TYPE=Integer
+p3_default_value=1000
+p3_description=Number of permutations to perform
+p3_fileFormat=
+p3_flag=--nperm\=
+p3_name=number.of.permutations
+p3_numValues=1..1
+p3_optional=
+p3_prefix=--nperm\=
+p3_prefix_when_specified=--nperm\=
+p3_range=0+
+p3_type=java.lang.Integer
+p3_value=
+p4_MODE=
+p4_TYPE=TEXT
+p4_default_value=none
+p4_description=Select a mathematical option to collapse a dataset from Gene IDs or Microarray probe IDs to Gene Symbols as used in MSigDB. For Preranked datasets "absmax" is recommended. If an option other than "none" is selected, a CHIP file containing the ID to symbol mappings must be provided to the "chip platform file" parameter.
+p4_fileFormat=
+p4_flag=--collapse\=
+p4_name=collapse.dataset
+p4_numValues=1..1
+p4_optional=
+p4_prefix=--collapse\=
+p4_prefix_when_specified=--collapse\=
+p4_type=java.lang.String
+p4_value=none\=none;max\=Max_probe;sum\=Sum_of_probes;mean\=Mean_of_probes;median\=Median_of_probes;absmax\=Abs_max_of_probes
+p5_MODE=IN
+p5_TYPE=FILE
+p5_choiceDir=ftp\://ftp.broadinstitute.org/pub/gsea/annotations_versioned/
+p5_choiceDirFilter=*2022.1.Hs.chip
+p5_default_value=
+p5_description=A Gene ID annotation file from GSEA website. Upload your own chip file if the one corresponding to your platform is not listed in the drop-down menu. A chip file is only required if collapse dataset is set to something other than "none".
+p5_fileFormat=
+p5_flag=--chip\=
+p5_name=chip.platform.file
+p5_numValues=0..1
+p5_optional=on
+p5_prefix=--chip\=
+p5_prefix_when_specified=--chip\=
+p5_type=java.io.File
+p5_value=
+p6_MODE=
+p6_TYPE=TEXT
+p6_default_value=ks
+p6_description=Which algorithm to use for running GSEA the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), an "area under the curve" variant of the Kolmogorov-Smirnov enrichment statistic, or "CIDAC" (cumulative information divergence with antisymmetricity and complementation) the next-generation GSEA method.
+p6_fileFormat=
+p6_flag=--alg\=
+p6_name=enrichment.algorithm
+p6_numValues=1..1
+p6_optional=
+p6_prefix=--alg\=
+p6_prefix_when_specified=--alg\=
+p6_type=java.lang.String
+p6_value=ks\=Kolmogorov-Smirnov (Classic GSEA);ksa\=Kolmogorov-Smirnov Area;cidac\=CIDAC (GSEA-Future)
+p7_MODE=
+p7_TYPE=Floating Point
+p7_default_value=1
+p7_description=Exponent for weighting the Kolmogorov-Smirnov or Kolmogorov-Smirnov Area enrichment method.<br>\nSetting 1.0 is equivalent to the old "scoring scheme\=weighted" option.<br> \nSetting 0 when running the Kolmogorov-Smirnov enrichment method is equivalent to the unweighted Kolmogorov-Smirnov statistic ("scoring scheme\=classic" option in prior versions of GSEA)
+p7_fileFormat=
+p7_flag=--exponent\=
+p7_name=weighting.exponent
+p7_numValues=1..1
+p7_optional=
+p7_prefix=--exponent\=
+p7_prefix_when_specified=--exponent\=
+p7_type=java.lang.Float
+p7_value=
+p8_MODE=
+p8_TYPE=Integer
+p8_default_value=500
+p8_description=Gene sets larger than this are excluded from the analysis
+p8_fileFormat=
+p8_flag=--max\=
+p8_name=max.gene.set.size
+p8_numValues=1..1
+p8_optional=
+p8_prefix=--max\=
+p8_prefix_when_specified=--max\=
+p8_range=1+
+p8_type=java.lang.Integer
+p8_value=
+p9_MODE=
+p9_TYPE=Integer
+p9_default_value=15
+p9_description=Gene sets smaller than this are excluded from the analysis
+p9_fileFormat=
+p9_flag=--min\=
+p9_name=min.gene.set.size
+p9_numValues=1..1
+p9_optional=
+p9_prefix=--min\=
+p9_prefix_when_specified=--min\=
+p9_range=1+
+p9_type=java.lang.Integer
+p9_value=
+privacy=public
+quality=development
+src.repo=
+taskDoc=
+taskType=
+userid=acastanza
+version=GSEA.jl 0.13.3

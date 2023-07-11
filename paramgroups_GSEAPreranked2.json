@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Basic parameters",
+        "hidden": false,
+        "parameters": [
+            "ranked.list",
+            "gene.sets.database",
+            "number.of.permutations",
+            "collapse.dataset",
+            "chip.platform.file"
+        ]
+    },
+    {
+        "name": "Algorithmic",
+        "hidden": false,
+        "parameters": [
+            "enrichment.algorithm",
+            "weighting.exponent",
+            "max.gene.set.size",
+            "min.gene.set.size",
+            "seed.for.permutation",
+            "override.gene.list.length.validation"
+        ]
+    },
+    {
+        "name": "Reporting",
+        "hidden": false,
+        "parameters": [
+            "plot.graphs"
+        ]
+    }
+]

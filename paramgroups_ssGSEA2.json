@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Basic parameters",
+        "hidden": false,
+        "parameters": [
+            "expression.dataset",
+            "gene.sets.database",
+            "collapse.dataset",
+            "chip.platform.file"
+        ]
+    },
+    {
+        "name": "Algorithmic",
+        "hidden": false,
+        "parameters": [
+            "enrichment.algorithm",
+            "weighting.exponent",
+            "max.gene.set.size",
+            "min.gene.set.size",
+            "override.gene.list.length.validation"
+        ]
+    },
+    {
+        "name": "Reporting",
+        "hidden": false,
+        "parameters": [
+            "plot.graphs"
+        ]
+    }
+]

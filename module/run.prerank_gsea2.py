@@ -52,7 +52,7 @@ def main():
     # ap.add_argument("--metric", action="store",
     #                 dest="rank_metric", help="Metric for ranking genes.")
     ap.add_argument("--alg", action="store", dest="method",
-                    help="Enrichment Method. 'ks' (Kolmogorov Smirnov, old GSEA), 'ksa' (Kolmogorov Smirnov area), and 'cidac' (cumulative information divergence with antisymmetricity and complementation, next generation GSEA) supported.")
+                    help="Enrichment Method. 'ks' (Kolmogorov-Smirnov, classic GSEA), 'ksa' (Kolmogorov-Smirnov area), kli, kliop, kliom")
     ap.add_argument("--exponent", action="store", dest="exponent", default=1.0,
                     type=float, help="Weight for ks or ksa enrichment method.")
     ap.add_argument("--max", action="store", dest="max",
@@ -199,8 +199,10 @@ def main():
         "minimum_gene_set_size": options.min,
         "remove_gene_set_genes": True,
         "random_seed": options.seed,
+        "high_text" : str(labels[0]),
+        "low_text" : str(labels[1]),
         "number_of_jobs": options.cpu,
-        "number_of_extreme_gene_sets_to_plot": options.nplot,
+        "number_of_sets_to_plot": options.nplot,
         "gene_sets_to_plot": []
     }
 

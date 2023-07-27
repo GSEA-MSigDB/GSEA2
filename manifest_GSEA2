@@ -18,7 +18,7 @@ os=any
 p10_MODE=
 p10_TYPE=TEXT
 p10_default_value=ks
-p10_description=Which algorithm to use for running GSEA the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), an "area under the curve" variant of the Kolmogorov-Smirnov enrichment statistic, or "CIDAC" (cumulative information divergence with antisymmetricity and complementation) the next-generation GSEA method.
+p10_description=Which algorithm to use for running GSEA the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), an "area under the curve" variant of the Kolmogorov-Smirnov enrichment statistic, or , or the next-generation "kli, kliop, or kliom" GSEA methods.
 p10_fileFormat=
 p10_flag=--alg\=
 p10_name=enrichment.algorithm
@@ -27,7 +27,7 @@ p10_optional=
 p10_prefix=--alg\=
 p10_prefix_when_specified=--alg\=
 p10_type=java.lang.String
-p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);ksa\=Kolmogorov-Smirnov Area;cidac\=CIDAC (GSEA-Future)
+p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);ksa\=Kolmogorov-Smirnov Area;kli\=KLI;kliop\=KLIIO;kliom\=KLIOM
 p11_MODE=
 p11_TYPE=Floating Point
 p11_default_value=1

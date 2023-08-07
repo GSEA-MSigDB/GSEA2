@@ -1,7 +1,7 @@
 # Copyright 2017-2022 Regents of the University of California and the Broad Institute. All rights reserved.
 
 # Julia base image
-FROM julia:1.9.1-bullseye as gsea_build
+FROM julia:1.9.2-bullseye as gsea_build
 
 # Install system dependencies
 RUN apt-get update && apt-get upgrade --yes

@@ -232,6 +232,7 @@ def main():
                        'Size'] = passing_lengths[gsea_stats.index[gs]]
     gsea_stats.to_csv(
         'set_x_statistic_x_number.tsv', sep="\t")
+    plot_paths = {name: str(index+1) + "_" + name.lower() + ".html" for index, name in enumerate(gsea_stats.index.to_list())}
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]
@@ -245,7 +246,7 @@ def main():
             filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
                 list(ranked_genes.index.values)))
             filtered_len = len(filtered_gs)
-            if gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
+            if plot_paths[gsea_pos.iloc[gs]['index']] in plots:
                 # Get Enrichment Statistics for the set of interest
                 report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                     deep=True)
@@ -259,7 +260,7 @@ def main():
                 # Edit in the needed information to the per-set enrichment reports
                 report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                     0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
-                page = open(gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
+                page = open(plot_paths[gsea_pos.iloc[gs]['index']], 'r')
                 page_str = page.read()
                 leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
                     page_str)
@@ -283,12 +284,11 @@ def main():
                 doc += h3("Random Enrichment Score Distribution for " +
                           gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
                 doc += raw(null_es_fig)
-                with open(gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
+                with open(plot_paths[gsea_pos.iloc[gs]['index']], 'w') as f:
                     f.write(doc.render())
                 # HTMLify the positive report
                 gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
-                    gsea_pos.iloc[gs]['index'].lower(
-                ) + ".html target='_blank'>Details...</a>"
+                    plot_paths[gsea_pos.iloc[gs]['index']] + " target='_blank'>Details...</a>"
         gsea_pos["index"] = gsea_pos.apply(
             lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
         gsea_pos.drop("URL", axis=1, inplace=True)
@@ -310,7 +310,7 @@ def main():
             filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
                 list(ranked_genes.index.values)))
             filtered_len = len(filtered_gs)
-            if gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
+            if plot_paths[gsea_neg.iloc[gs]['index']] in plots:
                 # Get Enrichment Statistics for the set of interest
                 report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                     deep=True)
@@ -324,7 +324,7 @@ def main():
                 # Edit in the needed information to the per-set enrichment reports
                 report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                     0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
-                page = open(gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
+                page = open(plot_paths[gsea_neg.iloc[gs]['index']], 'r')
                 page_str = page.read()
                 leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
                     page_str)
@@ -348,12 +348,11 @@ def main():
                 doc += h3("Random Enrichment Score Distribution for " +
                           gsea_neg.iloc[gs]['index'])  # add a title for the ES distplot
                 doc += raw(null_es_fig)
-                with open(gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
+                with open(plot_paths[gsea_neg.iloc[gs]['index']], 'w') as f:
                     f.write(doc.render())
                 # HTMLify the negative report
                 gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
-                    gsea_neg.iloc[gs]['index'].lower(
-                ) + ".html target='_blank'>Details...</a>"
+                    plot_paths[gsea_neg.iloc[gs]['index']] + " target='_blank'>Details...</a>"
         gsea_neg["index"] = gsea_neg.apply(
             lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
         gsea_neg.drop("URL", axis=1, inplace=True)

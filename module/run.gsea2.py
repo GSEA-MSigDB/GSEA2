@@ -196,8 +196,8 @@ def main():
         "minimum_gene_set_size": options.min,
         "remove_gene_set_genes": True,
         "random_seed": options.seed,
-        "high_text" : str(labels[0]),
-        "low_text" : str(labels[1]),
+        "high_text": str(labels[0]),
+        "low_text": str(labels[1]),
         "number_of_jobs": options.cpu,
         "number_of_sets_to_plot": options.nplot,
         "more_sets_to_plot": []
@@ -207,20 +207,38 @@ def main():
         json.dump(gsea_settings, path,  indent=2)
 
     # Run GSEA
-    subprocess.check_output(['gsea', 'metric-rank', 'input/gsea_settings.json', 'input/target_by_sample.tsv',
-                             'input/gene_by_sample.tsv', 'input/filtered_set_to_genes.json', os.getcwd()])
+    subprocess.check_output(['gsea', 'metric-rank',
+                             str(os.getcwd()),
+                             'input/target_by_sample.tsv',
+                             'input/gene_by_sample.tsv',
+                             'input/filtered_set_to_genes.json',
+                             '--minimum-set-size', str(options.min),
+                             '--maximum-set-size', str(options.max),
+                             '--metric', str(options.rank_metric),
+                             '--algorithm', str(options.method),
+                             '--exponent', str(options.exponent),
+                             '--permutation', str(options.perm),
+                             '--number-of-permutations', str(options.nperm),
+                             '--random-seed', str(options.seed),
+                             '--number-of-sets-to-plot', str(options.nplot),
+                             '--feature-name', 'Features',
+                             '--score-name', str(options.rank_metric),
+                             '--low-text', str(labels[1]),
+                             '--high-text', str(labels[0]),
+                             '--write-set-x-index-x-enrichment-tsv']
+                            )
 
     # Parse Results
     genesets_descr = pandas.DataFrame.from_dict(
         genesets_descr, orient="index", columns=["URL"])
     results = GSEAlib.result_paths(os.getcwd())
-    plots = [result for result in results if "plot" in result]
+    plots = [result for result in results if "html" in result]
     gsea_stats = pandas.read_csv(
         'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
     ranked_genes = pandas.read_csv(
-        'gene_x_metric_x_score.tsv', sep="\t", index_col=0)
+        'feature_x_metric_x_score.tsv', sep="\t", index_col=0)
     random_es_distribution = pandas.read_csv(
-        'set_x_random_x_enrichment.tsv', sep="\t", index_col=0)
+        'set_x_index_x_enrichment.tsv', sep="\t", index_col=0)
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -242,7 +260,7 @@ def main():
             filtered_gs = list(set(genesets[gsea_pos.iloc[gs]['index']]) & set(
                 list(ranked_genes.index.values)))
             filtered_len = len(filtered_gs)
-            if "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
+            if gsea_pos.iloc[gs]['index'].lower() + ".html" in plots:
                 # Get Enrichment Statistics for the set of interest
                 report_set = pandas.DataFrame(gsea_pos.iloc[gs]).copy(
                     deep=True)
@@ -257,7 +275,7 @@ def main():
                 report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                     0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
                 page = open(
-                    "plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
+                    gsea_pos.iloc[gs]['index'].lower() + ".html", 'r')
                 page_str = page.read()
                 leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
                     page_str)
@@ -281,7 +299,7 @@ def main():
                 doc += h3("Random Enrichment Score Distribution for " +
                           gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
                 doc += raw(null_es_fig)
-                with open("plot/" + gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
+                with open(gsea_pos.iloc[gs]['index'].lower() + ".html", 'w') as f:
                     f.write(doc.render())
                 # HTMLify the positive report
                 gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
@@ -308,7 +326,7 @@ def main():
             filtered_gs = list(set(genesets[gsea_neg.iloc[gs]['index']]) & set(
                 list(ranked_genes.index.values)))
             filtered_len = len(filtered_gs)
-            if "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
+            if gsea_neg.iloc[gs]['index'].lower() + ".html" in plots:
                 # Get Enrichment Statistics for the set of interest
                 report_set = pandas.DataFrame(gsea_neg.iloc[gs]).copy(
                     deep=True)
@@ -322,8 +340,7 @@ def main():
                 # Edit in the needed information to the per-set enrichment reports
                 report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
                     0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
-                page = open(
-                    "plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
+                page = open(gsea_neg.iloc[gs]['index'].lower() + ".html", 'r')
                 page_str = page.read()
                 leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
                     page_str)
@@ -347,7 +364,7 @@ def main():
                 doc += h3("Random Enrichment Score Distribution for " +
                           gsea_neg.iloc[gs]['index'])  # add a title for the ES distplot
                 doc += raw(null_es_fig)
-                with open("plot/" + gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
+                with open(gsea_neg.iloc[gs]['index'].lower() + ".html", 'w') as f:
                     f.write(doc.render())
                 # HTMLify the negative report
                 gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
@@ -396,11 +413,11 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] >= 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ",  b(str(labels[0]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Adjusted global p value'] < 0.25)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
+            gsea_stats['Adjusted P-Value'] < 0.25)])) + " gene sets are significant at adjusted pValue < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Global p value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
+            gsea_stats['P-Value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
-            gsea_stats['Global p value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
+            gsea_stats['P-Value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
         li(a("Detailed enrichment results in html format",
              href="gsea_report_for_positive_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",
@@ -412,11 +429,11 @@ def main():
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ", b(str(labels[1]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Adjusted global p value'] < 0.25)])) + " gene sets are significant at adjusted global pValue (FDR) < 25%"),
+            gsea_stats['Adjusted P-Value'] < 0.25)])) + " gene sets are significant at adjusted pValue < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Global p value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
+            gsea_stats['P-Value'] < 0.01)])) + " gene sets are significantly enriched at pValue < 1%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
-            gsea_stats['Global p value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
+            gsea_stats['P-Value'] < 0.05)])) + " gene sets are significantly enriched at pValue < 5%"),
         li(a("Detailed enrichment results in html format",
              href="gsea_report_for_negative_enrichment.html", target='_blank')),
         li(a("Guide to interpret results",

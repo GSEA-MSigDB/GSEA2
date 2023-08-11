@@ -538,33 +538,26 @@ def global_es_jointkde_distplot(score_matrix):
 
 
 def get_leading_edge(page_str):
-    content = ast.literal_eval(page_str.split("\n")[6].strip())
-    set_members = content[0][1]['text']
-    gene_list = content[0][0]['text']
-    gene_list_rank = content[0][0]['x']
-    gene_list_metric = content[0][0]['y']
-    es_index = content[0][4]['x']
-    set_es = content[0][4]['y'][0]
-    gene_ranks = dict(zip(gene_list, gene_list_rank))
+    content = ast.literal_eval(page_str.split("\n")[8].split(", ")[1].strip())
+    set_members = content[2]['text']
+    gene_list = content[3]['text']
+    gene_list_index = content[3]['x']
+    running_es = content[3]['y']
+    running_es_dict = dict(zip(gene_list, running_es))
+    gene_list_neg_metric = content[0]['y']
+    gene_list_pos_metric = content[1]['y']
+    gene_list_metric = [x if abs(x) >= abs(y) else y for x, y in zip(gene_list_neg_metric, gene_list_pos_metric)]
+    
+    es_position = max(range(len(running_es)), key=lambda i: abs(running_es[i]))
+    es_index = gene_list_index[es_position]
+    set_es = running_es[es_position]
+    gene_ranks = dict(zip(gene_list, gene_list_index))
     gene_metrics = dict(zip(gene_list, gene_list_metric))
     set_ranks = {k: int(v) for k, v in gene_ranks.items() if k in set_members}
     set_rank_metrics = {k: v for k,
                         v in gene_metrics.items() if k in set_members}
-    # Extract negative distribution
-    neg_symbols = content[0][2]['text']
-    neg_running_es = content[0][2]['y']
-    neg_es = min(neg_running_es)
-    scored_neg_genes = dict(zip(neg_symbols, neg_running_es))
-    negative_set = {k: v for k, v in scored_neg_genes.items()
-                    if k in set_members}
-    # Extract positive distribution
-    pos_symbols = content[0][3]['text']
-    pos_running_es = content[0][3]['y']
-    scored_pos_genes = dict(zip(pos_symbols, pos_running_es))
-    # Get complete Running ES Dict
-    running_es = {gene: max(
-        [scored_neg_genes[gene], scored_pos_genes[gene]], key=abs) for gene in gene_list}
-    set_running_es = {k: v for k, v in running_es.items() if k in set_members}
+    # Get Running ES for Leading Edge
+    set_running_es = {k: v for k, v in running_es_dict.items() if k in set_members}
     set_le_info = pandas.DataFrame([set_ranks, set_rank_metrics, set_running_es], index=[
                                    "Rank in Gene List", "Rank Metric Score", "Running ES"]).transpose()
     set_le_info["Rank in Gene List"] = set_le_info["Rank in Gene List"].astype(
@@ -572,14 +565,14 @@ def get_leading_edge(page_str):
     set_le_info["Core Enrichment"] = ""
     if set_es >= 0:
         set_le_info.loc[set_le_info['Rank in Gene List'].values >=
-                        es_index, 'Core Enrichment'] = 'Yes'
-        set_le_info.loc[set_le_info['Rank in Gene List'].values <
                         es_index, 'Core Enrichment'] = 'No'
+        set_le_info.loc[set_le_info['Rank in Gene List'].values <
+                        es_index, 'Core Enrichment'] = 'Yes'
     else:
         set_le_info.loc[set_le_info['Rank in Gene List'].values <=
-                        es_index, 'Core Enrichment'] = 'Yes'
-        set_le_info.loc[set_le_info['Rank in Gene List'].values >
                         es_index, 'Core Enrichment'] = 'No'
+        set_le_info.loc[set_le_info['Rank in Gene List'].values >
+                        es_index, 'Core Enrichment'] = 'Yes'
     set_le_info = set_le_info.sort_values(
         ["Rank Metric Score"], axis=0, ascending=(False)).reset_index()
     set_le_info.rename({'index': 'Gene Symbol'}, axis=1, inplace=True)

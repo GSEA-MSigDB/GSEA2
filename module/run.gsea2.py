@@ -299,7 +299,7 @@ def main():
                 doc += h3("Random Enrichment Score Distribution for " +
                           gsea_pos.iloc[gs]['index'])  # add a title for the ES distplot
                 doc += raw(null_es_fig)
-                with open(gplot_paths[gsea_pos.iloc[gs]['index']], 'w') as f:
+                with open(plot_paths[gsea_pos.iloc[gs]['index']], 'w') as f:
                     f.write(doc.render())
                 # HTMLify the positive report
                 gsea_pos.at[gs, "Details"] = "<a href=plot/" + \

@@ -575,9 +575,9 @@ def get_leading_edge(page_str):
     set_le_info["Core Enrichment"] = ""
     if set_es >= 0:
         set_le_info.loc[set_le_info['Rank in Gene List'].values >=
-                        es_index, 'Core Enrichment'] = 'No'
+                        es_index + 1, 'Core Enrichment'] = 'No'
         set_le_info.loc[set_le_info['Rank in Gene List'].values <
-                        es_index, 'Core Enrichment'] = 'Yes'
+                        es_index + 1 , 'Core Enrichment'] = 'Yes'
     else:
         set_le_info.loc[set_le_info['Rank in Gene List'].values <=
                         es_index, 'Core Enrichment'] = 'No'

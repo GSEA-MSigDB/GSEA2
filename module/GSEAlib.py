@@ -234,6 +234,16 @@ def result_paths(root_dir):
             file_set.add(rel_file)
     return list(file_set)
 
+# Enumerate Plot Paths
+def enumerate_plot_paths(gsea_stats, root_dir):
+    plot_names = {name: str(index+1) + "_" + name.lower() + ".html" for index, name in enumerate(gsea_stats.index.to_list())}
+    plot_paths = {}
+    for key, file_name in plot_names.items():
+        rel_dir = os.path.relpath(root_dir)
+        rel_file = os.path.join(rel_dir, file_name)
+        plot_paths[key] = rel_file
+    return plot_paths
+
 
 # Plot Heatmaps for a given set of genes
 def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending):

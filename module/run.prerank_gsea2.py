@@ -220,6 +220,7 @@ def main():
     plots = [result for result in results if "html" in result]
     gsea_stats = pandas.read_csv(
         'set_x_statistic_x_number.tsv', sep="\t", index_col=0)
+    plot_paths = GSEAlib.enumerate_plot_paths(gsea_stats, os.getcwd())
     ranked_genes = pandas.read_csv(
         'input/gene_by_sample.tsv', sep="\t", index_col=0)
     random_es_distribution = pandas.read_csv(
@@ -232,7 +233,6 @@ def main():
                        'Size'] = passing_lengths[gsea_stats.index[gs]]
     gsea_stats.to_csv(
         'set_x_statistic_x_number.tsv', sep="\t")
-    plot_paths = {name: str(index+1) + "_" + name.lower() + ".html" for index, name in enumerate(gsea_stats.index.to_list())}
 
     # Positive Enrichment Report
     gsea_pos = gsea_stats[gsea_stats.loc[:, "Enrichment"] > 0]

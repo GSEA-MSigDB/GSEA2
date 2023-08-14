@@ -1,15 +1,15 @@
 #GSEA2
-#Wed Aug 10 18:48:50 UTC 2022
+#Mon Aug 14 17:11:37 UTC 2023
 JVMLevel=
-LSID=urn\:lsid\:8080.gpserver.ip-172-31-26-71.ip-172-31-26-71.ec2.internal\:genepatternmodules\:477\:1.4
-author=
+LSID=urn\:lsid\:genepattern.org\:module.analysis\:00438\:1.8
+author=Anthony Castanza, Edwin Huang;Mesirov Lab UCSD
 commandLine=python3 <libdir>run.gsea2.py --libdir\=<libdir> <expression.dataset> <gene.sets.database> <number.of.permutations> <phenotype.labels> <reverse.phenotypes> <permutation.type> <collapse.dataset> <chip.platform.file> <metric.for.ranking.genes> <enrichment.algorithm> <weighting.exponent> <max.gene.set.size> <min.gene.set.size> <seed.for.permutation> <override.gene.list.length.validation> <plot.graphs> --cpu\=<job.cpuCount>
 cpuType=any
-description=New GSEA (GSEA.jl 0.11.4)
-documentationUrl=
+description=New GSEA (GSEA.jl 0.17.3 Build)
+documentationUrl=https\://github.com/KwatMDPhD/GSEA.jl
 fileFormat=
 job.cpuCount=3
-job.docker.image=acastanza/gsea2\:0.11.4
+job.docker.image=acastanza/gsea2\:0.17.3
 job.memory=
 job.walltime=
 language=any
@@ -18,7 +18,7 @@ os=any
 p10_MODE=
 p10_TYPE=TEXT
 p10_default_value=ks
-p10_description=Which algorithm to use for running GSEA the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), an "area under the curve" variant of the Kolmogorov-Smirnov enrichment statistic, or , or the next-generation "kli, kliop, or kliom" GSEA methods.
+p10_description=Which algorithm to use for running GSEA the old Kolmogorov-Smirnov enrichment statistic (Classic GSEA), an "area under the curve" variant of the Kolmogorov-Smirnov enrichment statistic, or, or the next-generation "kli, kliom, or kliop" GSEA methods.
 p10_fileFormat=
 p10_flag=--alg\=
 p10_name=enrichment.algorithm
@@ -27,7 +27,7 @@ p10_optional=
 p10_prefix=--alg\=
 p10_prefix_when_specified=--alg\=
 p10_type=java.lang.String
-p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);ksa\=Kolmogorov-Smirnov Area;kli\=KLI;kliop\=KLIIO;kliom\=KLIOM
+p10_value=ks\=Kolmogorov-Smirnov (Classic GSEA);ksa\=Kolmogorov-Smirnov Area;kli\=KLI;kliom\=KLIOM;kliop\=KLIOP
 p11_MODE=
 p11_TYPE=Floating Point
 p11_default_value=1
@@ -232,9 +232,9 @@ p9_prefix_when_specified=--metric\=
 p9_type=java.lang.String
 p9_value=signal-to-noise-ratio\=signal_to_noise_ratio;pearson-correlation\=pearson_correlation;information-correlation\=information_correlation;cosine-distance\=cosine_distance;median-difference\=median_difference;mean-difference\=mean_difference
 privacy=public
-quality=development
-src.repo=
+quality=preproduction
+src.repo=https\://github.com/genepattern/GSEA2
 taskDoc=
 taskType=
 userid=acastanza
-version=GSEA.jl 0.11.4
+version=Update for 0.17.3 Core Changes

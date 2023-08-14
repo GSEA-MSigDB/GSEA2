@@ -33,6 +33,11 @@ def read_chip(chip):
     return chip_df
 
 
+# Custom function to select the absolute maximum value from a Series
+def abs_max(series):
+    return series.abs().max()
+
+
 # Simple implementation of GSEA DEsktop's Collapse Dataset functions for use
 # with ssSGEA
 # Accepts an expression dataset in GCT format, a CHIP file, and a
@@ -58,6 +63,9 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
     annotations = joined_df[["Gene Symbol",
                              "Gene Title"]].drop_duplicates().copy()  # Save gene annotations for reporting
     joined_df.drop("Gene Title", axis=1, inplace=True)
+    value_columns = joined_df.columns.difference(['Gene Symbol'])
+    joined_df[value_columns] = joined_df[value_columns].apply(
+        pd.to_numeric, errors='coerce')
     # Do Mathematical Collapse Operations
     if method.lower() == "sum":
         collapsed_df = joined_df.groupby(["Gene Symbol"]).sum()
@@ -68,8 +76,8 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
     if method.lower() == "max":
         collapsed_df = joined_df.groupby(["Gene Symbol"]).max()
     if method.lower() == "absmax":
-        collapsed_df = joined_df.loc[joined_df.groupby(
-            ['Gene Symbol']).idxmax()]
+        agg_functions = {column: abs_max for column in value_columns}
+        collapsed_df = joined_df.groupby('Gene Symbol').agg(agg_functions)
     collapsed_df.index.name = "Name"
     # Group mapping details
     mappings = pandas.DataFrame(mappings.groupby(
@@ -96,7 +104,7 @@ def write_gct(gct, file_name, check_file_extension=True):
     with open(file_name, 'w') as file:
         file.write('#1.2\n' + rows + '\t' + columns + '\n')
         m.to_csv(file, sep='\t', index_label="NAME", mode='w+')
-    return(file_name)
+    return (file_name)
 
 
 # extension e.g. '.gct'
@@ -160,9 +168,9 @@ def match_phenotypes(expr, phen):
     if len(phen) == len(expr.columns):
         phen.index = expr.columns
     else:
-        #		common = set(phen['phenotypes'].index) & set(expr.columns)
-        #		expr = expr[list(common)]
-        #		phen = phen[list(common)]
+        # common = set(phen['phenotypes'].index) & set(expr.columns)
+        # expr = expr[list(common)]
+        # phen = phen[list(common)]
         sys.exit(
             "The number of samples in the CLS file did not match the number of samples in the dataset.")
     return phen
@@ -235,8 +243,11 @@ def result_paths(root_dir):
     return list(file_set)
 
 # Enumerate Plot Paths
+
+
 def enumerate_plot_paths(gsea_stats, root_dir):
-    plot_names = {name: str(index+1) + "_" + name.lower() + ".html" for index, name in enumerate(gsea_stats.index.to_list())}
+    plot_names = {name: str(index+1) + "_" + name.lower() +
+                  ".html" for index, name in enumerate(gsea_stats.index.to_list())}
     plot_paths = {}
     for key, file_name in plot_names.items():
         rel_dir = os.path.relpath(root_dir)
@@ -286,7 +297,7 @@ def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending)
     heatmap_fig = fig.to_html(
         full_html=False, include_plotlyjs='cdn')
     # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
-    return(heatmap_fig)
+    return (heatmap_fig)
 
 
 # Plot Barchart of top gene ranking
@@ -306,7 +317,7 @@ def plot_gene_rankings(ranked_genes, labels):
                                             margin=dict(autoexpand=True, t=24))
     corr_plot_fig = corplot_bar.to_html(
         full_html=False, include_plotlyjs='cdn')
-    return(corr_plot_fig)
+    return (corr_plot_fig)
 
 
 # Plot Preranked Heatmap for a given set of genes
@@ -336,7 +347,7 @@ def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, as
     heatmap_fig = fig.to_html(
         full_html=False, include_plotlyjs='cdn')
     # , default_height="{:.0%}".format(filtered_len / 20 if filtered_len / 20 >= 1 else 1))
-    return(heatmap_fig)
+    return (heatmap_fig)
 
 
 # Plot Permutation Distplot with Indepdenent KDE
@@ -391,7 +402,7 @@ def set_perm_indepkde_displot(random_score_matrix, true_es):
                                               yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
-    return(set_distplot_fig)
+    return (set_distplot_fig)
 
 
 # Plot Permutation Distplot with Joint KDE
@@ -451,7 +462,7 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
                                               yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
-    return(set_distplot_fig)
+    return (set_distplot_fig)
 
 
 # Plot Global ES Distplot with Indepdenent KDE
@@ -501,7 +512,7 @@ def global_es_indepkde_distplot(score_matrix):
                                               yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
-    return(set_distplot_fig)
+    return (set_distplot_fig)
 
 
 # Plot Global ES Distplot with Joint KDE
@@ -544,7 +555,7 @@ def global_es_jointkde_distplot(score_matrix):
                                               yaxis2=dict(rangemode='tozero', title=("ES KDE")), bargap=0.01, xaxis=dict(title="Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
     set_distplot_fig = set_distplot.to_html(
         full_html=False, include_plotlyjs='cdn')
-    return(set_distplot)
+    return (set_distplot)
 
 
 def get_leading_edge(page_str):
@@ -556,8 +567,9 @@ def get_leading_edge(page_str):
     running_es_dict = dict(zip(gene_list, running_es))
     gene_list_neg_metric = content[0]['y']
     gene_list_pos_metric = content[1]['y']
-    gene_list_metric = [x if abs(x) >= abs(y) else y for x, y in zip(gene_list_neg_metric, gene_list_pos_metric)]
-    
+    gene_list_metric = [x if abs(x) >= abs(y) else y for x, y in zip(
+        gene_list_neg_metric, gene_list_pos_metric)]
+
     es_position = max(range(len(running_es)), key=lambda i: abs(running_es[i]))
     es_index = gene_list_index[es_position]
     set_es = running_es[es_position]
@@ -567,7 +579,8 @@ def get_leading_edge(page_str):
     set_rank_metrics = {k: v for k,
                         v in gene_metrics.items() if k in set_members}
     # Get Running ES for Leading Edge
-    set_running_es = {k: v for k, v in running_es_dict.items() if k in set_members}
+    set_running_es = {k: v for k, v in running_es_dict.items()
+                      if k in set_members}
     set_le_info = pandas.DataFrame([set_ranks, set_rank_metrics, set_running_es], index=[
                                    "Rank in Gene List", "Rank Metric Score", "Running ES"]).transpose()
     set_le_info["Rank in Gene List"] = set_le_info["Rank in Gene List"].astype(
@@ -577,7 +590,7 @@ def get_leading_edge(page_str):
         set_le_info.loc[set_le_info['Rank in Gene List'].values >=
                         es_index + 1, 'Core Enrichment'] = 'No'
         set_le_info.loc[set_le_info['Rank in Gene List'].values <
-                        es_index + 1 , 'Core Enrichment'] = 'Yes'
+                        es_index + 1, 'Core Enrichment'] = 'Yes'
     else:
         set_le_info.loc[set_le_info['Rank in Gene List'].values <=
                         es_index, 'Core Enrichment'] = 'No'
@@ -597,7 +610,7 @@ def get_leading_edge(page_str):
     )
     set_le_info_styled = set_le_info_styled.apply(highlight_leading_edge, subset=[
         'Core Enrichment'], axis=1)
-    return(set_le_info_styled, leading_edge)
+    return (set_le_info_styled, leading_edge)
 
 
 def highlight_leading_edge(column):

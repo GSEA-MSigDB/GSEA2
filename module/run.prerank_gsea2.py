@@ -218,7 +218,7 @@ def main():
                              '--maximum-set-size', str(options.max),
                              '--algorithm', str(options.method),
                              '--exponent', str(options.exponent),
-                             '--permutation', str(options.perm),
+                             '--permutation', 'set',
                              '--number-of-permutations', str(options.nperm),
                              '--random-seed', str(options.seed),
                              '--number-of-sets-to-plot', str(options.nplot),

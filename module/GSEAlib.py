@@ -34,10 +34,10 @@ def read_chip(chip):
     return chip_df
 
 
-# Custom function to select the absolute maximum value from a Series
-def abs_max(series):
-    return series.abs().max()
-
+def true_value_of_abs_max(series):
+    abs_max_value = series.abs().max()  # Find the maximum absolute value
+    idx_of_max_abs_value = series.abs().idxmax()  # Find the index of the maximum absolute value
+    return series.loc[idx_of_max_abs_value]  # Return the corresponding true value
 
 # Simple implementation of GSEA DEsktop's Collapse Dataset functions for use
 # with ssSGEA
@@ -77,7 +77,7 @@ def collapse_dataset(dataset, chip, method="sum", drop=True):
     if method.lower() == "max":
         collapsed_df = joined_df.groupby(["Gene Symbol"]).max()
     if method.lower() == "absmax":
-        agg_functions = {column: abs_max for column in value_columns}
+        agg_functions = {column: true_value_of_abs_max  for column in value_columns}
         collapsed_df = joined_df.groupby('Gene Symbol').agg(agg_functions)
     collapsed_df.index.name = "Name"
     # Group mapping details

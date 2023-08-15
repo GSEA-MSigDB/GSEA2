@@ -207,8 +207,8 @@ def main():
 
     # Run GSEA
     subprocess.check_output(['gsea', 'metric-rank',
-                             str(os.getcwd()),
-                             'input/target_by_sample.tsv',
+                            str(os.getcwd()),
+                            'input/target_by_sample.tsv',
                              'input/gene_by_sample.tsv',
                              'input/filtered_set_to_genes.json',
                              '--minimum-set-size', str(options.min),
@@ -302,7 +302,8 @@ def main():
                     f.write(doc.render())
                 # HTMLify the positive report
                 gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
-                    plot_paths[gsea_pos.iloc[gs]['index']] + " target='_blank'>Details...</a>"
+                    plot_paths[gsea_pos.iloc[gs]['index']] + \
+                    " target='_blank'>Details...</a>"
         gsea_pos["index"] = gsea_pos.apply(
             lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
         gsea_pos.drop("URL", axis=1, inplace=True)
@@ -366,7 +367,8 @@ def main():
                     f.write(doc.render())
                 # HTMLify the negative report
                 gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
-                    plot_paths[gsea_neg.iloc[gs]['index']] + " target='_blank'>Details...</a>"
+                    plot_paths[gsea_neg.iloc[gs]['index']] + \
+                    " target='_blank'>Details...</a>"
         gsea_neg["index"] = gsea_neg.apply(
             lambda row: "<a href='{}' target='_blank'>{}</a>".format(row.URL, row['index']), axis=1)
         gsea_neg.drop("URL", axis=1, inplace=True)

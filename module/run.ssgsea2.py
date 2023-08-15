@@ -205,8 +205,26 @@ def main():
         json.dump(gsea_settings, path,  indent=2)
 
     # Run GSEA
-    subprocess.check_output(['gsea', 'data-rank', 'input/gsea_settings.json',
-                             'input/gene_by_sample.tsv', 'input/filtered_set_to_genes.json', os.getcwd()])
+    subprocess.check_output(['gsea', 'data-rank',
+                             str(os.getcwd()),
+                             # 'input/target_by_sample.tsv',
+                             'input/gene_by_sample.tsv',
+                             'input/filtered_set_to_genes.json',
+                             '--minimum-set-size', str(options.min),
+                             '--maximum-set-size', str(options.max),
+                             # '--metric', str(options.rank_metric),
+                             '--algorithm', str(options.method),
+                             '--exponent', str(options.exponent),
+                             # '--permutation', str(options.perm),
+                             # '--number-of-permutations', str(options.nperm),
+                             # '--random-seed', str(options.seed),
+                             # '--number-of-sets-to-plot', str(options.nplot),
+                             # '--feature-name', 'Features',
+                             # '--score-name', str(options.rank_metric),
+                             # '--low-text', str(labels[1]),
+                             # '--high-text', str(labels[0]),
+                             # '--write-set-x-index-x-enrichment-tsv'
+                            ])
 
     # Not Processing Results into figures for ssGSEA (yet?)
 

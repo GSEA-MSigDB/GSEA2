@@ -14,7 +14,6 @@ import numpy
 import dominate
 from dominate.tags import *
 from dominate.util import raw
-from scipy.integrate import simps
 
 
 # Better boolean command line parsing
@@ -216,6 +215,7 @@ def main():
                              'input/filtered_set_to_genes.json',
                              '--minimum-set-size', str(options.min),
                              '--maximum-set-size', str(options.max),
+                             # '--metric', str(options.rank_metric),
                              '--algorithm', str(options.method),
                              '--exponent', str(options.exponent),
                              '--permutation', 'set',
@@ -223,7 +223,7 @@ def main():
                              '--random-seed', str(options.seed),
                              '--number-of-sets-to-plot', str(options.nplot),
                              '--feature-name', 'Features',
-                             '--score-name', 'Ranking Metric',
+                             '--score-name', 'Ranking_Metric',
                              '--low-text', str(labels[1]),
                              '--high-text', str(labels[0]),
                              '--write-set-x-index-x-enrichment-tsv']
@@ -240,7 +240,7 @@ def main():
     ranked_genes = pandas.read_csv(
         'input/gene_by_sample.tsv', sep="\t", index_col=0)
     random_es_distribution = pandas.read_csv(
-        'set_x_random_x_enrichment.tsv', sep="\t", index_col=0)
+        'set_x_index_x_enrichment.tsv', sep="\t", index_col=0)
 
     # Add set sizes to enrichment report
     gsea_stats.insert(0, 'Size', '')
@@ -462,9 +462,9 @@ def main():
     gsea_index += ul(
         li("The dataset has " + str(len(ranked_genes)) + " features (genes)"),
         li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0)) + " (" + str(round(
-            numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values > 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
+            numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(GSEAlib.compute_corr_area(ranked_genes, "pos")) + "%"),
         li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(
-            numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values < 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
+            numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(GSEAlib.compute_corr_area(ranked_genes, "neg")) + "%"),
         li(a("Detailed rank ordered gene list for all features in the dataset (.tsv file)",
              href='gene_x_metric_x_score.tsv')),
         li(a("Heat map and gene list correlation profile for all features in the dataset",

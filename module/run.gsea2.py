@@ -14,7 +14,6 @@ import numpy
 import dominate
 from dominate.tags import *
 from dominate.util import raw
-from scipy.integrate import simps
 
 
 # Better boolean command line parsing
@@ -461,9 +460,9 @@ def main():
     gsea_index += ul(
         li("The dataset has " + str(len(ranked_genes)) + " features (genes)"),
         li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0)) + " (" + str(round(
-            numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values > 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
-        li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(
-            numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values < 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)) + "%"),
+            numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(GSEAlib.compute_corr_area(ranked_genes, "pos")) + "%"),
+        li("# of markers for phenotype " + str(labels[1]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(
+            numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(GSEAlib.compute_corr_area(ranked_genes, "pos")) + "%"),
         li(a("Detailed rank ordered gene list for all features in the dataset (.tsv file)",
              href='gene_x_metric_x_score.tsv')),
         li(a("Heat map and gene list correlation profile for all features in the dataset",

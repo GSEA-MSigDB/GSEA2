@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 # import plotly.figure_factory as ff
 from scipy.stats import gaussian_kde
+from scipy.integrate import simps
 
 
 # Simple implementation of a GCT parser
@@ -307,8 +308,11 @@ def plot_gene_rankings(ranked_genes, labels):
     corplot_bar = px.bar(corplot_data, y=corplot_data.columns[0], color=corplot_data.columns[0],
                          color_continuous_scale='RdBu_r', color_continuous_midpoint=0)
     corplot_bar = corplot_bar.update_traces(marker_line_width=0)
-    corplot_bar = corplot_bar.add_vline(x=numpy.where(numpy.diff(numpy.sign(corplot_data.iloc[:, 0].values)))[
-        0][0] + 0.5, line_dash="dashdot", annotation_text="zero-cross", line_color="grey")
+    try:
+        corplot_bar = corplot_bar.add_vline(x=numpy.where(numpy.diff(numpy.sign(corplot_data.iloc[:, 0].values)))[
+            0][0] + 0.5, line_dash="dashdot", annotation_text="zero-cross", line_color="grey")
+    except IndexError:
+        pass
     corplot_bar = corplot_bar.add_annotation(x=0, y=0, text=str(
         labels[0]) + " (positively correlated)", font={'color': "#EF553B"}, xanchor='left', yanchor='top', showarrow=False)
     corplot_bar = corplot_bar.add_annotation(x=len(corplot_data), y=0, text=str(
@@ -363,47 +367,50 @@ def set_perm_indepkde_displot(random_score_matrix, true_es):
         neg_visible = True
     pos_perm = random_score_matrix[random_score_matrix >= 0]
     neg_perm = random_score_matrix[random_score_matrix <= 0]
-    xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
-                          numpy.max(pos_perm) + 0.1, 0.0025)
-    # Compute Positive Permutation Statistics
-    pos_perm_kde = gaussian_kde(pos_perm)
-    pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=pos_perm_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
-        width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible)
-    set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
-        color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)', visible=pos_visible)
-    set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
-                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible)
-    # Compute Negative Permutation Statistics
-    neg_perm_kde = gaussian_kde(neg_perm)
-    neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=neg_perm_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
-        width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible)
-    set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
-        color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)', visible=neg_visible)
-    set_neg_rug = go.Box(x=neg_perm, marker_symbol='line-ns-open',
-                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)', visible=neg_visible)
-    # Create Plot
-    set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
-                                 {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
-    set_distplot = set_distplot.add_trace(
-        set_pos_histogram, secondary_y=False, row=1, col=1)
-    set_distplot = set_distplot.add_trace(
-        pos_kde_plot, secondary_y=True, row=1, col=1)
-    set_distplot = set_distplot.add_trace(
-        set_pos_rug, row=2, col=1)
-    set_distplot = set_distplot.add_trace(
-        set_neg_histogram, secondary_y=False, row=1, col=1)
-    set_distplot = set_distplot.add_trace(
-        neg_kde_plot, secondary_y=True, row=1, col=1)
-    set_distplot = set_distplot.add_trace(
-        set_neg_rug, row=2, col=1)
-    set_distplot = set_distplot.add_vline(
-        x=true_es, line_dash="dashdot", annotation_text="Set True ES", annotation_position="top", line_color="grey")
-    set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
-                                              yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
-    set_distplot_fig = set_distplot.to_html(
-        full_html=False, include_plotlyjs='cdn')
-    return (set_distplot_fig)
-
+    try:
+        xrange = numpy.arange(numpy.min(neg_perm) - 0.1,
+                            numpy.max(pos_perm) + 0.1, 0.0025)
+        # Compute Positive Permutation Statistics
+        pos_perm_kde = gaussian_kde(pos_perm)
+        pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=pos_perm_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
+            width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible)
+        set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
+            color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)', visible=pos_visible)
+        set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
+                            marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible)
+        # Compute Negative Permutation Statistics
+        neg_perm_kde = gaussian_kde(neg_perm)
+        neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=neg_perm_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
+            width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible)
+        set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
+            color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)', visible=neg_visible)
+        set_neg_rug = go.Box(x=neg_perm, marker_symbol='line-ns-open',
+                            marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)', visible=neg_visible)
+        # Create Plot
+        set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
+                                    {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
+        set_distplot = set_distplot.add_trace(
+            set_pos_histogram, secondary_y=False, row=1, col=1)
+        set_distplot = set_distplot.add_trace(
+            pos_kde_plot, secondary_y=True, row=1, col=1)
+        set_distplot = set_distplot.add_trace(
+            set_pos_rug, row=2, col=1)
+        set_distplot = set_distplot.add_trace(
+            set_neg_histogram, secondary_y=False, row=1, col=1)
+        set_distplot = set_distplot.add_trace(
+            neg_kde_plot, secondary_y=True, row=1, col=1)
+        set_distplot = set_distplot.add_trace(
+            set_neg_rug, row=2, col=1)
+        set_distplot = set_distplot.add_vline(
+            x=true_es, line_dash="dashdot", annotation_text="Set True ES", annotation_position="top", line_color="grey")
+        set_distplot = set_distplot.update_layout(yaxis=dict(title="Number of Permuted ES"),
+                                                yaxis2=dict(rangemode='tozero', title=("Permutation KDE")), bargap=0.01, xaxis=dict(title="Permutation Enrichment Scores", autorange="reversed"), margin=dict(autoexpand=True, t=24, b=0, r=0), height=800, width=1280)
+        set_distplot_fig = set_distplot.to_html(
+            full_html=False, include_plotlyjs='cdn')
+        return (set_distplot_fig)
+    except ValueError:
+        set_distplot_fig = set_perm_jointkde_displot(random_score_matrix, true_es)
+        return (set_distplot_fig)
 
 # Plot Permutation Distplot with Joint KDE
 def set_perm_jointkde_displot(random_score_matrix, true_es):
@@ -418,11 +425,11 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
         neg_visible = True
     pos_perm = random_score_matrix[random_score_matrix >= 0]
     neg_perm = random_score_matrix[random_score_matrix <= 0]
-    xrange = numpy.arange(numpy.nan_to_num(numpy.min(neg_es), nan=0) - 0.1,
-                          numpy.nan_to_num(numpy.max(pos_es), nan=0) + 0.1, 0.0025)
+    xrange = numpy.arange(numpy.nan_to_num(numpy.min(neg_perm), nan=0) - 0.1,
+                          numpy.nan_to_num(numpy.max(pos_perm), nan=0) + 0.1, 0.0025)
     set_kde = gaussian_kde(random_score_matrix)
     # Compute Positive Permutation Statistics
-    if len(pos_es) > 0:
+    if len(pos_perm) > 0:
         pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=set_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
             width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible)
         set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
@@ -430,7 +437,7 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
         set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
                              marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible)
     # Compute Negative Permutation Statistics
-    if len(neg_es) > 0:
+    if len(neg_perm) > 0:
         neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=set_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
             width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible)
         set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
@@ -441,7 +448,7 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
                                  {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
     # Add Positive Plot Elements
-    if len(pos_es) > 0:
+    if len(pos_perm) > 0:
         set_distplot = set_distplot.add_trace(
             set_pos_histogram, secondary_y=False, row=1, col=1)
         set_distplot = set_distplot.add_trace(
@@ -449,7 +456,7 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
         set_distplot = set_distplot.add_trace(
             set_pos_rug, row=2, col=1)
     # Add Negative Plot Elements
-    if len(neg_es) > 0:
+    if len(neg_perm) > 0:
         set_distplot = set_distplot.add_trace(
             set_neg_histogram, secondary_y=False, row=1, col=1)
         set_distplot = set_distplot.add_trace(
@@ -617,3 +624,13 @@ def highlight_leading_edge(column):
     highlight = 'background-color: #e6ffe6;'
     default = ''
     return [highlight if v == 'Yes' else default for v in column]
+
+def compute_corr_area(ranked_genes, dist):
+    try:
+        if dist == "pos":
+            corr_area = round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values > 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)
+        if dist =="neg":
+            corr_area = round(simps(abs(ranked_genes.iloc[:, 0].values[ranked_genes.iloc[:, 0].values < 0])) / simps(abs(ranked_genes.iloc[:, 0].values)) * 100, 1)
+    except IndexError:
+            corr_area = "N/A"
+    return (corr_area)

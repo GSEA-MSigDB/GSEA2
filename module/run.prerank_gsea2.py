@@ -407,7 +407,8 @@ def main():
                      os.path.splitext(os.path.basename(options.dataset))[0])
     gsea_index += h2(str(labels[0]) + " vs. " + str(labels[1]))
     gsea_index += h3("Enrichment in phenotype: " + str(
-        labels[0]) + " (" + str(sum(phenotypes['Phenotypes'] == 0)) + " samples)")
+        labels[0])# + " (" + str(sum(phenotypes['Phenotypes'] == 0)) + " samples)"
+                     )
     gsea_index += ul(
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] >= 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ",  b(str(labels[0]))),
@@ -423,7 +424,8 @@ def main():
              href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
     )
     gsea_index += h3("Enrichment in phenotype: " + str(
-        labels[1]) + " (" + str(sum(phenotypes['Phenotypes'] == 1)) + " samples)")
+        labels[1])# + " (" + str(sum(phenotypes['Phenotypes'] == 1)) + " samples)"
+                     )
     gsea_index += ul(
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0)])) + " / " + str(
             len(gsea_stats)) + " gene sets are upregulated in phenotype ", b(str(labels[1]))),

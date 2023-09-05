@@ -146,11 +146,13 @@ def main():
     # Parse CLS file
     labels, phenotypes = GSEAlib.read_cls(options.cls)
     phenotypes = GSEAlib.match_phenotypes(input_ds, phenotypes)
+    phenotypes['Phenotypes'] = phenotypes['Phenotypes'].astype(int)
+    phenotypes['Labels'] = [labels[label] for label in phenotypes['Phenotypes']]
     if options.reverse == True and phenotypes.columns[0] == "Labels":
         phenotypes["Phenotypes"] = numpy.where((phenotypes["Phenotypes"] == 0) | (
             phenotypes["Phenotypes"] == 1), phenotypes["Phenotypes"] ^ 1, phenotypes["Phenotypes"])
         labels = {0: labels[1], 1: labels[0]}
-    phenotypes = phenotypes.sort_values('Phenotypes')
+    phenotypes = phenotypes.sort_values('Phenotypes', ascending=False)
 
     # Order the dataset using the phenotypes and write out both files
     input_ds = input_ds.reindex(columns=phenotypes.index)
@@ -195,8 +197,8 @@ def main():
         "minimum_gene_set_size": options.min,
         "remove_gene_set_genes": True,
         "random_seed": options.seed,
-        "high_text": str(labels[0]),
-        "low_text": str(labels[1]),
+        "high_text": str(labels[1]),
+        "low_text": str(labels[0]),
         "number_of_jobs": options.cpu,
         "number_of_sets_to_plot": options.nplot,
         "more_sets_to_plot": []
@@ -222,8 +224,8 @@ def main():
                              '--number-of-sets-to-plot', str(options.nplot),
                              '--feature-name', 'Features',
                              '--score-name', str(options.rank_metric),
-                             '--low-text', str(labels[1]),
-                             '--high-text', str(labels[0]),
+                             '--low-text', str(labels[0]),
+                             '--high-text', str(labels[1]),
                              '--write-set-x-index-x-enrichment-tsv']
                             )
 
@@ -273,7 +275,7 @@ def main():
                     random_es_distribution.loc[gsea_pos.iloc[gs]['index']], set_enrichment_score)
                 # Edit in the needed information to the per-set enrichment reports
                 report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
-                    0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
+                    0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[1]) + " vs " + str(labels[0])
                 page = open(plot_paths[gsea_pos.iloc[gs]['index']], 'r')
                 page_str = page.read()
                 leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
@@ -338,7 +340,7 @@ def main():
                     random_es_distribution.loc[gsea_neg.iloc[gs]['index']], set_enrichment_score)
                 # Edit in the needed information to the per-set enrichment reports
                 report_set.loc["Details"] = "Dataset: " + os.path.splitext(os.path.basename(options.dataset))[
-                    0] + "<br>Enriched in Phenotype: \"" + str(labels[1]) + "\" of comparison " + str(labels[0]) + " vs " + str(labels[1])
+                    0] + "<br>Enriched in Phenotype: \"" + str(labels[0]) + "\" of comparison " + str(labels[1]) + " vs " + str(labels[0])
                 page = open(plot_paths[gsea_neg.iloc[gs]['index']], 'r')
                 page_str = page.read()
                 leading_edge_table, leading_edge_subset = GSEAlib.get_leading_edge(
@@ -405,12 +407,12 @@ def main():
         title="GSEA Report for Dataset " + os.path.splitext(os.path.basename(options.dataset))[0])
     gsea_index += h1("GSEA Report for Dataset " +
                      os.path.splitext(os.path.basename(options.dataset))[0])
-    gsea_index += h2(str(labels[0]) + " vs. " + str(labels[1]))
+    gsea_index += h2(str(labels[1]) + " vs. " + str(labels[0]))
     gsea_index += h3("Enrichment in phenotype: " + str(
-        labels[0]) + " (" + str(sum(phenotypes['Phenotypes'] == 0)) + " samples)")
+        labels[1]) + " (" + str(sum(phenotypes['Phenotypes'] == 1)) + " samples)")
     gsea_index += ul(
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] >= 0)])) + " / " + str(
-            len(gsea_stats)) + " gene sets are upregulated in phenotype ",  b(str(labels[0]))),
+            len(gsea_stats)) + " gene sets are upregulated in phenotype ",  b(str(labels[1]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
             gsea_stats['Adjusted P-Value'] < 0.25)])) + " gene sets are significant at adjusted pValue < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] > 0) & (
@@ -423,10 +425,10 @@ def main():
              href='http://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html?_Interpreting_GSEA_Results', target='_blank'))
     )
     gsea_index += h3("Enrichment in phenotype: " + str(
-        labels[1]) + " (" + str(sum(phenotypes['Phenotypes'] == 1)) + " samples)")
+        labels[0]) + " (" + str(sum(phenotypes['Phenotypes'] == 0)) + " samples)")
     gsea_index += ul(
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0)])) + " / " + str(
-            len(gsea_stats)) + " gene sets are upregulated in phenotype ", b(str(labels[1]))),
+            len(gsea_stats)) + " gene sets are upregulated in phenotype ", b(str(labels[0]))),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
             gsea_stats['Adjusted P-Value'] < 0.25)])) + " gene sets are significant at adjusted pValue < 25%"),
         li(str(len(gsea_stats[(gsea_stats['Enrichment'] < 0) & (
@@ -458,12 +460,12 @@ def main():
            " gene sets were used in the analysis")
     )
     gsea_index += h3("Gene markers for the " +
-                     str(labels[0]) + " vs. " + str(labels[1]) + " comparison")
+                     str(labels[1]) + " vs. " + str(labels[0]) + " comparison")
     gsea_index += ul(
         li("The dataset has " + str(len(ranked_genes)) + " features (genes)"),
-        li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0)) + " (" + str(round(
+        li("# of markers for phenotype " + str(labels[1]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0)) + " (" + str(round(
             numpy.count_nonzero(ranked_genes.iloc[:, 0].values > 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(GSEAlib.compute_corr_area(ranked_genes, "pos")) + "%"),
-        li("# of markers for phenotype " + str(labels[1]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(
+        li("# of markers for phenotype " + str(labels[0]) + ": " + str(numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0)) + " (" + str(round(
             numpy.count_nonzero(ranked_genes.iloc[:, 0].values < 0) / len(ranked_genes) * 100, 1)) + "%) with correlation area " + str(GSEAlib.compute_corr_area(ranked_genes, "pos")) + "%"),
         li(a("Detailed rank ordered gene list for all features in the dataset (.tsv file)",
              href='gene_x_metric_x_score.tsv')),

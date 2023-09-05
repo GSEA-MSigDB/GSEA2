@@ -441,13 +441,13 @@ def main():
     gsea_index += h3("Dataset details")
     if options.collapse != "none":
         gsea_index += ul(
-            li("The Dataset has " + str(input_length) + " native features"),
+            li("The dataset has " + str(input_length) + " native features"),
             li("After collapsing features into gene symbols, there are: " +
                str(collapse_length) + " genes"),
             li("Collapse method: \"" + options.collapse + "\" was used to collapse features to gene symbols"))
     else:
         gsea_index += ul(
-            li("The Dataset has " + str(input_length) + " features (genes)"),
+            li("The dataset has " + str(input_length) + " features (genes)"),
             li("No probe set => gene symbol collapsing was requested, so all " +
                str(input_length) + " features were used"))
     gsea_index += h3("Gene set details")

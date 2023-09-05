@@ -259,7 +259,7 @@ def enumerate_plot_paths(gsea_stats, root_dir):
 
 # Plot Heatmaps for a given set of genes
 def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending):
-    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale='RdBu_r', zmid=0)[
+    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale=[[0.0, 'blue'], [0.5, 'white'], [1.0, 'red']], zmid=0)[
         'colorscale']  # Create a colorscale for the ranking subset
     filtered_len = len(filtered_gs)
     ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
@@ -277,10 +277,10 @@ def plot_set_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending)
                         row_heights=[1 / (1 + len(gs_expression_norm))] * (1 + len(gs_expression_norm)), column_widths=[len(gs_expression_norm.columns) / (1 + len(gs_expression_norm.columns)), 1 / (1 + len(gs_expression_norm.columns))], horizontal_spacing=0.01)
     # Populate the first plot slot with the phenotype label information
     # NOTE: This will cause errors if using the phenotypes['Numeric'] Structure
-    fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral', showscale=False, text=pandas.DataFrame(
+    fig.append_trace(go.Heatmap(z=pandas.DataFrame(phenotypes['Phenotypes']).transpose(), colorscale='spectral_r', showscale=False, text=pandas.DataFrame(
         phenotypes['Labels']).transpose(), x=gs_expression_norm.columns.to_list(), y=["Phenotype"], name=''), row=1, col=1)
     # Add the plot containing the normalized expression heatmap annotated with the input expression data's values
-    fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale='RdBu_r', colorbar={'title': {'text': 'Row Normalized Expression', 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10,
+    fig.append_trace(go.Heatmap(z=gs_expression_norm, colorscale=[[0.0, 'blue'], [0.5, 'white'], [1.0, 'red']], colorbar={'title': {'text': 'Row Normalized Expression', 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10,
                                                                                      'orientation': 'h', 'xanchor': 'left', 'yanchor': 'bottom'}, x=gs_expression_norm.columns.to_list(), y=gs_expression_norm.index.to_list(), name="", text=gs_expression, hovertemplate="%{text}"), row=2, col=1)
     # Add a plot containing the gene rankings in the gene list
     fig.append_trace(go.Heatmap(z=ranked_gs_genes, colorscale=ranking_colorscale, colorbar={'title': {'text': ranked_gs_genes.columns.to_list()[0], 'side': 'top'}, 'x': 1.04, 'y': .9, 'len': 200, 'lenmode': 'pixels', 'thickness': 10, 'orientation': 'h', 'xanchor': 'left', 'yanchor': 'top'}, zmax=float(
@@ -306,7 +306,7 @@ def plot_gene_rankings(ranked_genes, labels):
     corplot_data = ranked_genes.sort_values(
         ranked_genes.columns[0], ascending=False)
     corplot_bar = px.bar(corplot_data, y=corplot_data.columns[0], color=corplot_data.columns[0],
-                         color_continuous_scale='RdBu_r', color_continuous_midpoint=0)
+                         color_continuous_scale=[[0.0, 'blue'], [0.5, 'white'], [1.0, 'red']], color_continuous_midpoint=0)
     corplot_bar = corplot_bar.update_traces(marker_line_width=0)
     try:
         corplot_bar = corplot_bar.add_vline(x=numpy.where(numpy.diff(numpy.sign(corplot_data.iloc[:, 0].values)))[
@@ -326,7 +326,7 @@ def plot_gene_rankings(ranked_genes, labels):
 
 # Plot Preranked Heatmap for a given set of genes
 def plot_set_prerank_heatmap(input_ds, phenotypes, ranked_genes, filtered_gs, ascending):
-    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale='RdBu_r', zmid=0)[
+    ranking_colorscale = go.Heatmap(z=ranked_genes, colorscale=[[0.0, 'blue'], [0.5, 'white'], [1.0, 'red']], zmid=0)[
         'colorscale']  # Create a colorscale for the ranking subset
     filtered_len = len(filtered_gs)
     ranked_gs_genes = ranked_genes.loc[filtered_gs].sort_values(
@@ -373,19 +373,19 @@ def set_perm_indepkde_displot(random_score_matrix, true_es):
         # Compute Positive Permutation Statistics
         pos_perm_kde = gaussian_kde(pos_perm)
         pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=pos_perm_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
-            width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible)
+            width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible, hoverlabel=dict(bgcolor='white'))
         set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
-            color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)', visible=pos_visible)
+            color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)', visible=pos_visible, hoverlabel=dict(bgcolor='white'))
         set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
-                            marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible)
+                            marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible, hoverlabel=dict(bgcolor='white'))
         # Compute Negative Permutation Statistics
         neg_perm_kde = gaussian_kde(neg_perm)
         neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=neg_perm_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
-            width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible)
+            width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible, hoverlabel=dict(bgcolor='white'))
         set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
-            color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)', visible=neg_visible)
+            color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)', visible=neg_visible, hoverlabel=dict(bgcolor='white'))
         set_neg_rug = go.Box(x=neg_perm, marker_symbol='line-ns-open',
-                            marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)', visible=neg_visible)
+                            marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)', visible=neg_visible, hoverlabel=dict(bgcolor='white'))
         # Create Plot
         set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
                                     {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
@@ -431,19 +431,19 @@ def set_perm_jointkde_displot(random_score_matrix, true_es):
     # Compute Positive Permutation Statistics
     if len(pos_perm) > 0:
         pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=set_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
-            width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible)
+            width=1.5, color=px.colors.qualitative.Plotly[1]), name='Perm ES Gaussian KDE (Pos)', visible=pos_visible, hoverlabel=dict(bgcolor='white'))
         set_pos_histogram = go.Histogram(x=pos_perm, marker=dict(
-            color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)', visible=pos_visible)
+            color=px.colors.qualitative.Pastel1[0]), name='Perm ES Histogram (Pos)', visible=pos_visible, hoverlabel=dict(bgcolor='white'))
         set_pos_rug = go.Box(x=pos_perm, marker_symbol='line-ns-open',
-                             marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible)
+                             marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='Perm ES Rugplot (Pos)', visible=pos_visible, hoverlabel=dict(bgcolor='white'))
     # Compute Negative Permutation Statistics
     if len(neg_perm) > 0:
         neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=set_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
-            width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible)
+            width=1.5, color=px.colors.qualitative.Plotly[0]), name='Perm ES Gaussian KDE (Neg)', visible=neg_visible, hoverlabel=dict(bgcolor='white'))
         set_neg_histogram = go.Histogram(x=neg_perm, marker=dict(
-            color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)', visible=neg_visible)
+            color=px.colors.qualitative.Pastel1[1]), name='Perm ES Histogram (Neg)', visible=neg_visible, hoverlabel=dict(bgcolor='white'))
         set_neg_rug = go.Box(x=neg_perm, marker_symbol='line-ns-open',
-                             marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)', visible=neg_visible)
+                             marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='Perm ES Rugplot (Neg)', visible=neg_visible, hoverlabel=dict(bgcolor='white'))
     # Create Plot
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
                                  {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
@@ -482,20 +482,20 @@ def global_es_indepkde_distplot(score_matrix):
     if len(pos_es) > 0:
         pos_es_kde = gaussian_kde(pos_es)
         pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=pos_es_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
-            width=1.5, color=px.colors.qualitative.Plotly[1]), name='ES Gaussian KDE (Pos)')
+            width=1.5, color=px.colors.qualitative.Plotly[1]), name='ES Gaussian KDE (Pos)', hoverlabel=dict(bgcolor='white'))
         set_pos_histogram = go.Histogram(x=pos_es, marker=dict(
-            color=px.colors.qualitative.Pastel1[0]), name='ES Histogram (Pos)')
+            color=px.colors.qualitative.Pastel1[0]), name='ES Histogram (Pos)', hoverlabel=dict(bgcolor='white'))
         set_pos_rug = go.Box(x=pos_es, marker_symbol='line-ns-open',
-                             marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='ES Rugplot (Pos)')
+                             marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='ES Rugplot (Pos)', hoverlabel=dict(bgcolor='white'))
     # Compute Negative ES Statistics
     if len(neg_es) > 0:
         neg_es_kde = gaussian_kde(neg_es)
         neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=neg_es_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
-            width=1.5, color=px.colors.qualitative.Plotly[0]), name='ES Gaussian KDE (Neg)')
+            width=1.5, color=px.colors.qualitative.Plotly[0]), name='ES Gaussian KDE (Neg)', hoverlabel=dict(bgcolor='white'))
         set_neg_histogram = go.Histogram(x=neg_es, marker=dict(
-            color=px.colors.qualitative.Pastel1[1]), name='ES Histogram (Neg)')
+            color=px.colors.qualitative.Pastel1[1]), name='ES Histogram (Neg)', hoverlabel=dict(bgcolor='white'))
         set_neg_rug = go.Box(x=neg_es, marker_symbol='line-ns-open',
-                             marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='ES Rugplot (Neg)')
+                             marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='ES Rugplot (Neg)', hoverlabel=dict(bgcolor='white'))
     # Create Plot
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
                                  {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)
@@ -531,18 +531,18 @@ def global_es_jointkde_distplot(score_matrix):
     set_kde = gaussian_kde(score_matrix)
     # Compute Positive ES Statistics
     pos_kde_plot = go.Scatter(x=xrange[xrange >= 0], y=set_kde.pdf(xrange)[xrange >= 0], mode='lines', line=dict(
-        width=1.5, color=px.colors.qualitative.Plotly[1]), name='ES Gaussian KDE (Pos)')
+        width=1.5, color=px.colors.qualitative.Plotly[1]), name='ES Gaussian KDE (Pos)', hoverlabel=dict(bgcolor='white'))
     set_pos_histogram = go.Histogram(x=pos_es, marker=dict(
-        color=px.colors.qualitative.Pastel1[0]), name='ES Histogram (Pos)')
+        color=px.colors.qualitative.Pastel1[0]), name='ES Histogram (Pos)', hoverlabel=dict(bgcolor='white'))
     set_pos_rug = go.Box(x=pos_es, marker_symbol='line-ns-open',
-                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='ES Rugplot (Pos)')
+                         marker_color=px.colors.qualitative.Plotly[1], boxpoints='all', jitter=0, name='ES Rugplot (Pos)', hoverlabel=dict(bgcolor='white'))
     # Compute Negative ES Statistics
     neg_kde_plot = go.Scatter(x=xrange[xrange <= 0], y=set_kde.pdf(xrange)[xrange <= 0], mode='lines', line=dict(
-        width=1.5, color=px.colors.qualitative.Plotly[0]), name='ES Gaussian KDE (Neg)')
+        width=1.5, color=px.colors.qualitative.Plotly[0]), name='ES Gaussian KDE (Neg)', hoverlabel=dict(bgcolor='white'))
     set_neg_histogram = go.Histogram(x=neg_es, marker=dict(
-        color=px.colors.qualitative.Pastel1[1]), name='ES Histogram (Neg)')
+        color=px.colors.qualitative.Pastel1[1]), name='ES Histogram (Neg)', hoverlabel=dict(bgcolor='white'))
     set_neg_rug = go.Box(x=neg_es, marker_symbol='line-ns-open',
-                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='ES Rugplot (Neg)')
+                         marker_color=px.colors.qualitative.Plotly[0], boxpoints='all', jitter=0, name='ES Rugplot (Neg)', hoverlabel=dict(bgcolor='white'))
     # Create Plot
     set_distplot = make_subplots(rows=2, cols=1, specs=[[{"secondary_y": True}], [
                                  {}]], row_heights=[0.8, 0.2], vertical_spacing=0.075, shared_xaxes=True)

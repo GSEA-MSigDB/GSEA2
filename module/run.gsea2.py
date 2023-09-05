@@ -301,7 +301,7 @@ def main():
                 with open(plot_paths[gsea_pos.iloc[gs]['index']], 'w') as f:
                     f.write(doc.render())
                 # HTMLify the positive report
-                gsea_pos.at[gs, "Details"] = "<a href=plot/" + \
+                gsea_pos.at[gs, "Details"] = "<a href=" + \
                     plot_paths[gsea_pos.iloc[gs]['index']] + \
                     " target='_blank'>Details...</a>"
         gsea_pos["index"] = gsea_pos.apply(
@@ -366,7 +366,7 @@ def main():
                 with open(plot_paths[gsea_neg.iloc[gs]['index']], 'w') as f:
                     f.write(doc.render())
                 # HTMLify the negative report
-                gsea_neg.at[gs, "Details"] = "<a href=plot/" + \
+                gsea_neg.at[gs, "Details"] = "<a href=" + \
                     plot_paths[gsea_neg.iloc[gs]['index']] + \
                     " target='_blank'>Details...</a>"
         gsea_neg["index"] = gsea_neg.apply(
